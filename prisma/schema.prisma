@@ -1,0 +1,165 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 1. User Model (Students & Admins)
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  mobileNumber String
+  role         String   @default("STUDENT") // "STUDENT", "SUPER_ADMIN"
+
+  // Student Profile
+  schoolName        String?
+  percentage10th    Float?
+  preferredStream   String?
+  preferredLocation String?
+  budget            Float?
+  hostelRequired    Boolean  @default(false)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  reviews       Review[]
+  savedColleges SavedCollege[]
+}
+
+// 2. College Model
+model College {
+  id                Int      @id @default(autoincrement())
+  name              String
+  logoUrl           String?
+  coverImageUrl     String?
+  description       String
+  ownership         String   // "GOVERNMENT", "PRIVATE", "AIDED"
+  category          String   // "JUNIOR_COLLEGE", "POLYTECHNIC", "ITI", "DIPLOMA", "VOCATIONAL"
+  establishedYear   Int?
+  
+  // Location
+  address           String
+  nearbyLandmark    String?
+  district          String   @default("Hyderabad")
+  state             String   @default("Telangana")
+  country           String   @default("India")
+  googleMapsUrl     String?
+  
+  // Contact
+  phone             String?
+  email             String?
+  website           String?
+  
+  // Facilities
+  hasHostel         Boolean  @default(false)
+  hasTransport      Boolean  @default(false)
+  hasLibrary        Boolean  @default(false)
+  hasLabs           Boolean  @default(false)
+  hasSports         Boolean  @default(false)
+  hasPlayground     Boolean  @default(false)
+  hasWifi           Boolean  @default(false)
+  hasSmartClassroom Boolean  @default(false)
+  hasCctv           Boolean  @default(false)
+  hasComputerLabs   Boolean  @default(false)
+  hasCafeteria      Boolean  @default(false)
+  
+  // Demographics
+  genderType        String   @default("CO_ED") // "BOYS", "GIRLS", "CO_ED"
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  
+  streams           CollegeStream[]
+  gallery           CollegeGallery[]
+  reviews           Review[]
+  savedBy           SavedCollege[]
+}
+
+// 3. College Stream Model
+model CollegeStream {
+  id                  Int     @id @default(autoincrement())
+  collegeId           Int
+  streamName          String  // "MPC", "BiPC", "MEC", "CEC", "HEC", "Polytechnic", "ITI", "Vocational"
+  annualFee           Float
+  minQualification    String  @default("10th Class")
+  requiredMarks       String  @default("Pass")
+  admissionType       String  @default("DIRECT") // "MERIT_BASED", "DIRECT", "COUNSELLING"
+  reservationInfo     String?
+  
+  college             College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+// 4. College Gallery Model
+model CollegeGallery {
+  id        Int     @id @default(autoincrement())
+  collegeId Int
+  imageUrl  String
+  
+  college   College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+// 5. Review Model (Requires Admin Approval)
+model Review {
+  id         Int      @id @default(autoincrement())
+  collegeId  Int
+  userId     Int
+  rating     Int
+  reviewText String
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  
+  college    College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// 6. Saved College Model (Bookmarks)
+model SavedCollege {
+  userId    Int
+  collegeId Int
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  college   College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, collegeId])
+}
+
+// 7. Career Model
+model Career {
+  id                       Int     @id @default(autoincrement())
+  title                    String  @unique
+  slug                     String  @unique
+  overview                 String
+  responsibilities         String  // Stringified JSON array
+  skillsRequired           String  // Stringified JSON array
+  qualificationRequired    String
+  salaryRangeMin           Float
+  salaryRangeMax           Float
+  futureScope              String
+  roadmapAfter10th         String
+  roadmapAfterIntermediate String
+}
+
+// 8. Scholarship Model
+model Scholarship {
+  id                Int       @id @default(autoincrement())
+  name              String
+  eligibility       String
+  requiredDocuments String?   // Stringified JSON array
+  incomeCriteria    String?
+  lastDate          String?   // ISO string format
+  officialWebsite   String?
+}
+
+// 9. Admission Update Model
+model AdmissionUpdate {
+  id            Int      @id @default(autoincrement())
+  title         String
+  category      String   // "INTERMEDIATE", "POLYTECHNIC", "ITI", "SCHOLARSHIP", "OTHER"
+  content       String
+  publishedDate DateTime @default(now())
+  isPinned      Boolean  @default(false)
+}
