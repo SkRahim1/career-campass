@@ -82,53 +82,56 @@ export default function ProfilePage() {
   const fetchRecommendations = async () => {
     setRecsLoading(true);
     try {
-      const res = await fetch('/api/colleges');
-      if (res.ok) {
-        const data = await res.json();
-        const list = data.colleges || [];
-        
-        const matched = list.filter(college => {
-          const offersStream = college.streams.some(
-            s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase()
+      const { collection, getDocs } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+
+      const querySnapshot = await getDocs(collection(db, 'colleges'));
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      
+      const matched = list.filter(college => {
+        const offersStream = college.streams?.some(
+          s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase()
+        );
+        if (!offersStream) return false;
+
+        if (formData.budget) {
+          const hasAffordableStream = college.streams?.some(
+            s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase() && 
+                 s.annualFee <= parseFloat(formData.budget)
           );
-          if (!offersStream) return false;
+          if (!hasAffordableStream) return false;
+        }
 
-          if (formData.budget) {
-            const hasAffordableStream = college.streams.some(
-              s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase() && 
-                   s.annualFee <= parseFloat(formData.budget)
-            );
-            if (!hasAffordableStream) return false;
-          }
+        if (formData.hostelRequired && !college.hasHostel) {
+          return false;
+        }
 
-          if (formData.hostelRequired && !college.hasHostel) {
-            return false;
-          }
+        return true;
+      }).map(college => {
+        let matchPercentage = 70;
+        
+        if (formData.preferredLocation && 
+            (college.address.toLowerCase().includes(formData.preferredLocation.toLowerCase()) || 
+             college.nearbyLandmark?.toLowerCase().includes(formData.preferredLocation.toLowerCase()))) {
+          matchPercentage += 20;
+        }
 
-          return true;
-        }).map(college => {
-          let matchPercentage = 70;
-          
-          if (formData.preferredLocation && 
-              (college.address.toLowerCase().includes(formData.preferredLocation.toLowerCase()) || 
-               college.nearbyLandmark?.toLowerCase().includes(formData.preferredLocation.toLowerCase()))) {
-            matchPercentage += 20;
-          }
+        if (college.averageRating >= 4.5) {
+          matchPercentage += 10;
+        }
 
-          if (college.averageRating >= 4.5) {
-            matchPercentage += 10;
-          }
+        return {
+          ...college,
+          matchPercentage: Math.min(matchPercentage, 100)
+        };
+      }).sort((a, b) => b.matchPercentage - a.matchPercentage);
 
-          return {
-            ...college,
-            matchPercentage: Math.min(matchPercentage, 100)
-          };
-        }).sort((a, b) => b.matchPercentage - a.matchPercentage);
-
-        setRecommendations(matched.slice(0, 3));
-      }
+      setRecommendations(matched.slice(0, 3));
     } catch (err) {
-      console.error('Error fetching recommendations:', err);
+      console.error('Error fetching recommendations from Firestore:', err);
     } finally {
       setRecsLoading(false);
     }
@@ -179,6 +182,30 @@ export default function ProfilePage() {
           Update your academic credentials and preferences to customize your college discovery feed.
         </p>
       </div>
+
+      {/* Pending Survey Banner for New Students */}
+      {user && !user.hasCompletedSurvey && (
+        <div className="bg-gradient-to-r from-purple-900/40 via-indigo-900/40 to-pink-900/30 border border-purple-500/30 rounded-3xl p-6 sm:p-7 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-lg text-left">
+          <div className="space-y-1.5 max-w-xl">
+            <span className="text-[10px] uppercase font-extrabold tracking-wider bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2.5 py-0.5 rounded-full">
+              Action Recommended
+            </span>
+            <h3 className="text-slate-100 font-extrabold text-base">
+              Take the Class 10 Educational Guidance Survey
+            </h3>
+            <p className="text-slate-300 text-xs leading-relaxed">
+              Complete your 25-question student survey to unlock instant college suggestions, stream eligibility roadmaps, and scholarship updates tailored to your career goal.
+            </p>
+          </div>
+          <Link
+            href="/survey"
+            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-90 text-white font-extrabold px-6 py-3 rounded-2xl text-xs transition shadow-md shrink-0 flex items-center gap-2 cursor-pointer"
+          >
+            <span>Start Survey (5–7 min)</span>
+            <Sparkles className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         

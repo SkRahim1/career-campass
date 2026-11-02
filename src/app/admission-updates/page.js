@@ -16,13 +16,30 @@ export default function AdmissionUpdatesPage() {
   const fetchUpdates = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admission-updates?category=${category}`);
-      if (res.ok) {
-        const data = await res.json();
-        setUpdates(data.updates || []);
+      const { collection, getDocs, query, where } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      
+      let q = collection(db, 'admission-updates');
+      if (category !== 'ALL') {
+        q = query(q, where('category', '==', category));
       }
+      
+      const querySnapshot = await getDocs(q);
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // Sort pinned to top, then by date descending
+      list.sort((a, b) => {
+        if (a.isPinned && !b.isPinned) return -1;
+        if (!a.isPinned && b.isPinned) return 1;
+        return new Date(b.publishedDate) - new Date(a.publishedDate);
+      });
+      
+      setUpdates(list);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching updates from Firestore:', err);
     } finally {
       setLoading(false);
     }

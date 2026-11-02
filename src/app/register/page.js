@@ -19,7 +19,11 @@ export default function RegisterPage() {
   // If already logged in, redirect
   useEffect(() => {
     if (user) {
-      router.push('/profile');
+      if (!user.hasCompletedSurvey) {
+        router.push('/survey?firstTime=true');
+      } else {
+        router.push('/profile');
+      }
     }
   }, [user, router]);
 
@@ -40,7 +44,7 @@ export default function RegisterPage() {
         password,
         mobileNumber,
       });
-      router.push('/profile');
+      router.push('/survey?firstTime=true');
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {

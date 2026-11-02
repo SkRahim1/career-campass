@@ -31,16 +31,20 @@ function ComparePageContent() {
         return;
       }
 
-      // Fetch all colleges and filter locally by IDs (for clean architecture)
-      const res = await fetch('/api/colleges');
-      if (res.ok) {
-        const data = await res.json();
-        const list = data.colleges || [];
-        const filtered = list.filter(c => ids.includes(c.id));
-        setColleges(filtered);
+      // Fetch colleges directly from Firestore by document ID
+      const { doc, getDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+
+      const list = [];
+      for (const id of ids) {
+        const collegeDocSnap = await getDoc(doc(db, 'colleges', String(id)));
+        if (collegeDocSnap.exists()) {
+          list.push({ id: collegeDocSnap.id, ...collegeDocSnap.data() });
+        }
       }
+      setColleges(list);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching colleges for comparison:', err);
     } finally {
       setLoading(false);
     }

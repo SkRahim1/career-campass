@@ -4,9 +4,7 @@ import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
 import CareerCard from '@/components/CareerCard';
 import ScholarshipCard from '@/components/ScholarshipCard';
-import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles } from 'lucide-react';
-
-export const revalidate = 0; // Disable cache for fresh local database updates
+import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList } from 'lucide-react';
 
 export default async function LandingPage() {
   const updates = await prisma.admissionUpdate.findMany({
@@ -119,11 +117,15 @@ export default async function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
-          <Link href="#portal-guide" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-8 py-3 rounded-2xl shadow-md transition text-center cursor-pointer text-xs">
-            Read Guidance Guide
+          <Link href="/survey" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-indigo-500/20 transition text-center cursor-pointer text-xs flex items-center justify-center gap-2">
+            <ClipboardList className="w-4 h-4" />
+            <span>Take Student Survey (5–7 Min)</span>
           </Link>
-          <Link href="/colleges" className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-800 dark:hover:border-slate-700 font-bold px-8 py-3 rounded-2xl transition text-center cursor-pointer text-xs">
+          <Link href="/colleges" className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-800 dark:hover:border-slate-700 font-bold px-8 py-3.5 rounded-2xl transition text-center cursor-pointer text-xs">
             Find Colleges
+          </Link>
+          <Link href="#portal-guide" className="bg-transparent hover:bg-slate-200/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 font-bold px-6 py-3.5 rounded-2xl transition text-center cursor-pointer text-xs">
+            Guidance Guide
           </Link>
         </div>
       </section>
@@ -350,6 +352,31 @@ export default async function LandingPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Class 10 Student Survey Feature Banner */}
+      <section className="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-gradient-to-r from-purple-900/20 via-indigo-900/30 to-pink-900/20 dark:from-purple-950/60 dark:via-indigo-950/60 dark:to-pink-950/40 border border-purple-500/25 dark:border-purple-500/30 rounded-3xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md text-left">
+          <div className="space-y-3 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase">
+              <ClipboardList className="w-3.5 h-3.5" />
+              <span>5–7 Minute Interactive Survey</span>
+            </div>
+            <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
+              Tell Us About Your Goals & Educational Preferences
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Take our 25-question guidance survey to receive personalized stream matches, college suggestions in Hyderabad, and scholarship notifications tailored to your future plans.
+            </p>
+          </div>
+          <Link
+            href="/survey"
+            className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-90 text-white font-extrabold px-8 py-3.5 rounded-2xl transition shrink-0 shadow-lg shadow-purple-500/20 cursor-pointer text-xs flex items-center gap-2"
+          >
+            <span>Start Student Survey</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

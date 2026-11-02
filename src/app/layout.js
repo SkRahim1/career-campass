@@ -22,6 +22,13 @@ export const metadata = {
   keywords: 'best intermediate colleges hyderabad, government junior colleges hyderabad, polytechnic colleges hyderabad, career guidance after 10th',
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#020617',
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${outfit.variable} ${inter.variable} h-full scroll-smooth`}>

@@ -13,9 +13,19 @@ export default function CollegeCard({
   isCompared = false,
   onCompareToggle
 }) {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [isBookmarked, setIsBookmarked] = useState(isBookmarkedInitial);
   const [loading, setLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
+  // Sync bookmark state with user profile
+  React.useEffect(() => {
+    if (user && user.savedColleges) {
+      setIsBookmarked(user.savedColleges.some(id => String(id) === String(college.id)));
+    } else {
+      setIsBookmarked(isBookmarkedInitial);
+    }
+  }, [user, college.id, isBookmarkedInitial]);
 
   const handleBookmark = async (e) => {
     e.preventDefault();
@@ -26,25 +36,39 @@ export default function CollegeCard({
     }
     setLoading(true);
     try {
+      const { doc, updateDoc, arrayUnion, arrayRemove } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      
+      const userDocRef = doc(db, 'users', user.uid);
+      const collegeIntId = parseInt(college.id);
+      
       if (isBookmarked) {
-        const res = await fetch(`/api/saved-colleges?collegeId=${college.id}`, { method: 'DELETE' });
-        if (res.ok) {
-          setIsBookmarked(false);
-          if (onBookmarkToggle) onBookmarkToggle(college.id, false);
-        }
-      } else {
-        const res = await fetch('/api/saved-colleges', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ collegeId: college.id })
+        // Remove from Firestore
+        await updateDoc(userDocRef, {
+          savedColleges: arrayRemove(collegeIntId)
         });
-        if (res.ok) {
-          setIsBookmarked(true);
-          if (onBookmarkToggle) onBookmarkToggle(college.id, true);
-        }
+        
+        // Update local auth context user state
+        const updatedSaved = (user.savedColleges || []).filter(id => id !== collegeIntId);
+        await updateProfile({ savedColleges: updatedSaved });
+        
+        setIsBookmarked(false);
+        if (onBookmarkToggle) onBookmarkToggle(college.id, false);
+      } else {
+        // Add to Firestore
+        await updateDoc(userDocRef, {
+          savedColleges: arrayUnion(collegeIntId)
+        });
+        
+        // Update local auth context user state
+        const updatedSaved = [...(user.savedColleges || []), collegeIntId];
+        await updateProfile({ savedColleges: updatedSaved });
+        
+        setIsBookmarked(true);
+        if (onBookmarkToggle) onBookmarkToggle(college.id, true);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error toggling bookmark in Firestore:', err);
     } finally {
       setLoading(false);
     }
@@ -58,15 +82,16 @@ export default function CollegeCard({
     <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 shadow-md hover:shadow-indigo-500/5 transition duration-305 flex flex-col h-full animate-fade-in">
       {/* Banner / Cover */}
       <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-950 overflow-hidden">
-        {college.coverImageUrl ? (
+        {college.coverImageUrl && !imageError ? (
           <img
             src={college.coverImageUrl}
             alt={college.name}
+            onError={() => setImageError(true)}
             className="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 dark:opacity-80"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-indigo-50 dark:from-indigo-950 to-slate-100 dark:to-slate-900 flex items-center justify-center">
-            <Sparkles className="w-10 h-10 text-indigo-300 dark:text-indigo-800" />
+          <div className="w-full h-full bg-gradient-to-br from-indigo-650/10 to-purple-650/15 dark:from-indigo-950/60 dark:to-slate-900 flex items-center justify-center border-b border-slate-150 dark:border-slate-850">
+            <Sparkles className="w-8 h-8 text-indigo-400 dark:text-indigo-700 animate-pulse" />
           </div>
         )}
         

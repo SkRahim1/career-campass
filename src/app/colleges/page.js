@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import CollegeCard from '@/components/CollegeCard';
 import { Search, Filter, SlidersHorizontal, ArrowRightLeft, Sparkles, Building2, HelpCircle, X, Check } from 'lucide-react';
 import Link from 'next/link';
+import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const HYDERABAD_AREAS = [
   'Abids', 'Ameerpet', 'Alwal', 'Attapur', 'Amberpet', 'Asif Nagar',
@@ -26,6 +28,7 @@ const HYDERABAD_AREAS = [
 ].sort();
 
 export default function CollegesSearchPage() {
+  const [allColleges, setAllColleges] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -34,7 +37,7 @@ export default function CollegesSearchPage() {
   const [category, setCategory] = useState('ALL');
   const [stream, setStream] = useState('ALL');
   const [genderType, setGenderType] = useState('ALL');
-  const [feeMax, setFeeMax] = useState('100000');
+  const [feeMax, setFeeMax] = useState('150000');
   
   // Mobile drawer state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -52,38 +55,88 @@ export default function CollegesSearchPage() {
   // Comparison State
   const [selectedForCompare, setSelectedForCompare] = useState([]);
 
+  // Fetch all colleges once on mount
   useEffect(() => {
-    fetchColleges();
-  }, [search, area, ownership, category, stream, genderType, feeMax, facilities]);
-
-  const fetchColleges = async () => {
-    setLoading(true);
-    try {
-      let query = `/api/colleges?search=${encodeURIComponent(search)}`;
-      if (area !== 'ALL') query += `&area=${area}`;
-      if (ownership !== 'ALL') query += `&ownership=${ownership}`;
-      if (category !== 'ALL') query += `&category=${category}`;
-      if (stream !== 'ALL') query += `&stream=${stream}`;
-      if (genderType !== 'ALL') query += `&genderType=${genderType}`;
-      if (feeMax) query += `&feeMax=${feeMax}`;
-      
-      Object.keys(facilities).forEach(key => {
-        if (facilities[key]) {
-          query += `&${key}=true`;
-        }
-      });
-
-      const res = await fetch(query);
-      if (res.ok) {
-        const data = await res.json();
-        setColleges(data.colleges || []);
+    async function fetchAllColleges() {
+      setLoading(true);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'colleges'));
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        setAllColleges(list);
+        setColleges(list);
+      } catch (err) {
+        console.error('Error fetching colleges from Firestore:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
-  };
+    fetchAllColleges();
+  }, []);
+
+  // Filter colleges client-side when dependency changes
+  useEffect(() => {
+    if (allColleges.length === 0) return;
+    
+    let filtered = [...allColleges];
+
+    // Search term
+    if (search.trim() !== '') {
+      const term = search.toLowerCase();
+      filtered = filtered.filter(c => 
+        c.name.toLowerCase().includes(term) ||
+        c.address.toLowerCase().includes(term) ||
+        (c.nearbyLandmark && c.nearbyLandmark.toLowerCase().includes(term))
+      );
+    }
+
+    // Area
+    if (area !== 'ALL') {
+      filtered = filtered.filter(c => c.address.toLowerCase().includes(area.toLowerCase()));
+    }
+
+    // Ownership
+    if (ownership !== 'ALL') {
+      filtered = filtered.filter(c => c.ownership === ownership);
+    }
+
+    // Category
+    if (category !== 'ALL') {
+      filtered = filtered.filter(c => c.category === category);
+    }
+
+    // Stream
+    if (stream !== 'ALL') {
+      filtered = filtered.filter(c => c.streams && c.streams.some(s => s.streamName === stream));
+    }
+
+    // GenderType
+    if (genderType !== 'ALL') {
+      filtered = filtered.filter(c => c.genderType === genderType);
+    }
+
+    // FeeMax
+    if (feeMax) {
+      const maxFee = parseInt(feeMax);
+      filtered = filtered.filter(c => {
+        if (!c.streams || c.streams.length === 0) return true;
+        const minFee = Math.min(...c.streams.map(s => s.annualFee));
+        return minFee <= maxFee;
+      });
+    }
+
+    // Facilities
+    Object.keys(facilities).forEach(key => {
+      if (facilities[key]) {
+        const dbKey = 'has' + key.charAt(0).toUpperCase() + key.slice(1);
+        filtered = filtered.filter(c => !!c[dbKey]);
+      }
+    });
+
+    setColleges(filtered);
+  }, [allColleges, search, area, ownership, category, stream, genderType, feeMax, facilities]);
 
   const handleFacilityChange = (name) => {
     setFacilities(prev => ({ ...prev, [name]: !prev[name] }));
@@ -262,6 +315,7 @@ export default function CollegesSearchPage() {
               </button>
             );
           })}
+        </div>
       </div>
     </div>
   );

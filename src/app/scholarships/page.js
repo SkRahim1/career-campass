@@ -3,8 +3,6 @@ import prisma from '@/lib/prisma';
 import ScholarshipCard from '@/components/ScholarshipCard';
 import { Award, ShieldCheck, Info } from 'lucide-react';
 
-export const revalidate = 0; // Fetch fresh data
-
 export default async function ScholarshipsPage() {
   const scholarships = await prisma.scholarship.findMany({
     orderBy: { lastDate: 'asc' }

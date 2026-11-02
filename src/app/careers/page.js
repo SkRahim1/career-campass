@@ -3,8 +3,6 @@ import prisma from '@/lib/prisma';
 import CareersSearchList from '@/components/CareersSearchList';
 import { BookOpen } from 'lucide-react';
 
-export const revalidate = 0; // Fetch fresh data
-
 export default async function CareersLibraryPage() {
   const careers = await prisma.career.findMany({
     orderBy: { title: 'asc' }

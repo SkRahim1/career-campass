@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight } from 'lucide-react';
+import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -57,6 +57,10 @@ export default function Navbar() {
               <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm flex items-center gap-1.5">
                 <Bell className="w-4 h-4 text-pink-500 dark:text-pink-400" />
                 <span>Updates</span>
+              </Link>
+              <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1.5 text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 px-3 py-1.5 rounded-full shadow-xs">
+                <ClipboardList className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
+                <span>Student Survey</span>
               </Link>
             </div>
 
@@ -240,6 +244,22 @@ export default function Navbar() {
                 <p className="text-[10px] text-slate-500 dark:text-slate-400">Live notifications & counseling bulletins</p>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
+            {/* 6. Student Survey */}
+            <Link
+              href="/survey"
+              onClick={toggleMenu}
+              className="flex items-center gap-3.5 p-3 rounded-2xl bg-gradient-to-r from-indigo-50/80 to-purple-50/80 dark:from-indigo-950/40 dark:to-purple-950/40 border border-indigo-200 dark:border-indigo-800 hover:border-indigo-400 transition group text-left shadow-xs"
+            >
+              <div className="p-2.5 rounded-xl bg-indigo-600 text-white group-hover:scale-105 transition-transform shrink-0">
+                <ClipboardList className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-extrabold text-xs text-indigo-700 dark:text-indigo-300 transition">Student Survey</p>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">Class 10 guidance survey (25 questions)</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
           </div>

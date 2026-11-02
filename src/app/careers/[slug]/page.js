@@ -3,8 +3,6 @@ import prisma from '@/lib/prisma';
 import { ArrowLeft, Briefcase, Award, TrendingUp, CheckSquare, Compass, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
-export const revalidate = 0; // Fetch fresh data
-
 // SEO Metadata Generator
 export async function generateMetadata({ params }) {
   const { slug } = await params;
@@ -18,6 +16,20 @@ export async function generateMetadata({ params }) {
     description: `Complete guide on how to become a ${career.title} in India. Discover salary ranges, required qualifications, and roadmap details after Class 10 and Intermediate.`,
     keywords: `${career.title} roadmap, career after 10th, how to become ${career.title}`,
   };
+}
+
+export async function generateStaticParams() {
+  try {
+    const careers = await prisma.career.findMany({
+      select: { slug: true }
+    });
+    return careers.map((c) => ({
+      slug: c.slug
+    }));
+  } catch (err) {
+    console.error('Error generating static params for careers:', err);
+    return [];
+  }
 }
 
 export default async function CareerDetailPage({ params }) {

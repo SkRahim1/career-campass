@@ -3,8 +3,6 @@ import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
 import { Star, ShieldAlert, FileText, Landmark, ClipboardList, Coins } from 'lucide-react';
 
-export const revalidate = 0; // Fresh database fetches
-
 export default async function GovernmentCollegesPage() {
   // Fetch government colleges from SQLite
   const rawColleges = await prisma.college.findMany({

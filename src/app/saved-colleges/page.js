@@ -21,13 +21,31 @@ export default function SavedCollegesPage() {
 
   const fetchSavedColleges = async () => {
     try {
-      const res = await fetch('/api/saved-colleges');
-      if (res.ok) {
-        const data = await res.json();
-        setColleges(data.savedColleges || []);
+      const { doc, getDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+
+      // 1. Get user profile doc to see bookmark IDs
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+      const bookmarkIds = userDocSnap.exists() ? (userDocSnap.data().savedColleges || []) : [];
+
+      if (bookmarkIds.length === 0) {
+        setColleges([]);
+        setLoading(false);
+        return;
       }
+
+      // 2. Fetch details for each bookmarked college ID
+      const list = [];
+      for (const id of bookmarkIds) {
+        const collegeDocSnap = await getDoc(doc(db, 'colleges', String(id)));
+        if (collegeDocSnap.exists()) {
+          list.push({ id: collegeDocSnap.id, ...collegeDocSnap.data() });
+        }
+      }
+      setColleges(list);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching bookmarked colleges:', err);
     } finally {
       setLoading(false);
     }
@@ -36,7 +54,7 @@ export default function SavedCollegesPage() {
   const handleBookmarkToggle = (collegeId, isBookmarked) => {
     if (!isBookmarked) {
       // Remove from state immediately on un-bookmarking
-      setColleges(prev => prev.filter(c => c.id !== collegeId));
+      setColleges(prev => prev.filter(c => String(c.id) !== String(collegeId)));
     }
   };
 

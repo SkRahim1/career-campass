@@ -2,6 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { auth, db } from '@/lib/firebase';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -12,58 +20,96 @@ export function AuthProvider({ children }) {
 
   // Check login status on mount
   useEffect(() => {
-    async function checkSession() {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.user);
+        if (firebaseUser) {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            setUser({ ...userDoc.data(), uid: firebaseUser.uid });
+          } else {
+            // If doc doesn't exist, create a basic student profile
+            const defaultProfile = {
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || 'Student User',
+              email: firebaseUser.email,
+              role: 'STUDENT',
+              mobileNumber: firebaseUser.phoneNumber || '',
+              savedColleges: [],
+              hasCompletedSurvey: false
+            };
+            await setDoc(userDocRef, defaultProfile);
+            setUser(defaultProfile);
+          }
+        } else {
+          setUser(null);
         }
       } catch (err) {
         console.error('Error fetching session:', err);
       } finally {
         setLoading(false);
       }
-    }
-    checkSession();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = async (email, password) => {
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Login failed');
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      let profile = {};
+      if (userDoc.exists()) {
+        profile = userDoc.data();
+      } else {
+        profile = {
+          uid: firebaseUser.uid,
+          name: firebaseUser.displayName || 'Student User',
+          email: firebaseUser.email,
+          role: email.includes('admin') ? 'SUPER_ADMIN' : 'STUDENT',
+          savedColleges: []
+        };
+        await setDoc(userDocRef, profile);
       }
-
-      setUser(data.user);
+      
+      const fullUser = { ...profile, uid: firebaseUser.uid };
+      setUser(fullUser);
       router.refresh();
-      return data.user;
+      return fullUser;
     } catch (err) {
       throw err;
     }
   };
 
   const register = async (userData) => {
+    const { email, password, name, mobileNumber, schoolName, percentage10th, preferredStream, preferredLocation, budget, hostelRequired } = userData;
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
+      const newProfile = {
+        uid: firebaseUser.uid,
+        name: name,
+        email: email,
+        mobileNumber: mobileNumber || '',
+        role: 'STUDENT',
+        schoolName: schoolName || null,
+        percentage10th: percentage10th ? parseFloat(percentage10th) : null,
+        preferredStream: preferredStream || null,
+        preferredLocation: preferredLocation || null,
+        budget: budget ? parseFloat(budget) : null,
+        hostelRequired: !!hostelRequired,
+        savedColleges: [],
+        hasCompletedSurvey: false
+      };
 
-      // Automatically log in after registration by calling login
-      return await login(userData.email, userData.password);
+      await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
+      setUser(newProfile);
+      router.refresh();
+      return newProfile;
     } catch (err) {
       throw err;
     }
@@ -71,7 +117,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await signOut(auth);
       setUser(null);
       router.push('/');
       router.refresh();
@@ -81,20 +127,13 @@ export function AuthProvider({ children }) {
   };
 
   const updateProfile = async (profileData) => {
+    if (!auth.currentUser) throw new Error('Not authenticated');
     try {
-      const res = await fetch('/api/auth/me', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profileData),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Profile update failed');
-      }
-
-      setUser(data.user);
-      return data.user;
+      const userDocRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userDocRef, profileData);
+      const updatedUser = { ...user, ...profileData };
+      setUser(updatedUser);
+      return updatedUser;
     } catch (err) {
       throw err;
     }
