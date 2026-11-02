@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList } from 'lucide-react';
+import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList, Info } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -58,6 +58,7 @@ export default function Navbar() {
                 <Bell className="w-4 h-4 text-pink-500 dark:text-pink-400" />
                 <span>Updates</span>
               </Link>
+              <Link href="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">About Us</Link>
               <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1.5 text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 px-3 py-1.5 rounded-full shadow-xs">
                 <ClipboardList className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
                 <span>Student Survey</span>
@@ -260,6 +261,22 @@ export default function Navbar() {
                 <p className="text-[10px] text-slate-600 dark:text-slate-400">Class 10 guidance survey (25 questions)</p>
               </div>
               <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
+            {/* 7. About Us */}
+            <Link
+              href="/about"
+              onClick={toggleMenu}
+              className="flex items-center gap-3.5 p-3 rounded-2xl bg-slate-50 hover:bg-indigo-50/20 dark:bg-slate-900/60 dark:hover:bg-indigo-900/10 border border-slate-150 dark:border-slate-850 hover:border-indigo-500/20 dark:hover:border-indigo-500/25 transition group text-left"
+            >
+              <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 group-hover:scale-105 transition-transform shrink-0">
+                <Info className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-extrabold text-xs text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">About Us</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Our aim, Excellence Voices & Rahim Shaikh</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
           </div>

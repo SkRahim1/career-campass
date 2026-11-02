@@ -16,9 +16,9 @@ export default function Footer() {
             <p className="text-sm leading-relaxed">
               A comprehensive career guidance and college discovery platform designed specifically for 10th class students. Find Intermediate streams, Polytechnic diplomas, ITI courses, and scholarships in Hyderabad.
             </p>
-            <div className="flex items-center gap-2 text-xs bg-white dark:bg-slate-900/60 text-slate-750 dark:text-slate-300 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-lg w-max shadow-xs">
-              <Database className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-405" />
-              <span>Database: SQLite (Online)</span>
+            <div className="flex items-center gap-2 text-xs bg-white dark:bg-slate-900/60 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-lg w-max shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>An Excellence Voices Initiative</span>
             </div>
           </div>
 
@@ -46,6 +46,12 @@ export default function Footer() {
             <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-sm tracking-wider uppercase mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link href="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-semibold text-indigo-600 dark:text-indigo-400">About Us & Vision</Link>
+              </li>
+              <li>
+                <Link href="/survey" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Student Survey (25 Qs)</Link>
+              </li>
+              <li>
                 <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Admission Updates</Link>
               </li>
               <li>
@@ -54,27 +60,29 @@ export default function Footer() {
               <li>
                 <Link href="/register" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Create Profile</Link>
               </li>
-              <li>
-                <a href="#faq" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Frequently Asked Questions</a>
-              </li>
             </ul>
           </div>
 
           {/* Contact Details */}
           <div>
-            <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-sm tracking-wider uppercase mb-4">Contact Info</h3>
+            <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-sm tracking-wider uppercase mb-4">Leadership & Contact</h3>
             <ul className="space-y-3 text-sm">
+              <li className="space-y-0.5">
+                <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">Mentorship Lead</span>
+                <p className="font-bold text-slate-800 dark:text-slate-100">Rahim Shaikh</p>
+                <p className="text-xs text-indigo-600 dark:text-indigo-400">Co-founder, Excellence Voices</p>
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <a href="tel:9284306159" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium">+91 92843 06159</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <a href="mailto:support@careercompass.com" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">support@careercompass.com</a>
+              </li>
               <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-indigo-650 dark:text-indigo-400 mt-0.5 shrink-0" />
-                <span>Renvix Technologies,<br />Hyderabad, Telangana, India</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-indigo-650 dark:text-indigo-400 shrink-0" />
-                <span>+91 98765 43210</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-indigo-650 dark:text-indigo-400 shrink-0" />
-                <span>support@careercompass.com</span>
+                <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" />
+                <span>Hyderabad, Telangana, India</span>
               </li>
             </ul>
           </div>
