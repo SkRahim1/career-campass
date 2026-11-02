@@ -40,12 +40,16 @@ Queries Firestore to generate customized matches based on the student's profile 
 - Annual tuition fee budget (dynamic cost filtering).
 - Location proximity and hostel boarding requirement.
 
-### 4. Admin Dashboard Panel
-Allows administrators (using the `SUPER_ADMIN` role) to manage the portal client-side:
-- View database-wide registration, college, and review statistics in-memory.
-- Moderate and approve/reject user reviews.
-- Publish pinned admission alerts and counseling timelines.
-- Add new college listings to the directory.
+### 5. 25-Question Diagnostic Student Survey & Sequential Filling
+- Comprehensive 6-section diagnostic survey for 10th-grade students to pinpoint interests, financial budgets, and future career questions.
+- Sequential "one-by-one" submission support for school drives and educational camps.
+- Instant personalized college recommendations matching student's chosen stream and location in a real-time modal popup.
+- Admin dashboard tab with search filter and instant CSV export for reporting.
+
+### 6. About Us, Leadership & Excellence Voices Initiative
+- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career Compass (Contact: `+91 92843 06159`).
+- **Our Aim**: Zero educational confusion, unbiased guidance, and equal access to higher education for every Class 10 student regardless of socioeconomic background.
+- **How We Help**: Stream roadmaps, verified college discovery, government scholarship & fee reimbursement navigation (ePASS/Gurukulam), entrance exam preparation (POLYCET, TG APRJC CET), and one-on-one counseling.
 
 ---
 
