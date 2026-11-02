@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { 
   ClipboardList, 
   CheckCircle2, 
@@ -356,8 +357,14 @@ export default function SurveyPage() {
 
   if (submitted) {
     return (
-      <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center space-y-8 bg-grid-pattern bg-radial-gradient flex-grow">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-6">
+      <AuthRequiredGate
+        featureName="Class 10 Student Survey"
+        featureDescription="Sign in or register to take the 25-Question Class 10 diagnostic survey and get personalized college suggestions."
+        iconName="survey"
+        redirectPath="/survey"
+      >
+        <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center space-y-8 bg-grid-pattern bg-radial-gradient flex-grow">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-6">
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/10">
             <CheckCircle2 className="w-10 h-10" />
           </div>
@@ -550,12 +557,19 @@ export default function SurveyPage() {
             </div>
           </div>
         )}
-      </div>
+        </div>
+      </AuthRequiredGate>
     );
   }
 
   return (
-    <div className="bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 bg-grid-pattern bg-radial-gradient flex-grow text-left">
+    <AuthRequiredGate
+      featureName="Class 10 Student Survey"
+      featureDescription="Sign in or register to take the 25-Question Class 10 diagnostic survey and get personalized college suggestions."
+      iconName="survey"
+      redirectPath="/survey"
+    >
+      <div className="bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 bg-grid-pattern bg-radial-gradient flex-grow text-left">
       
       {/* First-time Student Welcome Banner */}
       {user && !user.hasCompletedSurvey && (
@@ -1349,6 +1363,7 @@ export default function SurveyPage() {
         <p className="font-semibold text-slate-400">Career Compass • Discover Your Path. Design Your Future.</p>
       </div>
 
-    </div>
+      </div>
+    </AuthRequiredGate>
   );
 }

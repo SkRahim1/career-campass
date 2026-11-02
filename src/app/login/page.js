@@ -13,17 +13,32 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('');
+
+  // Extract redirect target client-side safely
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('redirect');
+      if (target && target.startsWith('/')) {
+        setRedirectPath(target);
+      }
+    }
+  }, []);
+
+  const getRedirectTarget = (role) => {
+    if (redirectPath) {
+      return redirectPath;
+    }
+    return role === 'SUPER_ADMIN' ? '/admin' : '/profile';
+  };
 
   // If already logged in, redirect
   useEffect(() => {
     if (user) {
-      if (user.role === 'SUPER_ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/profile');
-      }
+      router.push(getRedirectTarget(user.role));
     }
-  }, [user, router]);
+  }, [user, router, redirectPath]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,11 +52,7 @@ export default function LoginPage() {
 
     try {
       const loggedInUser = await login(email, password);
-      if (loggedInUser.role === 'SUPER_ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/profile');
-      }
+      router.push(getRedirectTarget(loggedInUser.role));
     } catch (err) {
       setError(err.message || 'Invalid email or password');
     } finally {
@@ -64,6 +75,13 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-slate-900 border border-slate-800 rounded-3xl py-8 px-6 sm:px-10 shadow-xl space-y-6">
+          {redirectPath && (
+            <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-indigo-300">
+              <Compass className="w-4 h-4 shrink-0 mt-0.5 text-indigo-400" />
+              <span>Please sign in or create an account to access this feature.</span>
+            </div>
+          )}
+
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-red-400 animate-shake">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -145,7 +163,10 @@ export default function LoginPage() {
 
           <div className="text-center text-xs text-slate-400 border-t border-slate-800/60 pt-4">
             <span>Don't have an account? </span>
-            <Link href="/register" className="font-bold text-indigo-400 hover:text-indigo-300 transition flex items-center justify-center gap-0.5 mt-1">
+            <Link 
+              href={redirectPath ? `/register?redirect=${encodeURIComponent(redirectPath)}` : "/register"} 
+              className="font-bold text-indigo-400 hover:text-indigo-300 transition flex items-center justify-center gap-0.5 mt-1"
+            >
               <span>Create an Account</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>

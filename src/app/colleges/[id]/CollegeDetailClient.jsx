@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import MapComponent from '@/components/MapComponent';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { Star, MapPin, Phone, Mail, Globe, Landmark, GraduationCap, ClipboardCheck, Dumbbell, ShieldAlert, Sparkles, Send } from 'lucide-react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
@@ -152,7 +153,13 @@ export default function CollegeDetailClient({ id }) {
   } : null;
 
   return (
-    <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow">
+    <AuthRequiredGate
+      featureName={`${college.name} Details`}
+      featureDescription="Sign in or register to view full fee structures, admission cutoffs, campus facilities, and student reviews."
+      iconName="landmark"
+      redirectPath={`/colleges/${id}`}
+    >
+      <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow">
       {jsonLd && (
         <script
           type="application/ld+json"
@@ -580,6 +587,7 @@ export default function CollegeDetailClient({ id }) {
         </div>
       </div>
 
-    </div>
+      </div>
+    </AuthRequiredGate>
   );
 }

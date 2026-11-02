@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import CareerCard from './CareerCard';
-import { Search, Compass, ShieldAlert, Sparkles } from 'lucide-react';
+import AuthRequiredGate from './AuthRequiredGate';
+import { Search, Compass, ShieldAlert, Sparkles, BookOpen } from 'lucide-react';
 
 export default function CareersSearchList({ initialCareers }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,7 +58,13 @@ export default function CareersSearchList({ initialCareers }) {
   });
 
   return (
-    <div className="space-y-8 text-left">
+    <AuthRequiredGate
+      featureName="Career Library & Roadmaps"
+      featureDescription="Sign in or register to browse 50+ career roadmaps, qualification routes, required skills, and salary insights."
+      iconName="book"
+      redirectPath="/careers"
+    >
+      <div className="space-y-8 text-left">
       
       {/* Search & Category Filter Section */}
       <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl shadow-md">
@@ -114,6 +121,7 @@ export default function CareersSearchList({ initialCareers }) {
         )}
       </div>
 
-    </div>
+      </div>
+    </AuthRequiredGate>
   );
 }

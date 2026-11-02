@@ -15,17 +15,31 @@ export default function RegisterPage() {
   const [mobileNumber, setMobileNumber] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [redirectPath, setRedirectPath] = useState('');
+
+  // Extract redirect target client-side safely
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('redirect');
+      if (target && target.startsWith('/')) {
+        setRedirectPath(target);
+      }
+    }
+  }, []);
 
   // If already logged in, redirect
   useEffect(() => {
     if (user) {
-      if (!user.hasCompletedSurvey) {
+      if (redirectPath) {
+        router.push(redirectPath);
+      } else if (!user.hasCompletedSurvey) {
         router.push('/survey?firstTime=true');
       } else {
         router.push('/profile');
       }
     }
-  }, [user, router]);
+  }, [user, router, redirectPath]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +58,7 @@ export default function RegisterPage() {
         password,
         mobileNumber,
       });
-      router.push('/survey?firstTime=true');
+      router.push(redirectPath || '/survey?firstTime=true');
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {
@@ -172,7 +186,10 @@ export default function RegisterPage() {
 
           <div className="text-center text-xs text-slate-400 border-t border-slate-800/60 pt-4">
             <span>Already have an account? </span>
-            <Link href="/login" className="font-bold text-indigo-400 hover:text-indigo-300 transition flex items-center justify-center gap-0.5 mt-1">
+            <Link 
+              href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"} 
+              className="font-bold text-indigo-400 hover:text-indigo-300 transition flex items-center justify-center gap-0.5 mt-1"
+            >
               <span>Sign In</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>

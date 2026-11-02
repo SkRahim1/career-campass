@@ -1,5 +1,6 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { ArrowLeft, Briefcase, Award, TrendingUp, CheckSquare, Compass, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
@@ -80,7 +81,13 @@ export default async function CareerDetailPage({ params }) {
   };
 
   return (
-    <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow py-16 px-4 sm:px-6 lg:px-8">
+    <AuthRequiredGate
+      featureName={`${career.title} Career Roadmap`}
+      featureDescription={`Sign in or create a free student account to explore the comprehensive roadmap, required qualifications, and salary insights for ${career.title}.`}
+      iconName="career"
+      redirectPath={`/careers/${slug}`}
+    >
+      <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow py-16 px-4 sm:px-6 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -210,6 +217,7 @@ export default async function CareerDetailPage({ params }) {
         </div>
 
       </div>
-    </div>
+      </div>
+    </AuthRequiredGate>
   );
 }

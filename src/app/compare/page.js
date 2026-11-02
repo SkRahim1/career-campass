@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ArrowRightLeft, Star, MapPin, X, Plus, Sparkles, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 
 function ComparePageContent() {
   const searchParams = useSearchParams();
@@ -253,7 +254,14 @@ export default function ComparePage() {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
       </div>
     }>
-      <ComparePageContent />
+      <AuthRequiredGate
+        featureName="College Comparison Tool"
+        featureDescription="Sign in or register to compare fee structures, hostel availability, and student ratings side-by-side."
+        iconName="compare"
+        redirectPath="/compare"
+      >
+        <ComparePageContent />
+      </AuthRequiredGate>
     </React.Suspense>
   );
 }

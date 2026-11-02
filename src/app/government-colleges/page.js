@@ -1,6 +1,7 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { Star, ShieldAlert, FileText, Landmark, ClipboardList, Coins } from 'lucide-react';
 
 export default async function GovernmentCollegesPage() {
@@ -36,7 +37,13 @@ export default async function GovernmentCollegesPage() {
   ];
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-radial-gradient text-left">
+    <AuthRequiredGate
+      featureName="Government Colleges Directory"
+      featureDescription="Sign in or register to explore state-funded junior colleges, reservation guidelines, and free hostel facilities."
+      iconName="landmark"
+      redirectPath="/government-colleges"
+    >
+      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-radial-gradient text-left">
       
       {/* Title */}
       <div className="space-y-3">
@@ -126,6 +133,7 @@ export default async function GovernmentCollegesPage() {
         )}
       </div>
 
-    </div>
+      </div>
+    </AuthRequiredGate>
   );
 }

@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
 import CareerCard from '@/components/CareerCard';
 import ScholarshipCard from '@/components/ScholarshipCard';
+import HomeAuthModal from '@/components/HomeAuthModal';
 import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList } from 'lucide-react';
 
 export default async function LandingPage() {
@@ -72,6 +73,7 @@ export default async function LandingPage() {
 
   return (
     <div className="relative overflow-hidden bg-slate-50 dark:bg-slate-950 bg-grid-pattern bg-radial-gradient text-left">
+      <HomeAuthModal />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import CollegeCard from '@/components/CollegeCard';
+import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { Bookmark, Sparkles, Heart } from 'lucide-react';
 import Link from 'next/link';
 
@@ -68,14 +69,14 @@ export default function SavedCollegesPage() {
 
   if (!user) {
     return (
-      <div className="flex-grow bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh]">
-        <Bookmark className="w-16 h-16 text-slate-700 mb-4" />
-        <h2 className="text-2xl font-bold text-slate-200">Sign in to view saved colleges</h2>
-        <p className="text-slate-500 max-w-sm mt-2 mb-6">Create a profile to save colleges, compare options, and track recommendations.</p>
-        <Link href="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition cursor-pointer">
-          Sign In
-        </Link>
-      </div>
+      <AuthRequiredGate
+        featureName="Saved Colleges & Bookmarks"
+        featureDescription="Sign in or register to bookmark colleges, track fee structures, and compare options later."
+        iconName="bookmark"
+        redirectPath="/saved-colleges"
+      >
+        <div />
+      </AuthRequiredGate>
     );
   }
 
