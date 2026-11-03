@@ -71,7 +71,7 @@ export default function RegisterPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           <Compass className="w-8 h-8 text-indigo-400 animate-spin-slow" />
-          <span>Career Compass</span>
+          <span>Career Compass 365</span>
         </Link>
         <h2 className="text-3xl font-extrabold text-slate-100">Create an Account</h2>
         <p className="text-slate-400 text-sm">

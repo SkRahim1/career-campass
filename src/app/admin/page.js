@@ -158,7 +158,7 @@ export default function AdminDashboardPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `career_compass_student_surveys_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `career_compass_365_student_surveys_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

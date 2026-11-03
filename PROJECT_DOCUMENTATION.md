@@ -1,6 +1,6 @@
-# Career Compass - Project Documentation
+# Career Compass 365 - Project Documentation
 
-Career Compass is a verified educational guidance portal designed specifically for 10th-class graduates in Hyderabad, Telangana. The platform provides transparent, objective, and verified information regarding Intermediate streams, Polytechnic diplomas, ITI trade programs, welfare scholarships, and government reservation quotas.
+Career Compass 365 is a verified educational guidance portal designed specifically for 10th-class graduates in Hyderabad, Telangana. The platform provides transparent, objective, and verified information regarding Intermediate streams, Polytechnic diplomas, ITI trade programs, welfare scholarships, and government reservation quotas.
 
 ---
 
@@ -47,7 +47,7 @@ Queries Firestore to generate customized matches based on the student's profile 
 - Admin dashboard tab with search filter and instant CSV export for reporting.
 
 ### 6. About Us, Leadership & Excellence Voices Initiative
-- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career Compass (Contact: `+91 92843 06159`).
+- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career Compass 365 (Contact: `+91 92843 06159`).
 - **Our Aim**: Zero educational confusion, unbiased guidance, and equal access to higher education for every Class 10 student regardless of socioeconomic background.
 - **How We Help**: Stream roadmaps, verified college discovery, government scholarship & fee reimbursement navigation (ePASS/Gurukulam), entrance exam preparation (POLYCET, TG APRJC CET), and one-on-one counseling.
 

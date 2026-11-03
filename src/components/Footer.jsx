@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100 text-lg">
               <Compass className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-              <span>Career Compass</span>
+              <span>Career Compass 365</span>
             </div>
             <p className="text-sm leading-relaxed">
               A comprehensive career guidance and college discovery platform designed specifically for 10th class students. Find Intermediate streams, Polytechnic diplomas, ITI courses, and scholarships in Hyderabad.
@@ -90,7 +90,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-200 dark:border-slate-900 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left text-slate-400 dark:text-slate-500">
-            <span>© {new Date().getFullYear()} Career Compass. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Career Compass 365. All rights reserved.</span>
             <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
             <span>
               A product of{' '}

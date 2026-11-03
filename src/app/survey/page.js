@@ -577,7 +577,7 @@ export default function SurveyPage() {
           <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
           <div className="space-y-1 text-left text-xs">
             <p className="text-slate-100 font-bold">
-              Welcome to Career Compass, {user.name}!
+              Welcome to Career Compass 365, {user.name}!
             </p>
             <p className="text-slate-300 leading-relaxed">
               As a newly registered student, please fill out this quick 5-minute survey. Your responses unlock tailored college suggestions and admission alerts right after completion.
@@ -1360,7 +1360,7 @@ export default function SurveyPage() {
       {/* Footer Advisory */}
       <div className="text-center text-[11px] text-slate-500 space-y-1">
         <p>Participation is voluntary. Please complete the survey with your parent&apos;s or guardian&apos;s awareness.</p>
-        <p className="font-semibold text-slate-400">Career Compass • Discover Your Path. Design Your Future.</p>
+        <p className="font-semibold text-slate-400">Career Compass 365 • Discover Your Path. Design Your Future.</p>
       </div>
 
       </div>

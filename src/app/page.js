@@ -62,7 +62,7 @@ export default async function LandingPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Career Compass",
+    "name": "Career Compass 365",
     "url": "https://www.careercompass.com",
     "potentialAction": {
       "@type": "SearchAction",
@@ -115,7 +115,7 @@ export default async function LandingPage() {
         </h1>
         
         <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-base max-w-2xl leading-relaxed">
-          Transitioning from school can be confusing. Career Compass is a verified guidance portal designed specifically to help 10th-class students in Telangana make confident next-step decisions.
+          Transitioning from school can be confusing. Career Compass 365 is a verified guidance portal designed specifically to help 10th-class students in Telangana make confident next-step decisions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
@@ -145,7 +145,7 @@ export default async function LandingPage() {
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-normal">
               Most search platforms are driven by paid sponsorships and advertisements, which promote expensive private institutions. 
-              <strong> Career Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options—regardless of budget.
+              <strong> Career Compass 365 has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options—regardless of budget.
             </p>
           </div>
 
