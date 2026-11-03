@@ -30,7 +30,9 @@ export default function LoginPage() {
     if (redirectPath) {
       return redirectPath;
     }
-    return role === 'SUPER_ADMIN' ? '/admin' : '/profile';
+    if (role === 'SUPER_ADMIN') return '/admin';
+    if (role === 'COLLEGE_ADMIN') return '/college-portal';
+    return '/profile';
   };
 
   // If already logged in, redirect
@@ -159,6 +161,15 @@ export default function LoginPage() {
               <p><span className="font-semibold text-slate-300">Admin:</span> admin@careercompass.com | admin123</p>
               <p><span className="font-semibold text-slate-300">Student:</span> rahul@gmail.com | student123</p>
             </div>
+          </div>
+
+          {/* College Portal Quick Link */}
+          <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-xs text-center space-y-1">
+            <p className="font-bold text-slate-200">Are you a College Representative?</p>
+            <Link href="/college-portal" className="text-indigo-400 hover:text-indigo-300 font-semibold inline-flex items-center gap-1">
+              <span>Go to College Self-Registration & Portal</span>
+              <ArrowRight className="w-3 h-3" />
+            </Link>
           </div>
 
           <div className="text-center text-xs text-slate-400 border-t border-slate-800/60 pt-4">

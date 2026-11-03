@@ -19,6 +19,57 @@ The project is built using a modern, serverless, and highly scalable static arch
 
 ---
 
+## 🏛️ Tri-Portal System Architecture
+
+Career Compass 365 is organized into three interconnected portals:
+
+### 1. Student Portal (Public-Facing Platform)
+- **Directory & Exploration**: Class 10 graduates browse and filter Junior Colleges, Polytechnics, and ITIs across Hyderabad.
+- **Stream Discovery**: In-depth guidance for Intermediate streams (MPC, BiPC, MEC, CEC, HEC), vocational certifications, and 3-year technical diplomas.
+- **Transparent Profiles**: Institutional fees breakdown (Tuition, Admission, Lab, Hostel), cutoffs, eligibility criteria, and facility checklists.
+- **Admissions & Direct WhatsApp Enquiry**: Instant click-to-chat WhatsApp admissions desk link with prefilled enquiry messages, key application dates, and direct application links.
+- **Documents & Downloads**: Instant download access to official College Prospectuses, Approved Fee Structure circulars, and brochures.
+- **Side-by-Side Comparison**: Compare up to 4 institutions side-by-side on fees, facilities, established year, and affiliation.
+- **25-Question Diagnostic Survey**: Personalized recommendation engine mapping stream preferences, budgets, and location proximity.
+
+### 2. College Portal (Self-Registration & Institutional Management Dashboard)
+- **Self-Registration for Institutions (`/college-portal`)**:
+  - Authorised representative registration using institutional email, password, mobile number, and designation.
+  - Institutional credentials: College name, short code, ownership (Government / Private / Aided / Autonomous), category, campus address, landmark, website, board affiliation (TSBIE, SBTET, AICTE), and board code.
+- **Institutional Management Dashboard (10 Core Sections)**:
+  1. **Basic Profile**: Campus name, description, logo, cover banner, photo gallery, website, principal message.
+  2. **Streams & Courses**: Management of intermediate streams (MPC, BiPC, MEC, CEC, HEC) and technical diplomas with duration, medium, and intake seats.
+  3. **Fees Structure**: Tuition fees, admission fees, other charges, hostel fees, and installment terms.
+  4. **Eligibility Criteria**: Minimum 10th marks / GPA cutoffs, subject prerequisites, and reservation quotas.
+  5. **Campus Facilities**: Infrastructure toggles (Hostels, Transport buses, Laboratories, Library, Wi-Fi, Cafeteria, CCTV) with custom route and capacity notes.
+  6. **Contact & Helpline**: Phone numbers, admissions mobile, official email, admissions office hours, and WhatsApp admissions helpline.
+  7. **Admissions & Key Dates**: Academic year, application start & end dates, counseling schedule, classes start date, and 4-step procedure builder.
+  8. **Scholarships & Concessions**: State ePASS fee reimbursement eligibility, merit waivers, and sports quota concessions.
+  9. **Documents & Brochures**: Link/upload Prospectus PDF, Fee structure circular, and printable application forms.
+  10. **Student View Preview**: Instant real-time preview of how the institution's public profile renders to prospective students.
+- **Verification Workflow**: Newly registered institutions receive `PENDING` verification status, keeping them safe in draft mode until vetted by Super Admin.
+
+### 3. Super Admin Portal (Platform Control Centre - `/admin`)
+- **Direct College Creation & Instant Publishing (`Add New College`)**:
+  - Full institutional profile builder for Super Admins to add any junior college, polytechnic, or vocational institute.
+  - Comprehensive data capture: Institutional identity, ownership, category, district, board affiliation (TSBIE/SBTET), code, principal contact, WhatsApp admissions desk helpline, key dates, scholarships, and custom facility notes.
+  - Dynamic stream repeater: Stream fees (MPC, BiPC, MEC, CEC, HEC, etc.), admission modes, cutoffs, and quota details.
+  - **"Publish LIVE Immediately on Student Portal" Toggle**: Allows admins to publish directly to the public directory with an official "Verified Institution" badge, or save as an offline draft.
+  - Real-time celebratory success card with 1-click links to view the live college page on the Student Portal (`/colleges/[id]`) or manage it in the directory.
+- **Institutional Approvals & Directory Control (`College Directory & Approvals`)**:
+  - Filter colleges by `Pending Verification`, `Approved & Live`, or `Rejected`.
+  - Comprehensive **Dossier Review Modal** inspecting institutional credentials, representative information, fee schedules, documents, and contact details.
+  - **1-Click "Approve & Publish Live"**: Instantly activates the institution on the public Student Portal with a "Verified Institution" badge.
+  - **1-Click "Pause / Unpublish"**: Instantly takes any live college offline into draft status.
+  - **1-Click "Reject / Request Revision"**: Sends actionable feedback notes to the institution.
+  - **Verification Badge Toggle** and permanent deletion controls.
+  - Direct `+ Add New College` shortcut button in the directory header.
+- **Student Reviews Moderation**: Approve or discard submitted student ratings and testimonials.
+- **Admissions Announcement Publisher**: Post real-time notifications, entrance exam alerts (POLYCET, APRJC), and counseling updates.
+- **Survey Analytics & CSV Export**: Real-time analysis of student responses with 1-click formatted CSV download for school drives.
+
+---
+
 ## 🚀 Key Features
 
 ### 1. Unified Pathways Catalog

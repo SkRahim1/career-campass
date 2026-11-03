@@ -2,7 +2,40 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { LayoutDashboard, CheckSquare, PlusCircle, Bell, UserX, BarChart3, Star, Landmark, Trash2, Heart, Megaphone, Send, HelpCircle, ClipboardList, Download, Eye, X, FileSpreadsheet } from 'lucide-react';
+import {
+  LayoutDashboard,
+  CheckSquare,
+  PlusCircle,
+  Bell,
+  UserX,
+  BarChart3,
+  Star,
+  Landmark,
+  Trash2,
+  Heart,
+  Megaphone,
+  Send,
+  HelpCircle,
+  ClipboardList,
+  Download,
+  Eye,
+  X,
+  FileSpreadsheet,
+  ShieldCheck,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  ExternalLink,
+  Phone,
+  Mail,
+  Building2,
+  Search,
+  Filter,
+  Globe,
+  MapPin,
+  Sparkles,
+  Radio
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboardPage() {
@@ -27,6 +60,16 @@ export default function AdminDashboardPage() {
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [surveySearch, setSurveySearch] = useState('');
 
+  // Registered Colleges & Approvals state
+  const [adminColleges, setAdminColleges] = useState([]);
+  const [adminCollegesLoading, setAdminCollegesLoading] = useState(true);
+  const [collegeFilter, setCollegeFilter] = useState('ALL'); // 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED'
+  const [collegeSearch, setCollegeSearch] = useState('');
+  const [selectedReviewCollege, setSelectedReviewCollege] = useState(null);
+  const [rejectionNote, setRejectionNote] = useState('');
+  const [showRejectInput, setShowRejectInput] = useState(false);
+  const [approvalMsg, setApprovalMsg] = useState('');
+
   // Publish Update Form state
   const [updateForm, setUpdateForm] = useState({
     title: '',
@@ -41,30 +84,47 @@ export default function AdminDashboardPage() {
     name: '',
     ownership: 'PRIVATE',
     category: 'JUNIOR_COLLEGE',
+    district: 'Hyderabad',
+    affiliation: 'Board of Intermediate Education, Telangana (TSBIE)',
+    boardCode: '',
     establishedYear: '',
     description: '',
     address: '',
     nearbyLandmark: '',
     phone: '',
+    whatsappNumber: '',
     email: '',
     website: '',
     genderType: 'CO_ED',
+    principalName: '',
+    principalDesignation: 'Principal',
+    principalMessage: '',
+    admissionStartDate: '',
+    admissionEndDate: '',
+    admissionProcedure: 'Direct walk-in or online counseling with SSC memo.',
+    applicationLink: '',
+    scholarships: 'Fee concessions available for meritorious students (>9.0 GPA), SC/ST/BC welfare, and sports quota.',
+    prospectusUrl: '',
     hasHostel: false,
     hasTransport: false,
-    hasLibrary: false,
-    hasLabs: false,
+    hasLibrary: true,
+    hasLabs: true,
     hasSports: false,
     hasPlayground: false,
-    hasWifi: false,
+    hasWifi: true,
     hasSmartClassroom: false,
-    hasCctv: false,
-    hasComputerLabs: false,
-    hasCafeteria: false
+    hasCctv: true,
+    hasComputerLabs: true,
+    hasCafeteria: false,
+    facilityNotes: '',
+    isLive: true,
+    verifiedBadge: true
   });
   const [streamsList, setStreamsList] = useState([
     { streamName: 'MPC', annualFee: '35000', minQualification: '10th Class', requiredMarks: 'Pass', admissionType: 'DIRECT', reservationInfo: '' }
   ]);
   const [collegeMsg, setCollegeMsg] = useState('');
+  const [createdCollegeSuccess, setCreatedCollegeSuccess] = useState(null);
 
   useEffect(() => {
     if (user && user.role === 'SUPER_ADMIN') {
@@ -72,8 +132,145 @@ export default function AdminDashboardPage() {
       fetchReviews();
       fetchUpdates();
       fetchSurveys();
+      fetchCollegesList();
     }
   }, [user]);
+
+  const fetchCollegesList = async () => {
+    setAdminCollegesLoading(true);
+    try {
+      const { collection, getDocs } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      const snap = await getDocs(collection(db, 'colleges'));
+      const list = [];
+      snap.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      // Sort: PENDING first, then by createdAt / id desc
+      list.sort((a, b) => {
+        const aPending = a.status === 'PENDING' || (!a.isApproved && a.registeredByEmail);
+        const bPending = b.status === 'PENDING' || (!b.isApproved && b.registeredByEmail);
+        if (aPending && !bPending) return -1;
+        if (!aPending && bPending) return 1;
+        return (b.createdAt || 0) > (a.createdAt || 0) ? 1 : -1;
+      });
+      setAdminColleges(list);
+    } catch (err) {
+      console.error('Error fetching admin colleges list:', err);
+    } finally {
+      setAdminCollegesLoading(false);
+    }
+  };
+
+  const handleApproveCollege = async (collegeId) => {
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await updateDoc(doc(db, 'colleges', String(collegeId)), {
+        status: 'APPROVED',
+        isApproved: true,
+        verified: true,
+        isLive: true,
+        approvedAt: new Date().toISOString(),
+        publishedAt: new Date().toISOString()
+      });
+      setApprovalMsg('College approved and published live to Student Directory!');
+      setTimeout(() => setApprovalMsg(''), 4000);
+      fetchCollegesList();
+      fetchMetrics();
+      if (selectedReviewCollege && selectedReviewCollege.id === collegeId) {
+        setSelectedReviewCollege(prev => ({ ...prev, status: 'APPROVED', isApproved: true, verified: true, isLive: true }));
+      }
+    } catch (err) {
+      console.error('Error approving college:', err);
+      alert('Error approving college: ' + err.message);
+    }
+  };
+
+  const handleToggleCollegeLive = async (collegeId, currentLiveStatus) => {
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      const newLive = !currentLiveStatus;
+      await updateDoc(doc(db, 'colleges', String(collegeId)), {
+        isLive: newLive,
+        status: newLive ? 'APPROVED' : 'UNPUBLISHED',
+        isApproved: newLive,
+        publishedAt: newLive ? new Date().toISOString() : null
+      });
+      setApprovalMsg(newLive ? 'College is now PUBLISHED LIVE on Student Directory!' : 'College has been UNPUBLISHED (taken offline).');
+      setTimeout(() => setApprovalMsg(''), 4500);
+      fetchCollegesList();
+      fetchMetrics();
+      if (selectedReviewCollege && selectedReviewCollege.id === collegeId) {
+        setSelectedReviewCollege(prev => ({
+          ...prev,
+          isLive: newLive,
+          status: newLive ? 'APPROVED' : 'UNPUBLISHED',
+          isApproved: newLive
+        }));
+      }
+    } catch (err) {
+      console.error('Error toggling college live status:', err);
+      alert('Error updating live status: ' + err.message);
+    }
+  };
+
+  const handleRejectCollege = async (collegeId, remarks) => {
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await updateDoc(doc(db, 'colleges', String(collegeId)), {
+        status: 'REJECTED',
+        isApproved: false,
+        verified: false,
+        isLive: false,
+        rejectionRemarks: remarks || 'Institutional details need revision',
+        rejectedAt: new Date().toISOString()
+      });
+      setApprovalMsg('College marked as rejected / revisions requested.');
+      setTimeout(() => setApprovalMsg(''), 4000);
+      setShowRejectInput(false);
+      setRejectionNote('');
+      fetchCollegesList();
+      fetchMetrics();
+      if (selectedReviewCollege && selectedReviewCollege.id === collegeId) {
+        setSelectedReviewCollege(prev => ({ ...prev, status: 'REJECTED', isApproved: false, verified: false, isLive: false }));
+      }
+    } catch (err) {
+      console.error('Error rejecting college:', err);
+      alert('Error rejecting college: ' + err.message);
+    }
+  };
+
+  const handleToggleCollegeVerify = async (collegeId, currentVerified) => {
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await updateDoc(doc(db, 'colleges', String(collegeId)), {
+        verified: !currentVerified
+      });
+      fetchCollegesList();
+      fetchMetrics();
+    } catch (err) {
+      console.error('Error toggling college verification:', err);
+    }
+  };
+
+  const handleDeleteCollege = async (collegeId) => {
+    if (!window.confirm('Are you sure you want to delete this college profile permanently?')) return;
+    try {
+      const { doc, deleteDoc } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await deleteDoc(doc(db, 'colleges', String(collegeId)));
+      fetchCollegesList();
+      fetchMetrics();
+      setSelectedReviewCollege(null);
+    } catch (err) {
+      console.error('Error deleting college:', err);
+      alert('Error deleting college: ' + err.message);
+    }
+  };
 
   const fetchSurveys = async () => {
     setSurveysLoading(true);
@@ -399,6 +596,7 @@ export default function AdminDashboardPage() {
   const handleCreateCollege = async (e) => {
     e.preventDefault();
     setCollegeMsg('');
+    setCreatedCollegeSuccess(null);
     try {
       const { collection, getDocs, doc, setDoc } = await import('firebase/firestore');
       const { db } = await import('@/lib/firebase');
@@ -410,38 +608,126 @@ export default function AdminDashboardPage() {
         const idNum = parseInt(doc.id);
         if (!isNaN(idNum) && idNum > maxId) maxId = idNum;
       });
-      const nextId = maxId + 1;
+      const nextId = maxId > 0 ? maxId + 1 : 6580;
+
+      const isLiveNow = collegeForm.isLive !== false;
+      const willBeVerified = isLiveNow && collegeForm.verifiedBadge !== false;
 
       const payload = {
-        id: nextId,
-        ...collegeForm,
+        id: String(nextId),
+        name: collegeForm.name.trim(),
+        ownership: collegeForm.ownership,
+        category: collegeForm.category,
+        district: collegeForm.district || 'Hyderabad',
+        affiliation: collegeForm.affiliation || 'Board of Intermediate Education, Telangana (TSBIE)',
+        boardCode: collegeForm.boardCode ? collegeForm.boardCode.trim() : '',
         establishedYear: collegeForm.establishedYear ? parseInt(collegeForm.establishedYear) : null,
+        description: collegeForm.description.trim(),
+        address: collegeForm.address.trim(),
+        nearbyLandmark: collegeForm.nearbyLandmark ? collegeForm.nearbyLandmark.trim() : '',
+        phone: collegeForm.phone.trim(),
+        whatsappNumber: collegeForm.whatsappNumber ? collegeForm.whatsappNumber.trim() : collegeForm.phone.trim(),
+        email: collegeForm.email ? collegeForm.email.trim() : '',
+        website: collegeForm.website ? collegeForm.website.trim() : '',
+        genderType: collegeForm.genderType,
+        principalName: collegeForm.principalName ? collegeForm.principalName.trim() : '',
+        principalDesignation: collegeForm.principalDesignation ? collegeForm.principalDesignation.trim() : 'Principal',
+        principalMessage: collegeForm.principalMessage ? collegeForm.principalMessage.trim() : '',
+        admissions: {
+          startDate: collegeForm.admissionStartDate || '',
+          endDate: collegeForm.admissionEndDate || '',
+          procedure: collegeForm.admissionProcedure || 'Direct walk-in or online counseling with SSC memo.',
+          applyLink: collegeForm.applicationLink || ''
+        },
+        scholarships: collegeForm.scholarships || 'Merit-based fee concessions for >9.0 GPA, SC/ST/BC welfare, and sports quota.',
+        documents: collegeForm.prospectusUrl ? [
+          { title: 'Official Prospectus & Fee Structure', url: collegeForm.prospectusUrl }
+        ] : [],
+        facilities: {
+          hostel: !!collegeForm.hasHostel,
+          transport: !!collegeForm.hasTransport,
+          library: !!collegeForm.hasLibrary,
+          labs: !!collegeForm.hasLabs,
+          sports: !!collegeForm.hasSports,
+          playground: !!collegeForm.hasPlayground,
+          wifi: !!collegeForm.hasWifi,
+          smartClassrooms: !!collegeForm.hasSmartClassroom,
+          cctv: !!collegeForm.hasCctv,
+          computerLabs: !!collegeForm.hasComputerLabs,
+          cafeteria: !!collegeForm.hasCafeteria,
+          notes: collegeForm.facilityNotes || ''
+        },
+        // Facility flags directly at root for backward compatibility
+        hasHostel: !!collegeForm.hasHostel,
+        hasTransport: !!collegeForm.hasTransport,
+        hasLibrary: !!collegeForm.hasLibrary,
+        hasLabs: !!collegeForm.hasLabs,
+        hasSports: !!collegeForm.hasSports,
+        hasPlayground: !!collegeForm.hasPlayground,
+        hasWifi: !!collegeForm.hasWifi,
+        hasSmartClassroom: !!collegeForm.hasSmartClassroom,
+        hasCctv: !!collegeForm.hasCctv,
+        hasComputerLabs: !!collegeForm.hasComputerLabs,
+        hasCafeteria: !!collegeForm.hasCafeteria,
         streams: streamsList.map(s => ({
           streamName: s.streamName,
-          annualFee: parseFloat(s.annualFee),
-          minQualification: s.minQualification,
-          requiredMarks: s.requiredMarks,
-          admissionType: s.admissionType,
-          reservationInfo: s.reservationInfo
+          annualFee: parseFloat(s.annualFee) || 0,
+          minQualification: s.minQualification || '10th Class',
+          requiredMarks: s.requiredMarks || 'Pass',
+          admissionType: s.admissionType || 'DIRECT',
+          reservationInfo: s.reservationInfo || ''
         })),
         gallery: [
-          'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80'
+          'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80',
+          'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80'
         ],
-        averageRating: 4.0,
-        totalReviews: 0
+        coverImageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80',
+        averageRating: 4.5,
+        totalReviews: 0,
+        // Live status & verification fields:
+        isLive: isLiveNow,
+        status: isLiveNow ? 'APPROVED' : 'DRAFT',
+        isApproved: isLiveNow,
+        verified: willBeVerified,
+        createdBy: 'SUPER_ADMIN',
+        createdAt: new Date().toISOString(),
+        approvedAt: isLiveNow ? new Date().toISOString() : null,
+        publishedAt: isLiveNow ? new Date().toISOString() : null
       };
 
       await setDoc(doc(db, 'colleges', String(nextId)), payload);
 
-      setCollegeMsg('College profile created successfully!');
-      setCollegeForm({
-        name: '', ownership: 'PRIVATE', category: 'JUNIOR_COLLEGE', establishedYear: '',
-        description: '', address: '', nearbyLandmark: '', phone: '', email: '', website: '',
-        genderType: 'CO_ED', hasHostel: false, hasTransport: false, hasLibrary: false,
-        hasLabs: false, hasSports: false, hasPlayground: false, hasWifi: false,
-        hasSmartClassroom: false, hasCctv: false, hasComputerLabs: false, hasCafeteria: false
+      setCreatedCollegeSuccess({
+        id: String(nextId),
+        name: payload.name,
+        isLive: isLiveNow,
+        verified: willBeVerified
       });
-      setStreamsList([{ streamName: 'MPC', annualFee: '35000', minQualification: '10th Class', requiredMarks: 'Pass', admissionType: 'DIRECT', reservationInfo: '' }]);
+
+      setCollegeMsg(isLiveNow 
+        ? `College "${payload.name}" created and published LIVE on the Student Portal!` 
+        : `College "${payload.name}" saved as draft (offline).`
+      );
+
+      // Reset form to clean defaults
+      setCollegeForm({
+        name: '', ownership: 'PRIVATE', category: 'JUNIOR_COLLEGE', district: 'Hyderabad',
+        affiliation: 'Board of Intermediate Education, Telangana (TSBIE)', boardCode: '',
+        establishedYear: '', description: '', address: '', nearbyLandmark: '', phone: '',
+        whatsappNumber: '', email: '', website: '', genderType: 'CO_ED', principalName: '',
+        principalDesignation: 'Principal', principalMessage: '', admissionStartDate: '',
+        admissionEndDate: '', admissionProcedure: 'Direct walk-in or online counseling with SSC memo.',
+        applicationLink: '', scholarships: 'Fee concessions available for meritorious students (>9.0 GPA), SC/ST/BC welfare, and sports quota.',
+        prospectusUrl: '', hasHostel: false, hasTransport: false, hasLibrary: true, hasLabs: true,
+        hasSports: false, hasPlayground: false, hasWifi: true, hasSmartClassroom: false,
+        hasCctv: true, hasComputerLabs: true, hasCafeteria: false, facilityNotes: '',
+        isLive: true, verifiedBadge: true
+      });
+      setStreamsList([
+        { streamName: 'MPC', annualFee: '35000', minQualification: '10th Class', requiredMarks: 'Pass', admissionType: 'DIRECT', reservationInfo: '' }
+      ]);
+
+      fetchCollegesList();
       fetchMetrics();
     } catch (err) {
       console.error('Error creating college profile:', err);
@@ -470,8 +756,19 @@ export default function AdminDashboardPage() {
     );
   }
 
+  const pendingColleges = adminColleges.filter(
+    (c) => c.status === 'PENDING' || (!c.isApproved && c.registeredByEmail)
+  );
+  const pendingCount = pendingColleges.length;
+
   const tabs = [
     { id: 'analytics', label: 'Dashboard Stats', icon: BarChart3 },
+    {
+      id: 'colleges-approvals',
+      label: pendingCount > 0 ? `College Approvals (${pendingCount})` : 'College Approvals & Directory',
+      icon: Building2,
+      badge: pendingCount
+    },
     { id: 'surveys', label: `Survey Responses (${surveys.length})`, icon: ClipboardList },
     { id: 'reviews', label: 'Review Moderation', icon: CheckSquare },
     { id: 'updates', label: 'Admission updates', icon: Bell },
@@ -533,10 +830,17 @@ export default function AdminDashboardPage() {
             ) : (
               <div className="space-y-8">
                 {/* Visual Counters */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
                   <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
                     <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Colleges Listed</span>
                     <p className="text-slate-200 text-2xl sm:text-3xl font-extrabold">{metrics.totalColleges}</p>
+                  </div>
+                  <div
+                    onClick={() => setActiveTab('colleges-approvals')}
+                    className="bg-slate-950 border border-amber-500/30 rounded-2xl p-5 text-center space-y-1.5 cursor-pointer hover:border-amber-500 transition"
+                  >
+                    <span className="text-amber-400 text-[10px] uppercase font-bold tracking-wide">Pending Verifications</span>
+                    <p className="text-amber-400 text-2xl sm:text-3xl font-extrabold">{pendingCount}</p>
                   </div>
                   <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
                     <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Registered Students</span>
@@ -1057,13 +1361,84 @@ export default function AdminDashboardPage() {
         {/* Tab 4: Add New College Profile */}
         {activeTab === 'add-college' && (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
-              <PlusCircle className="w-5 h-5 text-purple-400" />
-              <span>Create College Profile</span>
-            </h2>
+            <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                  <PlusCircle className="w-5 h-5 text-purple-400" />
+                  <span>Create & Publish College Profile</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Super Admin Direct Entry. Add any junior college, polytechnic, or vocational institution with full stream fees, facilities, and publish LIVE immediately on the public Student Portal.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('colleges-approvals')}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
+              >
+                <Building2 className="w-3.5 h-3.5 text-purple-400" />
+                <span>View College Directory</span>
+              </button>
+            </div>
+
+            {/* Created Success Banner with direct live links */}
+            {createdCollegeSuccess && (
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 text-xs text-emerald-300 space-y-3 shadow-lg animate-fade-in">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <p className="font-bold text-emerald-200 text-sm flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <span>College Profile Successfully Created!</span>
+                    </p>
+                    <p className="text-slate-300">
+                      <strong>{createdCollegeSuccess.name}</strong> (ID: <code className="text-emerald-400 font-mono bg-emerald-950/60 px-1.5 py-0.5 rounded">{createdCollegeSuccess.id}</code>) has been saved to the database.
+                    </p>
+                    <p className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                      <Radio className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
+                      <span>{createdCollegeSuccess.isLive ? 'PUBLISHED LIVE on Student Search Directory & Comparison Tool.' : 'Saved as Offline Draft.'}</span>
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setCreatedCollegeSuccess(null)}
+                    className="text-slate-400 hover:text-white text-base leading-none cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-emerald-500/20">
+                  <Link
+                    href={`/colleges/${createdCollegeSuccess.id}`}
+                    target="_blank"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm"
+                  >
+                    <span>View Live on Public Student Portal</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('colleges-approvals')}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Manage in College Directory</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCreatedCollegeSuccess(null)}
+                    className="px-3 py-2 text-slate-400 hover:text-slate-200 text-xs transition cursor-pointer"
+                  >
+                    + Add Another College
+                  </button>
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleCreateCollege} className="space-y-8">
-              {collegeMsg && (
+              {collegeMsg && !createdCollegeSuccess && (
                 <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs p-3 rounded-xl max-w-xl">
                   {collegeMsg}
                 </div>
@@ -1071,10 +1446,10 @@ export default function AdminDashboardPage() {
 
               {/* 1. Basic specifications */}
               <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">1. Basic Details</h3>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">1. Institutional Identity & Demographics</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">College Name</label>
+                    <label className="font-semibold text-slate-300">College Name <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="name"
@@ -1082,17 +1457,17 @@ export default function AdminDashboardPage() {
                       value={collegeForm.name}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Methodist Junior College"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Ownership</label>
+                    <label className="font-semibold text-slate-300">Ownership Type</label>
                     <select
                       name="ownership"
                       value={collegeForm.ownership}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                     >
                       <option value="GOVERNMENT">Government Only</option>
                       <option value="PRIVATE">Private Only</option>
@@ -1106,7 +1481,7 @@ export default function AdminDashboardPage() {
                       name="category"
                       value={collegeForm.category}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                     >
                       <option value="JUNIOR_COLLEGE">Junior College (11th & 12th)</option>
                       <option value="POLYTECHNIC">Polytechnic Diploma</option>
@@ -1117,6 +1492,51 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">District</label>
+                    <select
+                      name="district"
+                      value={collegeForm.district}
+                      onChange={handleCollegeChange}
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="Hyderabad">Hyderabad</option>
+                      <option value="Medchal-Malkajgiri">Medchal-Malkajgiri</option>
+                      <option value="Ranga Reddy">Ranga Reddy</option>
+                      <option value="Sangareddy">Sangareddy</option>
+                      <option value="Warangal">Warangal</option>
+                      <option value="Nizamabad">Nizamabad</option>
+                      <option value="Karimnagar">Karimnagar</option>
+                      <option value="Nalgonda">Nalgonda</option>
+                      <option value="Khammam">Khammam</option>
+                      <option value="Mahabubnagar">Mahabubnagar</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Affiliation & Board</label>
+                    <input
+                      type="text"
+                      name="affiliation"
+                      value={collegeForm.affiliation}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. Board of Intermediate Education, Telangana (TSBIE)"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Board / College Code</label>
+                    <input
+                      type="text"
+                      name="boardCode"
+                      value={collegeForm.boardCode}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. TS-HYD-5021"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
                     <label className="font-semibold text-slate-300">Established Year</label>
                     <input
                       type="number"
@@ -1124,7 +1544,7 @@ export default function AdminDashboardPage() {
                       value={collegeForm.establishedYear}
                       onChange={handleCollegeChange}
                       placeholder="e.g. 1995"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
 
@@ -1134,7 +1554,7 @@ export default function AdminDashboardPage() {
                       name="genderType"
                       value={collegeForm.genderType}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                     >
                       <option value="CO_ED">Co-Education</option>
                       <option value="BOYS">Boys Only</option>
@@ -1144,7 +1564,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="space-y-1.5 text-xs">
-                  <label className="font-semibold text-slate-300">Description</label>
+                  <label className="font-semibold text-slate-300">Description <span className="text-red-400">*</span></label>
                   <textarea
                     name="description"
                     rows="3"
@@ -1152,17 +1572,17 @@ export default function AdminDashboardPage() {
                     value={collegeForm.description}
                     onChange={handleCollegeChange}
                     placeholder="Provide a brief historical and academic description of the institution..."
-                    className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                    className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                   ></textarea>
                 </div>
               </div>
 
               {/* 2. Contact and Location specifications */}
               <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">2. Contact & Address Details</h3>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">2. Campus Address & Admissions Helpline</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Street Address</label>
+                    <label className="font-semibold text-slate-300">Street Address <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="address"
@@ -1170,31 +1590,47 @@ export default function AdminDashboardPage() {
                       value={collegeForm.address}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Abids, Hyderabad, TS 500001"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Nearby Landmark</label>
+                    <label className="font-semibold text-slate-300">Nearby Landmark / Area</label>
                     <input
                       type="text"
                       name="nearbyLandmark"
                       value={collegeForm.nearbyLandmark}
                       onChange={handleCollegeChange}
-                      placeholder="e.g. Near GPO"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      placeholder="e.g. Near GPO / Metro Station"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Contact Number</label>
+                    <label className="font-semibold text-slate-300">Official Phone Number <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="phone"
+                      required
                       value={collegeForm.phone}
                       onChange={handleCollegeChange}
-                      placeholder="e.g. 040-12345678"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      placeholder="e.g. 040-12345678 or 9876543210"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-emerald-400 flex items-center gap-1">
+                      <span>WhatsApp Admissions Desk</span>
+                      <span className="text-[10px] text-slate-500 font-normal">(Direct Student Chat)</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="whatsappNumber"
+                      value={collegeForm.whatsappNumber}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. +91 98765 43210"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -1205,39 +1641,157 @@ export default function AdminDashboardPage() {
                       name="email"
                       value={collegeForm.email}
                       onChange={handleCollegeChange}
-                      placeholder="e.g. info@college.com"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      placeholder="e.g. admissions@college.edu.in"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Website URL</label>
+                    <label className="font-semibold text-slate-300">Official Website URL</label>
                     <input
                       type="url"
                       name="website"
                       value={collegeForm.website}
                       onChange={handleCollegeChange}
-                      placeholder="e.g. https://www.college.com"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none"
+                      placeholder="e.g. https://www.college.edu.in"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* 3. Facilities flags */}
+              {/* 3. Leadership & Authorized Representative */}
               <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">3. Facilities Checkmarks</h3>
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">3. Institutional Leadership & Principal</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Principal / Head of Institution Name</label>
+                    <input
+                      type="text"
+                      name="principalName"
+                      value={collegeForm.principalName}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. Dr. K. Radhakrishna, M.Sc., Ph.D."
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Designation / Role</label>
+                    <input
+                      type="text"
+                      name="principalDesignation"
+                      value={collegeForm.principalDesignation}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. Principal / Campus Director"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2 text-xs">
+                    <label className="font-semibold text-slate-300">Principal Message / Institutional Motto</label>
+                    <input
+                      type="text"
+                      name="principalMessage"
+                      value={collegeForm.principalMessage}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. Committed to academic excellence and nurturing future technocrats and civil servants."
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 4. Admissions, Key Dates & Scholarships */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">4. Admissions Key Dates, Scholarships & Documents</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Application Cycle Start Date</label>
+                    <input
+                      type="date"
+                      name="admissionStartDate"
+                      value={collegeForm.admissionStartDate}
+                      onChange={handleCollegeChange}
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-300">Application Last Date / Deadline</label>
+                    <input
+                      type="date"
+                      name="admissionEndDate"
+                      value={collegeForm.admissionEndDate}
+                      onChange={handleCollegeChange}
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-semibold text-slate-300">Admission Procedure & Walk-in Instructions</label>
+                    <input
+                      type="text"
+                      name="admissionProcedure"
+                      value={collegeForm.admissionProcedure}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. Direct walk-in with SSC 10th Marks Memo, Transfer Certificate, and 3 passport photos."
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-semibold text-slate-300">Online Application / Admission Form URL</label>
+                    <input
+                      type="url"
+                      name="applicationLink"
+                      value={collegeForm.applicationLink}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. https://www.college.edu.in/admissions/apply"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-semibold text-slate-300">Available Scholarships & Concessions</label>
+                    <textarea
+                      name="scholarships"
+                      rows="2"
+                      value={collegeForm.scholarships}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. 50% tuition waiver for >9.5 GPA in 10th class, Telangana ePASS post-matric reimbursement, sports concessions."
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    ></textarea>
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-semibold text-slate-300">College Prospectus / Brochure PDF URL</label>
+                    <input
+                      type="url"
+                      name="prospectusUrl"
+                      value={collegeForm.prospectusUrl}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. https://www.college.edu.in/brochure-2026.pdf"
+                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. Facilities flags */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">5. Campus Facilities & Infrastructure</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-slate-300 bg-slate-950 p-5 rounded-2xl border border-slate-850">
                   {[
                     { key: 'hasHostel', label: 'Hostel' },
                     { key: 'hasTransport', label: 'Transport Bus' },
                     { key: 'hasLibrary', label: 'Library' },
-                    { key: 'hasLabs', label: 'Labs' },
+                    { key: 'hasLabs', label: 'Science Labs' },
                     { key: 'hasSports', label: 'Sports' },
                     { key: 'hasPlayground', label: 'Playground' },
-                    { key: 'hasWifi', label: 'Wi-Fi' },
+                    { key: 'hasWifi', label: 'Campus Wi-Fi' },
                     { key: 'hasSmartClassroom', label: 'Smart Classrooms' },
-                    { key: 'hasCctv', label: 'CCTV' },
+                    { key: 'hasCctv', label: 'CCTV Surveillance' },
                     { key: 'hasComputerLabs', label: 'Computer Labs' },
                     { key: 'hasCafeteria', label: 'Cafeteria Canteen' },
                   ].map((fac) => (
@@ -1248,18 +1802,30 @@ export default function AdminDashboardPage() {
                         name={fac.key}
                         checked={collegeForm[fac.key]}
                         onChange={handleCollegeChange}
-                        className="w-3.5 h-3.5 bg-slate-900 border-slate-800 rounded text-purple-600 focus:ring-0"
+                        className="w-4 h-4 bg-slate-900 border-slate-800 rounded text-purple-600 focus:ring-0 cursor-pointer"
                       />
                       <label htmlFor={`form-${fac.key}`} className="select-none cursor-pointer">{fac.label}</label>
                     </div>
                   ))}
                 </div>
+
+                <div className="space-y-1.5 text-xs">
+                  <label className="font-semibold text-slate-300">Facility Description / Notes</label>
+                  <input
+                    type="text"
+                    name="facilityNotes"
+                    value={collegeForm.facilityNotes}
+                    onChange={handleCollegeChange}
+                    placeholder="e.g. AC computer labs with 100+ terminals, RO purified water, separate hostel for girls."
+                    className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
               </div>
 
-              {/* 4. Stream sub-form */}
+              {/* 6. Stream sub-form */}
               <div className="space-y-4">
                 <div className="flex justify-between items-center border-b border-slate-850 pb-2">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">4. Stream Fee configurations</h3>
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">6. Academic Streams & Fee Configurations</h3>
                   <button
                     type="button"
                     onClick={addStreamField}
@@ -1290,26 +1856,26 @@ export default function AdminDashboardPage() {
                             onChange={(e) => handleStreamChange(idx, 'streamName', e.target.value)}
                             className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
                           >
-                            <option value="MPC">MPC</option>
-                            <option value="BiPC">BiPC</option>
-                            <option value="MEC">MEC</option>
-                            <option value="CEC">CEC</option>
-                            <option value="HEC">HEC</option>
-                            <option value="Polytechnic">Polytechnic</option>
-                            <option value="ITI">ITI</option>
-                            <option value="Vocational">Vocational</option>
+                            <option value="MPC">MPC (Maths, Physics, Chem)</option>
+                            <option value="BiPC">BiPC (Biology, Physics, Chem)</option>
+                            <option value="MEC">MEC (Maths, Econ, Commerce)</option>
+                            <option value="CEC">CEC (Civics, Econ, Commerce)</option>
+                            <option value="HEC">HEC (History, Econ, Civics)</option>
+                            <option value="Polytechnic">Polytechnic Engineering</option>
+                            <option value="ITI">ITI Technical Trade</option>
+                            <option value="Vocational">Vocational Intermediate</option>
                           </select>
                         </div>
 
                         <div className="space-y-1.5">
-                          <label className="font-semibold text-slate-400">Annual Fee (₹)</label>
+                          <label className="font-semibold text-slate-400">Annual Tuition Fee (₹) <span className="text-red-400">*</span></label>
                           <input
                             type="number"
                             required
                             value={s.annualFee}
                             onChange={(e) => handleStreamChange(idx, 'annualFee', e.target.value)}
                             placeholder="e.g. 35000"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                           />
                         </div>
 
@@ -1318,22 +1884,22 @@ export default function AdminDashboardPage() {
                           <select
                             value={s.admissionType}
                             onChange={(e) => handleStreamChange(idx, 'admissionType', e.target.value)}
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                           >
-                            <option value="DIRECT">Direct Admission</option>
-                            <option value="MERIT_BASED">Merit Based Selection</option>
-                            <option value="COUNSELLING">Central Counselling</option>
+                            <option value="DIRECT">Direct Walk-in Admission</option>
+                            <option value="MERIT_BASED">Merit-Based (SSC Marks)</option>
+                            <option value="COUNSELLING">State Central Counselling</option>
                           </select>
                         </div>
 
                         <div className="space-y-1.5">
-                          <label className="font-semibold text-slate-400">Required Marks</label>
+                          <label className="font-semibold text-slate-400">Required Marks / Cutoff</label>
                           <input
                             type="text"
                             value={s.requiredMarks}
                             onChange={(e) => handleStreamChange(idx, 'requiredMarks', e.target.value)}
-                            placeholder="e.g. Pass or 75% GPA"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                            placeholder="e.g. Pass or 7.5 GPA"
+                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                           />
                         </div>
 
@@ -1343,8 +1909,8 @@ export default function AdminDashboardPage() {
                             type="text"
                             value={s.reservationInfo}
                             onChange={(e) => handleStreamChange(idx, 'reservationInfo', e.target.value)}
-                            placeholder="e.g. Standard State quotas apply"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                            placeholder="e.g. Standard Telangana state quotas apply"
+                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
                           />
                         </div>
                       </div>
@@ -1353,18 +1919,560 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-xl text-xs shadow-md transition cursor-pointer"
-              >
-                Create College Profile
-              </button>
+              {/* 7. PUBLICATION & LIVE STATUS TOGGLE */}
+              <div className="space-y-4">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">7. Publication & Live Status</h3>
+                
+                <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-950/40 via-slate-950 to-emerald-950/20 border border-purple-500/30 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <Radio className={`w-4 h-4 ${collegeForm.isLive ? 'text-emerald-400 animate-pulse' : 'text-slate-500'}`} />
+                        <h4 className="text-sm font-bold text-slate-100">Publish LIVE Immediately on Student Portal</h4>
+                      </div>
+                      <p className="text-xs text-slate-400 max-w-xl">
+                        When enabled, this college will immediately appear on the public Student Search Directory (<code className="text-purple-300">/colleges</code>), College Comparison tool, and its public profile will be live right away.
+                      </p>
+                    </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                      <input
+                        type="checkbox"
+                        name="isLive"
+                        checked={collegeForm.isLive}
+                        onChange={handleCollegeChange}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                      <span className="ml-3 text-xs font-bold text-slate-200">
+                        {collegeForm.isLive ? 'LIVE' : 'DRAFT'}
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-slate-850">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <span className="text-xs font-bold text-slate-200">Grant Verified Institution Badge</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        Displays the green verified shield on the college listing card and public profile.
+                      </p>
+                    </div>
+
+                    <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                      <input
+                        type="checkbox"
+                        name="verifiedBadge"
+                        checked={collegeForm.verifiedBadge}
+                        onChange={handleCollegeChange}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                      <span className="ml-3 text-xs font-bold text-slate-200">
+                        {collegeForm.verifiedBadge ? 'Verified' : 'Unverified'}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+                <button
+                  type="submit"
+                  className={`w-full sm:w-auto font-bold py-3.5 px-8 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-2 ${
+                    collegeForm.isLive
+                      ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
+                      : 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20'
+                  }`}
+                >
+                  {collegeForm.isLive ? (
+                    <>
+                      <Radio className="w-4 h-4 text-emerald-200 animate-pulse" />
+                      <span>Create College Profile & Publish LIVE to Student Portal</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Save College Profile as Draft (Offline)</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('colleges-approvals')}
+                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+                >
+                  Cancel / Back to Directory
+                </button>
+              </div>
             </form>
           </div>
         )}
 
+        {/* Tab: College Directory & Approvals */}
+        {activeTab === 'colleges-approvals' && (
+          <div className="space-y-6">
+            <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-purple-400" />
+                  <span>College Directory & Institutional Approvals</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Verify self-registered colleges, inspect representative credentials, review fee structures, and approve profiles to go live on the Student Portal.
+                </p>
+              </div>
+
+              {/* Header Actions */}
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('add-college')}
+                  className="px-3.5 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-purple-600/20 transition cursor-pointer"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>+ Add New College</span>
+                </button>
+
+                <button
+                  onClick={fetchCollegesList}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer"
+                >
+                  Refresh List
+                </button>
+              </div>
+            </div>
+
+            {/* Notification alert banner */}
+            {approvalMsg && (
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 animate-fade-in">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{approvalMsg}</span>
+              </div>
+            )}
+
+            {/* Filter and Search Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+              {/* Filter pills */}
+              <div className="flex overflow-x-auto gap-2 scrollbar-none pb-1">
+                {[
+                  { id: 'ALL', label: `All (${adminColleges.length})` },
+                  { id: 'PENDING', label: `Pending Verification (${pendingCount})`, highlight: pendingCount > 0 },
+                  { id: 'APPROVED', label: `Approved & Live (${adminColleges.filter(c => c.status === 'APPROVED' || c.isApproved).length})` },
+                  { id: 'REJECTED', label: `Rejected (${adminColleges.filter(c => c.status === 'REJECTED').length})` }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setCollegeFilter(f.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                      collegeFilter === f.id
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : f.highlight
+                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
+                        : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search input */}
+              <div className="relative sm:w-72">
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Search college, principal, email..."
+                  value={collegeSearch}
+                  onChange={(e) => setCollegeSearch(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-hidden focus:border-purple-500"
+                />
+              </div>
+            </div>
+
+            {/* Colleges List */}
+            {adminCollegesLoading ? (
+              <div className="py-12 flex justify-center items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+              </div>
+            ) : adminColleges.length === 0 ? (
+              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-8 text-center text-slate-500 text-xs">
+                No colleges registered in database.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {adminColleges
+                  .filter((c) => {
+                    if (collegeFilter === 'PENDING') return c.status === 'PENDING' || (!c.isApproved && c.registeredByEmail);
+                    if (collegeFilter === 'APPROVED') return c.status === 'APPROVED' || c.isApproved;
+                    if (collegeFilter === 'REJECTED') return c.status === 'REJECTED';
+                    return true;
+                  })
+                  .filter((c) => {
+                    if (!collegeSearch.trim()) return true;
+                    const q = collegeSearch.toLowerCase();
+                    return (
+                      (c.name && c.name.toLowerCase().includes(q)) ||
+                      (c.email && c.email.toLowerCase().includes(q)) ||
+                      (c.principalName && c.principalName.toLowerCase().includes(q)) ||
+                      (c.district && c.district.toLowerCase().includes(q))
+                    );
+                  })
+                  .map((col) => {
+                    const isPending = col.status === 'PENDING' || (!col.isApproved && col.registeredByEmail);
+                    const isApproved = col.status === 'APPROVED' || col.isApproved;
+                    const isRejected = col.status === 'REJECTED';
+
+                    return (
+                      <div
+                        key={col.id}
+                        className={`bg-slate-950 border rounded-2xl p-4 sm:p-5 transition space-y-4 ${
+                          isPending
+                            ? 'border-amber-500/40 bg-amber-500/[0.02]'
+                            : isApproved
+                            ? 'border-slate-800 hover:border-slate-700'
+                            : 'border-red-500/30 bg-red-500/[0.02]'
+                        }`}
+                      >
+                        {/* Header Row */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="space-y-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="font-bold text-slate-100 text-sm sm:text-base">{col.name}</h3>
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                                {col.ownership} • {col.category?.replace('_', ' ')}
+                              </span>
+                              {col.verified && (
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                  <ShieldCheck className="w-3 h-3" />
+                                  <span>Verified Badge</span>
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400 flex items-center gap-2">
+                              <span>📍 {col.address || col.district || 'Hyderabad'}</span>
+                              {col.boardCode && <span>• Board Code: {col.boardCode}</span>}
+                            </p>
+                          </div>
+
+                          {/* Status Pill */}
+                          <div className="shrink-0">
+                            {isPending ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                                <Clock className="w-3.5 h-3.5" />
+                                <span>Pending Verification</span>
+                              </span>
+                            ) : isApproved ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>Approved & Live</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/30">
+                                <AlertTriangle className="w-3.5 h-3.5" />
+                                <span>Rejected / Needs Revision</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Details Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-850 text-xs">
+                          <div>
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Representative</span>
+                            <p className="text-slate-200 font-medium">
+                              {col.principalName || col.registeredByName || 'Official Rep'}
+                            </p>
+                            <p className="text-slate-400 text-[11px]">{col.principalDesignation || 'Authorised Contact'}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Contact Details</span>
+                            <p className="text-slate-200">{col.email || col.registeredByEmail || 'No email'}</p>
+                            <p className="text-slate-400 text-[11px]">{col.phone || col.whatsappNumber || 'No phone'}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Academic Streams & Affiliation</span>
+                            <p className="text-slate-200 font-medium">
+                              {col.streams?.map(s => s.streamName).join(', ') || 'No streams set'}
+                            </p>
+                            <p className="text-slate-400 text-[11px] truncate">{col.affiliation || 'TSBIE'}</p>
+                          </div>
+                        </div>
+
+                        {/* Rejection remarks notice if present */}
+                        {col.rejectionRemarks && (
+                          <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                            <strong>Super Admin Remarks:</strong> {col.rejectionRemarks}
+                          </div>
+                        )}
+
+                        {/* Actions Row */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-900">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setSelectedReviewCollege(col)}
+                              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-purple-400" />
+                              <span>Review Full Dossier</span>
+                            </button>
+
+                            <Link
+                              href={`/colleges/${col.id}`}
+                              target="_blank"
+                              className="px-3 py-1.5 text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-1"
+                            >
+                              <span>Public Page</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </Link>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            {/* Toggle Live / Offline Button */}
+                            {col.isLive !== false && isApproved ? (
+                              <button
+                                onClick={() => handleToggleCollegeLive(col.id, true)}
+                                className="px-2.5 py-1.5 bg-slate-900 hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                                title="Temporarily take this college offline from Student Directory"
+                              >
+                                <span>Pause / Unpublish</span>
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleToggleCollegeLive(col.id, false)}
+                                className="px-2.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                                title="Make this college live on Student Directory"
+                              >
+                                <Radio className="w-3 h-3 text-emerald-400" />
+                                <span>Make Live</span>
+                              </button>
+                            )}
+
+                            {/* Approve Button if not approved */}
+                            {!isApproved && (
+                              <button
+                                onClick={() => handleApproveCollege(col.id)}
+                                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-sm transition cursor-pointer"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>Approve & Publish Live</span>
+                              </button>
+                            )}
+
+                            {/* Reject / Request revisions Button */}
+                            {!isRejected && (
+                              <button
+                                onClick={() => {
+                                  const reason = prompt('Enter rejection / revision remarks for the college representative:');
+                                  if (reason) handleRejectCollege(col.id, reason);
+                                }}
+                                className="px-3 py-1.5 bg-slate-900 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+                              >
+                                Reject / Revision
+                              </button>
+                            )}
+
+                            {/* Toggle Verified Badge */}
+                            <button
+                              onClick={() => handleToggleCollegeVerify(col.id, col.verified)}
+                              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 rounded-xl text-xs transition cursor-pointer"
+                              title="Toggle Verified Badge"
+                            >
+                              {col.verified ? 'Unverify' : 'Verify'}
+                            </button>
+
+                            {/* Delete College */}
+                            <button
+                              onClick={() => handleDeleteCollege(col.id)}
+                              className="text-slate-600 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-900 transition cursor-pointer"
+                              title="Delete permanently"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
+
+      {/* FULL DOSSIER REVIEW MODAL */}
+      {selectedReviewCollege && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+              <div>
+                <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-purple-400" />
+                  <span>Institutional Dossier Review</span>
+                </h3>
+                <p className="text-xs text-slate-400">ID: {selectedReviewCollege.id} • Registered: {selectedReviewCollege.createdAt ? new Date(selectedReviewCollege.createdAt).toLocaleDateString() : 'Initial Seed'}</p>
+              </div>
+              <button
+                onClick={() => setSelectedReviewCollege(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Profile Overview */}
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h4 className="text-base font-extrabold text-white">{selectedReviewCollege.name}</h4>
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    {selectedReviewCollege.ownership} • {selectedReviewCollege.category}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300">{selectedReviewCollege.description}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] text-slate-400 border-t border-slate-900">
+                  <p><strong className="text-slate-300">Address:</strong> {selectedReviewCollege.address}</p>
+                  <p><strong className="text-slate-300">District:</strong> {selectedReviewCollege.district}</p>
+                  <p><strong className="text-slate-300">Affiliation:</strong> {selectedReviewCollege.affiliation}</p>
+                  <p><strong className="text-slate-300">Board Code:</strong> {selectedReviewCollege.boardCode || 'N/A'}</p>
+                </div>
+              </div>
+
+              {/* Representative & Contacts */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="font-bold text-slate-300 block uppercase text-[10px]">Authorised Representative</span>
+                  <p className="text-slate-200 font-semibold">{selectedReviewCollege.principalName || 'Not specified'}</p>
+                  <p className="text-slate-400">{selectedReviewCollege.principalDesignation || 'Principal'}</p>
+                  {selectedReviewCollege.principalMessage && (
+                    <p className="text-slate-400 italic text-[11px] pt-1">&ldquo;{selectedReviewCollege.principalMessage}&rdquo;</p>
+                  )}
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="font-bold text-slate-300 block uppercase text-[10px]">Official Contact Desk</span>
+                  <p className="text-slate-200">Email: {selectedReviewCollege.email}</p>
+                  <p className="text-slate-200">Phone: {selectedReviewCollege.phone}</p>
+                  <p className="text-emerald-400 font-medium">WhatsApp: {selectedReviewCollege.whatsappNumber || 'None'}</p>
+                  {selectedReviewCollege.website && (
+                    <a href={selectedReviewCollege.website} target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:underline block pt-1">
+                      Website: {selectedReviewCollege.website}
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Streams & Fees Table */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-slate-300 uppercase">Streams & Fee Structures</h4>
+                <div className="overflow-x-auto rounded-xl border border-slate-800 bg-slate-950">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-850 text-slate-400 bg-slate-900/50">
+                        <th className="p-2.5">Stream Name</th>
+                        <th className="p-2.5">Annual Tuition</th>
+                        <th className="p-2.5">Admission Fee</th>
+                        <th className="p-2.5">Eligibility Marks</th>
+                        <th className="p-2.5">Intake</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-850">
+                      {selectedReviewCollege.streams?.map((s, idx) => (
+                        <tr key={idx}>
+                          <td className="p-2.5 font-bold text-slate-200">{s.streamName}</td>
+                          <td className="p-2.5 text-emerald-400 font-semibold">₹{Number(s.annualFee || 0).toLocaleString('en-IN')}</td>
+                          <td className="p-2.5 text-slate-300">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</td>
+                          <td className="p-2.5 text-slate-400">{s.requiredMarks || 'Pass'}</td>
+                          <td className="p-2.5 text-slate-400">{s.intakeSeats || '120'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Facilities Summary */}
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold text-slate-300 uppercase">Campus Facilities</h4>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {selectedReviewCollege.hasHostel && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Hostel</span>}
+                  {selectedReviewCollege.hasTransport && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Transport Buses</span>}
+                  {selectedReviewCollege.hasLibrary && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Library</span>}
+                  {selectedReviewCollege.hasLabs && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Science Labs</span>}
+                  {selectedReviewCollege.hasWifi && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Wi-Fi</span>}
+                  {selectedReviewCollege.hasSports && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Sports Ground</span>}
+                </div>
+              </div>
+
+              {/* Documents & Downloads */}
+              {selectedReviewCollege.documents && selectedReviewCollege.documents.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-slate-300 uppercase">Attached Documents</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    {selectedReviewCollege.documents.map((d, idx) => (
+                      <div key={idx} className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                        <span className="font-semibold text-slate-200">{d.title}</span>
+                        {d.url ? (
+                          <a href={d.url} target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" />
+                            <span>Download PDF</span>
+                          </a>
+                        ) : (
+                          <span className="text-slate-600">No URL</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-800">
+              <button
+                onClick={() => setSelectedReviewCollege(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold cursor-pointer"
+              >
+                Close Dossier
+              </button>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    const reason = prompt('Enter rejection / revision remarks for this college:');
+                    if (reason) handleRejectCollege(selectedReviewCollege.id, reason);
+                  }}
+                  className="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-500/30 rounded-xl text-xs font-bold transition cursor-pointer"
+                >
+                  Reject / Request Revision
+                </button>
+
+                {selectedReviewCollege.isApproved && selectedReviewCollege.isLive !== false ? (
+                  <button
+                    onClick={() => handleToggleCollegeLive(selectedReviewCollege.id, true)}
+                    className="px-4 py-2 bg-slate-800 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-slate-700 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5"
+                  >
+                    <span>Pause / Unpublish Profile</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleApproveCollege(selectedReviewCollege.id)}
+                    className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-emerald-600/20 transition cursor-pointer"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Approve & Publish LIVE to Directory</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

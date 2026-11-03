@@ -49,7 +49,7 @@ export default function Navbar() {
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-5">
               <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Explore Colleges</Link>
               <Link href="/government-colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Govt Colleges</Link>
               <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Career Library</Link>
@@ -58,10 +58,13 @@ export default function Navbar() {
                 <Bell className="w-4 h-4 text-pink-500 dark:text-pink-400" />
                 <span>Updates</span>
               </Link>
-              <Link href="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">About Us</Link>
-              <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1.5 text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 px-3 py-1.5 rounded-full shadow-xs">
-                <ClipboardList className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
-                <span>Student Survey</span>
+              <Link href="/college-portal" className="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 px-3 py-1.5 rounded-full transition flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5 text-indigo-500" />
+                <span>College Portal</span>
+              </Link>
+              <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1.5 text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 px-3 py-1.5 rounded-full shadow-xs">
+                <ClipboardList className="w-3.5 h-3.5 text-purple-500 animate-pulse" />
+                <span>Survey</span>
               </Link>
             </div>
 
@@ -82,6 +85,11 @@ export default function Navbar() {
                     <Link href="/admin" className="flex items-center gap-1 bg-purple-650/10 dark:bg-purple-600/20 hover:bg-purple-650/20 dark:hover:bg-purple-600/30 text-purple-600 dark:text-purple-305 border border-purple-550/20 dark:border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm">
                       <LayoutDashboard className="w-3.5 h-3.5" />
                       <span>Admin Panel</span>
+                    </Link>
+                  ) : user.role === 'COLLEGE_ADMIN' ? (
+                    <Link href="/college-portal" className="flex items-center gap-1.5 bg-indigo-650/10 dark:bg-indigo-600/20 hover:bg-indigo-650/20 dark:hover:bg-indigo-600/30 text-indigo-600 dark:text-indigo-305 border border-indigo-555/20 dark:border-indigo-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm">
+                      <Building2 className="w-3.5 h-3.5" />
+                      <span>{user.collegeName ? `${user.collegeName.slice(0, 16)}...` : 'College Portal'}</span>
                     </Link>
                   ) : (
                     <>
@@ -263,6 +271,22 @@ export default function Navbar() {
               <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
+            {/* College Portal */}
+            <Link
+              href="/college-portal"
+              onClick={toggleMenu}
+              className="flex items-center gap-3.5 p-3 rounded-2xl bg-indigo-50/60 hover:bg-indigo-50 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800/60 transition group text-left"
+            >
+              <div className="p-2.5 rounded-xl bg-indigo-600 text-white group-hover:scale-105 transition-transform shrink-0">
+                <Building2 className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-extrabold text-xs text-indigo-700 dark:text-indigo-300 transition">College Portal</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Institutional self-registration & dashboard</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
             {/* 7. About Us */}
             <Link
               href="/about"
@@ -292,11 +316,11 @@ export default function Navbar() {
                     <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{user.name}</p>
                   </div>
                   <Link
-                    href={user.role === 'SUPER_ADMIN' ? '/admin' : '/profile'}
+                    href={user.role === 'SUPER_ADMIN' ? '/admin' : user.role === 'COLLEGE_ADMIN' ? '/college-portal' : '/profile'}
                     onClick={toggleMenu}
                     className="bg-indigo-600/10 dark:bg-indigo-600/20 hover:bg-indigo-600/20 dark:hover:bg-indigo-600/30 text-indigo-650 dark:text-indigo-305 px-3.5 py-1.5 rounded-xl text-xs font-bold transition"
                   >
-                    {user.role === 'SUPER_ADMIN' ? 'Admin Panel' : 'Settings'}
+                    {user.role === 'SUPER_ADMIN' ? 'Admin Panel' : user.role === 'COLLEGE_ADMIN' ? 'College Portal' : 'Settings'}
                   </Link>
                 </div>
 

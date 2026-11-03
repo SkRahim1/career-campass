@@ -5,7 +5,31 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import MapComponent from '@/components/MapComponent';
 import AuthRequiredGate from '@/components/AuthRequiredGate';
-import { Star, MapPin, Phone, Mail, Globe, Landmark, GraduationCap, ClipboardCheck, Dumbbell, ShieldAlert, Sparkles, Send } from 'lucide-react';
+import {
+  Star,
+  MapPin,
+  Phone,
+  Mail,
+  Globe,
+  Landmark,
+  GraduationCap,
+  ClipboardCheck,
+  Dumbbell,
+  ShieldAlert,
+  Sparkles,
+  Send,
+  ShieldCheck,
+  CheckCircle2,
+  MessageSquare,
+  FileText,
+  Download,
+  ExternalLink,
+  Calendar,
+  Award,
+  Building2,
+  Clock,
+  Check
+} from 'lucide-react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -126,13 +150,17 @@ export default function CollegeDetailClient({ id }) {
     );
   }
 
+  const isVerified = college.status === 'APPROVED' || college.isApproved || college.verified;
+
   const tabs = [
     { id: 'overview', label: 'Overview' },
     { id: 'streams', label: 'Streams & Fees' },
-    { id: 'admissions', label: 'Admissions' },
-    { id: 'facilities', label: 'Facilities' },
+    { id: 'admissions', label: 'Admissions & Dates' },
+    { id: 'scholarships', label: 'Scholarships & Concessions' },
+    { id: 'facilities', label: 'Campus Facilities' },
+    { id: 'documents', label: 'Prospectus & Docs' },
     { id: 'location', label: 'Location' },
-    { id: 'gallery', label: 'Gallery' },
+    { id: 'gallery', label: 'Campus Gallery' },
     { id: 'reviews', label: `Reviews (${college.totalReviews || 0})` },
   ];
 
@@ -183,48 +211,105 @@ export default function CollegeDetailClient({ id }) {
 
       {/* College Header Card */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-32 relative z-10 space-y-8 pb-20">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center">
-          
-          {/* Logo */}
-          <div className="w-24 h-24 rounded-2xl bg-slate-950 border border-slate-800 shrink-0 flex items-center justify-center p-2 shadow-inner overflow-hidden">
-            {college.logoUrl ? (
-              <img src={college.logoUrl} alt="Logo" className="w-full h-full object-contain" />
-            ) : (
-              <Landmark className="w-12 h-12 text-indigo-400" />
+        {(!college.isApproved || college.isLive === false || college.status === 'PENDING' || college.status === 'DRAFT') && (
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-2.5">
+              <Clock className="w-5 h-5 shrink-0 text-amber-400" />
+              <div>
+                <p className="font-bold">Administrative Preview Mode</p>
+                <p className="text-[11px] text-amber-400/80">This institution profile is currently {college.isLive === false ? 'UNPUBLISHED (Offline)' : 'PENDING APPROVAL'}. It is not publicly visible to students in the directory until approved and made live.</p>
+              </div>
+            </div>
+            {user?.role === 'SUPER_ADMIN' && (
+              <Link href="/admin" className="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs hover:bg-amber-400 transition shrink-0">
+                Manage in Admin →
+              </Link>
             )}
           </div>
+        )}
 
-          {/* Core Info */}
-          <div className="space-y-3 flex-grow">
-            <div className="flex flex-wrap gap-1.5">
-              <span className="text-[9px] font-extrabold uppercase bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full">
-                {college.ownership}
-              </span>
-              <span className="text-[9px] font-extrabold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-full">
-                {college.category.replace('_', ' ')}
-              </span>
-              {college.establishedYear && (
-                <span className="text-[9px] font-extrabold uppercase bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full">
-                  Estd {college.establishedYear}
-                </span>
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+          
+          <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center flex-grow">
+            {/* Logo */}
+            <div className="w-24 h-24 rounded-2xl bg-slate-950 border border-slate-800 shrink-0 flex items-center justify-center p-2 shadow-inner overflow-hidden">
+              {college.logoUrl ? (
+                <img src={college.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+              ) : (
+                <Landmark className="w-12 h-12 text-indigo-400" />
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 font-display leading-tight">{college.name}</h1>
-            
-            <div className="flex flex-wrap gap-4 text-xs text-slate-400">
-              <p className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
-                <span>{college.address}</span>
-              </p>
-              <div className="flex items-center gap-1">
-                <div className="flex items-center text-yellow-400">
-                  <Star className="w-3.5 h-3.5 fill-current" />
-                  <span className="font-bold ml-1">{college.averageRating || '4.0'}</span>
+            {/* Core Info */}
+            <div className="space-y-3 flex-grow">
+              <div className="flex flex-wrap gap-1.5 items-center">
+                <span className="text-[9px] font-extrabold uppercase bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full">
+                  {college.ownership}
+                </span>
+                <span className="text-[9px] font-extrabold uppercase bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-full">
+                  {college.category?.replace('_', ' ')}
+                </span>
+                {college.establishedYear && (
+                  <span className="text-[9px] font-extrabold uppercase bg-slate-800 text-slate-400 px-2.5 py-1 rounded-full">
+                    Estd {college.establishedYear}
+                  </span>
+                )}
+                {isVerified && (
+                  <span className="text-[9px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" />
+                    <span>Verified Institution</span>
+                  </span>
+                )}
+                {college.affiliation && (
+                  <span className="text-[9px] font-extrabold uppercase bg-slate-800 text-indigo-300 border border-slate-700 px-2.5 py-1 rounded-full">
+                    {college.affiliation}
+                  </span>
+                )}
+              </div>
+
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 font-display leading-tight">{college.name}</h1>
+              
+              <div className="flex flex-wrap gap-4 text-xs text-slate-400">
+                <p className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-indigo-400 shrink-0" />
+                  <span>{college.address}</span>
+                </p>
+                <div className="flex items-center gap-1">
+                  <div className="flex items-center text-yellow-400">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    <span className="font-bold ml-1">{college.averageRating || '4.0'}</span>
+                  </div>
+                  <span className="text-slate-500">({college.totalReviews || 0} reviews)</span>
                 </div>
-                <span className="text-slate-500">({college.totalReviews || 0} reviews)</span>
               </div>
             </div>
+          </div>
+
+          {/* Action CTAs: Direct WhatsApp & Apply Online */}
+          <div className="flex flex-col sm:flex-row gap-2.5 shrink-0 self-stretch md:self-center">
+            {(college.whatsappNumber || college.phone) && (
+              <a
+                href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I found ${college.name} on Career Compass 365. I am interested in admission details and streams offered.`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition cursor-pointer"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>WhatsApp Admissions Desk</span>
+              </a>
+            )}
+
+            {college.admissions?.applicationLink && (
+              <a
+                href={college.admissions.applicationLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 transition cursor-pointer"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Apply for Admission</span>
+              </a>
+            )}
           </div>
         </div>
 
@@ -251,21 +336,46 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 1: Overview */}
           {activeTab === 'overview' && (
             <div className="space-y-8 text-left">
+              {/* About description */}
               <div className="space-y-3">
                 <h3 className="text-lg font-bold text-slate-100">About the College</h3>
                 <p className="text-slate-300 text-sm leading-relaxed">{college.description}</p>
               </div>
 
+              {/* Principal Message card if available */}
+              {(college.principalName || college.principalMessage) && (
+                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-2">
+                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                    <Award className="w-4 h-4" />
+                    <span>Leadership & Authorised Representative</span>
+                  </div>
+                  <h4 className="text-slate-100 font-bold text-sm">
+                    {college.principalName || 'Principal'} <span className="text-slate-400 font-normal">({college.principalDesignation || 'Authorised Representative'})</span>
+                  </h4>
+                  {college.principalMessage && (
+                    <p className="text-xs text-slate-300 italic border-l-2 border-indigo-500 pl-3 py-1">
+                      "{college.principalMessage}"
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="border-t border-slate-800 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Contact Columns */}
                 <div className="space-y-4">
                   <h3 className="text-slate-100 font-bold text-sm">Contact & Location Links</h3>
-                  <div className="space-y-2 text-xs text-slate-300">
+                  <div className="space-y-2.5 text-xs text-slate-300">
                     {college.phone && (
                       <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-indigo-400" /> {college.phone}</p>
                     )}
+                    {college.whatsappNumber && (
+                      <p className="flex items-center gap-2"><MessageSquare className="w-4 h-4 text-emerald-400" /> WhatsApp: {college.whatsappNumber}</p>
+                    )}
                     {college.email && (
                       <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-indigo-400" /> {college.email}</p>
+                    )}
+                    {college.officeTimings && (
+                      <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-indigo-400" /> Office Hours: {college.officeTimings}</p>
                     )}
                     {college.website && (
                       <a href={college.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-indigo-400 hover:underline">
@@ -288,11 +398,13 @@ export default function CollegeDetailClient({ id }) {
                 {/* Admission Info summary */}
                 <div className="space-y-4">
                   <h3 className="text-slate-100 font-bold text-sm">General Parameters</h3>
-                  <div className="grid grid-cols-2 gap-4 text-xs text-slate-300 bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
+                  <div className="grid grid-cols-2 gap-3 text-xs text-slate-300 bg-slate-950 p-4 rounded-2xl border border-slate-800/80">
                     <p><span className="font-semibold text-slate-500">Gender Demographics:</span> {college.genderType === 'CO_ED' ? 'Co-Educational' : college.genderType}</p>
                     <p><span className="font-semibold text-slate-500">Hostel Facility:</span> {college.hasHostel ? 'Available' : 'Not Available'}</p>
                     <p><span className="font-semibold text-slate-500">Bus Transport:</span> {college.hasTransport ? 'Available' : 'Not Available'}</p>
                     <p><span className="font-semibold text-slate-500">Wi-Fi:</span> {college.hasWifi ? 'Yes' : 'No'}</p>
+                    {college.boardCode && <p><span className="font-semibold text-slate-500">Board Code:</span> {college.boardCode}</p>}
+                    {college.hostelFee && <p><span className="font-semibold text-slate-500">Hostel Fee:</span> ₹{Number(college.hostelFee).toLocaleString('en-IN')}/yr</p>}
                   </div>
                 </div>
               </div>
@@ -304,81 +416,169 @@ export default function CollegeDetailClient({ id }) {
             <div className="space-y-6 text-left">
               <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-indigo-400" />
-                <span>Offered Streams & Annual Fees</span>
+                <span>Offered Streams & Transparent Fee Structure</span>
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {college.streams?.map((s, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3">
-                    <div className="flex justify-between items-start gap-4">
-                      <h4 className="text-slate-100 font-bold text-base">{s.streamName}</h4>
-                      <span className="text-sm font-extrabold text-indigo-400">₹{s.annualFee.toLocaleString('en-IN')} / yr</span>
+                {college.streams?.map((s, idx) => {
+                  const total = (Number(s.annualFee) || 0) + (Number(s.admissionFee) || 0) + (Number(s.otherCharges) || 0);
+                  return (
+                    <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+                      <div className="flex justify-between items-start gap-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-slate-100 font-bold text-lg">{s.streamName}</h4>
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                              {s.courseType || 'Intermediate'}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            Medium: {s.medium || 'English'} • Intake: {s.intakeSeats || 120} seats
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-base font-extrabold text-indigo-400">₹{Number(s.annualFee || 0).toLocaleString('en-IN')}</span>
+                          <span className="text-[10px] text-slate-500 block uppercase">Tuition / Year</span>
+                        </div>
+                      </div>
+
+                      {/* Fee Breakdown */}
+                      <div className="grid grid-cols-3 gap-2 p-2.5 rounded-xl bg-slate-900 border border-slate-850 text-xs text-center">
+                        <div>
+                          <span className="text-[10px] text-slate-500 uppercase block">Admission</span>
+                          <span className="font-bold text-slate-200">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-500 uppercase block">Other Charges</span>
+                          <span className="font-bold text-slate-200">₹{Number(s.otherCharges || 0).toLocaleString('en-IN')}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-500 uppercase block">Total Year 1</span>
+                          <span className="font-extrabold text-emerald-400">₹{total.toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-400 border-t border-slate-800/60 pt-3">
+                        <p><span className="font-semibold text-slate-500">Min Qualification:</span> {s.minQualification || '10th Pass'}</p>
+                        <p><span className="font-semibold text-slate-500">Cutoff / Marks:</span> {s.requiredMarks || 'Pass'}</p>
+                        <p><span className="font-semibold text-slate-500">Admission Mode:</span> {s.admissionType ? s.admissionType.replace('_', ' ') : 'Direct'}</p>
+                        <p><span className="font-semibold text-slate-500">Duration:</span> 2 Academic Years</p>
+                      </div>
+
+                      {s.reservationInfo && (
+                        <p className="text-[11px] text-slate-500 leading-normal border-t border-slate-800/60 pt-2 italic">
+                          <span className="font-semibold not-italic">Quota/Rules:</span> {s.reservationInfo}
+                        </p>
+                      )}
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-400 border-t border-slate-800/60 pt-2">
-                      <p><span className="font-semibold text-slate-500">Min Qualification:</span> {s.minQualification}</p>
-                      <p><span className="font-semibold text-slate-500">Required Marks:</span> {s.requiredMarks}</p>
-                      <p><span className="font-semibold text-slate-500">Admission Mode:</span> {s.admissionType.replace('_', ' ')}</p>
+                  );
+                })}
+              </div>
+
+              {college.feePaymentTerms && (
+                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1">
+                  <span className="font-bold text-slate-100 uppercase text-[10px] tracking-wide block">Payment Terms & Installments</span>
+                  <p>{college.feePaymentTerms}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Tab 3: Admissions & Dates */}
+          {activeTab === 'admissions' && (
+            <div className="space-y-8 text-left max-w-4xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                  <ClipboardCheck className="w-5 h-5 text-indigo-400" />
+                  <span>Admissions & Important Dates</span>
+                </h3>
+                {college.admissions?.applicationLink && (
+                  <a
+                    href={college.admissions.applicationLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span>Open Online Application</span>
+                  </a>
+                )}
+              </div>
+
+              {/* Key Dates Banner */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Academic Year</span>
+                  <span className="text-xs font-extrabold text-slate-200">{college.admissions?.academicYear || '2026-2027'}</span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Application Start</span>
+                  <span className="text-xs font-extrabold text-indigo-400">{college.admissions?.applicationStartDate || 'May 2026'}</span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Application Deadline</span>
+                  <span className="text-xs font-extrabold text-rose-400">{college.admissions?.applicationEndDate || 'July 2026'}</span>
+                </div>
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                  <span className="text-[10px] text-slate-500 uppercase font-bold block">Classes Commencement</span>
+                  <span className="text-xs font-extrabold text-emerald-400">{college.admissions?.classesStartDate || 'July 2026'}</span>
+                </div>
+              </div>
+
+              {/* Step-by-Step Procedure */}
+              <div className="space-y-4">
+                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Step-by-Step Admission Procedure</h4>
+                <div className="space-y-4 relative border-l border-slate-800 pl-6 ml-3">
+                  {(college.admissions?.procedure || [
+                    'Check eligibility criteria and cutoff GPA for chosen stream.',
+                    'Prepare required certificates (10th memo, Transfer Certificate, Bonafide, Aadhaar).',
+                    'Submit application online or visit admissions administrative block in person.',
+                    'Confirm provisional seat allotment with verification of original documents.'
+                  ]).map((step, idx) => (
+                    <div key={idx} className="relative">
+                      <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-slate-900 text-xs font-bold flex items-center justify-center text-white">
+                        {idx + 1}
+                      </span>
+                      <p className="text-xs text-slate-300 leading-relaxed font-medium">{step}</p>
                     </div>
-                    {s.reservationInfo && (
-                      <p className="text-[10px] text-slate-500 leading-normal border-t border-slate-800/60 pt-2 italic">
-                        <span className="font-semibold not-italic">Quota/Rules:</span> {s.reservationInfo}
-                      </p>
-                    )}
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Scholarships & Concessions */}
+          {activeTab === 'scholarships' && (
+            <div className="space-y-6 text-left max-w-4xl">
+              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-indigo-400" />
+                <span>Available Scholarships & Fee Concessions</span>
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(college.scholarships && college.scholarships.length > 0 ? college.scholarships : [
+                  {
+                    title: 'Telangana State ePASS Fee Reimbursement',
+                    description: 'Full or partial tuition fee reimbursement provided by TS Government for eligible SC, ST, BC, and Minority candidates.',
+                    eligibility: 'Annual parental income under ₹2 Lakhs (Urban) / ₹1.5 Lakhs (Rural).'
+                  },
+                  {
+                    title: 'Merit Academic Fee Waiver',
+                    description: 'Institution provides fee concessions for high achievers securing 9.5+ GPA in SSC Board exams.',
+                    eligibility: 'SSC Grade 9.5+ or CBSE 90%+'
+                  }
+                ]).map((sch, idx) => (
+                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-2">
+                    <h4 className="text-slate-100 font-bold text-sm">{sch.title}</h4>
+                    <p className="text-xs text-slate-400 leading-relaxed">{sch.description}</p>
+                    <p className="text-xs text-indigo-400 font-semibold pt-1">Eligibility: {sch.eligibility}</p>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* Tab 3: Admission Process */}
-          {activeTab === 'admissions' && (
-            <div className="space-y-8 text-left max-w-3xl">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                <ClipboardCheck className="w-5 h-5 text-indigo-400" />
-                <span>Step-by-Step Admission Process</span>
-              </h3>
-
-              <div className="space-y-6 relative border-l border-slate-800 pl-6 ml-3">
-                {/* Step 1 */}
-                <div className="relative">
-                  <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-slate-900 text-xs font-bold flex items-center justify-center text-white">1</span>
-                  <h4 className="font-bold text-slate-200 text-sm">Check Eligibility criteria</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-1">
-                    Ensure you satisfy the qualification requirements, TS POLYCET eligibility rules, or minimum mark caps for your preferred stream.
-                  </p>
-                </div>
-
-                {/* Step 2 */}
-                <div className="relative">
-                  <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-slate-900 text-xs font-bold flex items-center justify-center text-white">2</span>
-                  <h4 className="font-bold text-slate-200 text-sm">Prepare Required Documents</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-1">
-                    Gather Class 10 memo sheets, Meeseva caste/income certificates, school bonafides (Class 6-10), and Transfer Certificates (TC).
-                  </p>
-                </div>
-
-                {/* Step 3 */}
-                <div className="relative">
-                  <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-slate-900 text-xs font-bold flex items-center justify-center text-white">3</span>
-                  <h4 className="font-bold text-slate-200 text-sm">Application submission</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-1">
-                    Apply directly at the college administrative block (for private direct admissions) or submit counselling web choices on state portals (like TS POLYCET or board portals).
-                  </p>
-                </div>
-
-                {/* Step 4 */}
-                <div className="relative">
-                  <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-slate-900 text-xs font-bold flex items-center justify-center text-white">4</span>
-                  <h4 className="font-bold text-slate-200 text-sm">Admission Confirmation</h4>
-                  <p className="text-xs text-slate-400 leading-relaxed mt-1">
-                    Once allotted or approved, undergo certificate validation at the center and pay nominal admission charges to lock your seat.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab 4: Facilities */}
+          {/* Tab 5: Facilities */}
           {activeTab === 'facilities' && (
             <div className="space-y-6 text-left">
               <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
@@ -386,33 +586,95 @@ export default function CollegeDetailClient({ id }) {
                 <span>Campus Infrastructure & Facilities</span>
               </h3>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                 {[
-                  { key: 'hasHostel', label: 'Hostel facility' },
-                  { key: 'hasTransport', label: 'Transport Bus' },
-                  { key: 'hasLibrary', label: 'Central Library' },
-                  { key: 'hasLabs', label: 'Scientific Laboratories' },
-                  { key: 'hasSports', label: 'Sports Equipment' },
-                  { key: 'hasPlayground', label: 'Playground Field' },
-                  { key: 'hasWifi', label: 'Campus Wi-Fi' },
-                  { key: 'hasSmartClassroom', label: 'Smart Classrooms' },
-                  { key: 'hasCctv', label: 'CCTV Security' },
-                  { key: 'hasComputerLabs', label: 'Computer Labs' },
-                  { key: 'hasCafeteria', label: 'Cafeteria Canteen' },
+                  { key: 'hasHostel', label: 'Hostel Facility', detail: college.hostelDetails || 'Hostel accommodations with meal plans' },
+                  { key: 'hasTransport', label: 'College Transport Buses', detail: college.transportDetails || 'Bus network covering prime city routes' },
+                  { key: 'hasLibrary', label: 'Central Library', detail: college.libraryDetails || 'Academic textbooks and reading hall' },
+                  { key: 'hasLabs', label: 'Science Laboratories', detail: college.labsDetails || 'Physics, Chemistry, and Biology labs' },
+                  { key: 'hasComputerLabs', label: 'Computer & AI Labs', detail: college.computerLabsDetails || 'Digital computer stations' },
+                  { key: 'hasSports', label: 'Sports & Athletics', detail: college.sportsDetails || 'Outdoor and indoor sports facilities' },
+                  { key: 'hasPlayground', label: 'Playground Turf', detail: college.playgroundDetails || 'Open playground campus ground' },
+                  { key: 'hasWifi', label: 'Campus Wi-Fi', detail: college.wifiDetails || 'High-speed internet network' },
+                  { key: 'hasSmartClassroom', label: 'Smart Classrooms', detail: college.smartClassDetails || 'Projectors and interactive digital boards' },
+                  { key: 'hasCctv', label: 'CCTV & Security', detail: college.cctvDetails || '24/7 security surveillance' },
+                  { key: 'hasCafeteria', label: 'Canteen & Cafeteria', detail: college.cafeteriaDetails || 'Subsidized hygienic cafeteria' },
                 ].map((fac, idx) => (
                   <div
                     key={idx}
-                    className={`p-4 rounded-xl border flex items-center justify-between font-semibold ${
+                    className={`p-4 rounded-xl border flex flex-col justify-between gap-2 font-medium ${
                       college[fac.key]
-                        ? 'bg-indigo-500/5 border-indigo-500/20 text-indigo-300'
+                        ? 'bg-indigo-500/5 border-indigo-500/30 text-indigo-300'
                         : 'bg-slate-950/40 border-slate-900/60 text-slate-500'
                     }`}
                   >
-                    <span>{fac.label}</span>
-                    <span>{college[fac.key] ? '✓' : '✗'}</span>
+                    <div className="flex items-center justify-between font-bold">
+                      <span>{fac.label}</span>
+                      <span>{college[fac.key] ? '✓' : '✗'}</span>
+                    </div>
+                    {college[fac.key] && (
+                      <p className="text-[11px] text-slate-400">{fac.detail}</p>
+                    )}
                   </div>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Tab 6: Documents & Brochures */}
+          {activeTab === 'documents' && (
+            <div className="space-y-6 text-left max-w-4xl">
+              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-indigo-400" />
+                <span>Official Documents, Prospectus & Brochures</span>
+              </h3>
+
+              {college.documents && college.documents.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {college.documents.map((d, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-xs text-slate-200">{d.title}</h4>
+                          <span className="text-[10px] text-slate-500 uppercase">{d.type}</span>
+                        </div>
+                      </div>
+                      {d.url ? (
+                        <a
+                          href={d.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>PDF</span>
+                        </a>
+                      ) : (
+                        <span className="text-[11px] text-slate-600">Available on campus</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-8 rounded-2xl bg-slate-950 border border-slate-800 text-center text-xs text-slate-400 space-y-3">
+                  <FileText className="w-8 h-8 text-slate-600 mx-auto" />
+                  <p>Official printed prospectus and admission forms are available directly at the admissions administrative block.</p>
+                  {(college.whatsappNumber || college.phone) && (
+                    <a
+                      href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, please share the admission prospectus and brochure for ${college.name}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>Request Prospectus on WhatsApp</span>
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

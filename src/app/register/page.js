@@ -184,15 +184,25 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <div className="text-center text-xs text-slate-400 border-t border-slate-800/60 pt-4">
-            <span>Already have an account? </span>
-            <Link 
-              href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"} 
-              className="font-bold text-indigo-400 hover:text-indigo-300 transition flex items-center justify-center gap-0.5 mt-1"
-            >
-              <span>Sign In</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+          <div className="text-center text-xs text-slate-400 border-t border-slate-800/60 pt-4 space-y-3">
+            <div>
+              <span>Already have an account? </span>
+              <Link 
+                href={redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : "/login"} 
+                className="font-bold text-indigo-400 hover:text-indigo-300 transition inline-flex items-center gap-0.5 ml-1"
+              >
+                <span>Sign In</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-center space-y-1">
+              <p className="font-bold text-slate-200">Registering a College or Institute?</p>
+              <Link href="/college-portal" className="text-indigo-400 hover:text-indigo-300 font-semibold inline-flex items-center gap-1">
+                <span>Go to Institutional Self-Registration</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
           </div>
         </div>
       </div>

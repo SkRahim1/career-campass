@@ -64,7 +64,14 @@ export default function CollegesSearchPage() {
         const querySnapshot = await getDocs(collection(db, 'colleges'));
         const list = [];
         querySnapshot.forEach((doc) => {
-          list.push({ id: doc.id, ...doc.data() });
+          const data = doc.data();
+          // Hide pending, draft, unpublished, or rejected colleges from public student directory
+          const isPending = data.status === 'PENDING' || (!data.isApproved && data.registeredByEmail);
+          const isRejected = data.status === 'REJECTED';
+          const isUnpublished = data.isLive === false || data.status === 'UNPUBLISHED' || data.status === 'DRAFT';
+          if (!isPending && !isRejected && !isUnpublished) {
+            list.push({ id: doc.id, ...data });
+          }
         });
         setAllColleges(list);
         setColleges(list);

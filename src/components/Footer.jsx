@@ -49,6 +49,9 @@ export default function Footer() {
                 <Link href="/about" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-semibold text-indigo-600 dark:text-indigo-400">About Us & Vision</Link>
               </li>
               <li>
+                <Link href="/college-portal" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-bold text-indigo-600 dark:text-indigo-400">College Portal (Registration)</Link>
+              </li>
+              <li>
                 <Link href="/survey" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Student Survey (25 Qs)</Link>
               </li>
               <li>

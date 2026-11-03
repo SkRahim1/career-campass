@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Star, MapPin, Bookmark, Heart, Sparkles } from 'lucide-react';
+import { Star, MapPin, Bookmark, Heart, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function CollegeCard({ 
   college, 
@@ -78,6 +78,10 @@ export default function CollegeCard({
     ? `₹${Math.min(...college.streams.map(s => s.annualFee)).toLocaleString('en-IN')} - ₹${Math.max(...college.streams.map(s => s.annualFee)).toLocaleString('en-IN')}`
     : 'Fee on inquiry';
 
+  const isVerified = college.status === 'APPROVED' || college.isApproved || college.verified;
+  const isNumericId = !isNaN(Number(college.id));
+  const collegeUrl = isNumericId ? `/colleges/${college.id}` : `/colleges/details?id=${college.id}`;
+
   return (
     <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 shadow-md hover:shadow-indigo-500/5 transition duration-305 flex flex-col h-full animate-fade-in">
       {/* Banner / Cover */}
@@ -96,13 +100,19 @@ export default function CollegeCard({
         )}
         
         {/* Badges on cover */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 items-center">
           <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-slate-950/80 text-indigo-650 dark:text-indigo-300 backdrop-blur-md px-2.5 py-1 rounded-full border border-indigo-150 dark:border-indigo-500/20 shadow-sm">
             {college.ownership}
           </span>
           <span className="text-[10px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-slate-950/80 text-purple-650 dark:text-purple-300 backdrop-blur-md px-2.5 py-1 rounded-full border border-purple-150 dark:border-purple-500/20 shadow-sm">
-            {college.category.replace('_', ' ')}
+            {college.category?.replace('_', ' ')}
           </span>
+          {isVerified && (
+            <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-500/90 text-white backdrop-blur-md px-2 py-0.5 rounded-full border border-emerald-400 shadow-sm flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3" />
+              <span>Verified</span>
+            </span>
+          )}
         </div>
  
         {/* Compare Trigger */}
@@ -154,7 +164,7 @@ export default function CollegeCard({
  
           {/* Title */}
           <h3 className="text-slate-800 dark:text-slate-100 font-bold text-base leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
-            <Link href={`/colleges/${college.id}`}>
+            <Link href={collegeUrl}>
               {college.name}
             </Link>
           </h3>
@@ -183,7 +193,7 @@ export default function CollegeCard({
           </div>
           
           <Link
-            href={`/colleges/${college.id}`}
+            href={collegeUrl}
             className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform cursor-pointer"
           >
             <span>Details</span>
