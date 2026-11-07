@@ -125,7 +125,7 @@ async function main() {
   const adminProfile = {
     uid: 'admin-default-uid',
     name: 'Super Admin',
-    email: 'admin@careercompass.com',
+    email: 'admin@career365compass.com',
     role: 'SUPER_ADMIN',
     mobileNumber: '9999999999'
   };

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import AuthRequiredGate from '@/components/AuthRequiredGate';
+import SchoolSelect from '@/components/SchoolSelect';
 import { 
   ClipboardList, 
   CheckCircle2, 
@@ -577,7 +578,7 @@ export default function SurveyPage() {
           <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
           <div className="space-y-1 text-left text-xs">
             <p className="text-slate-100 font-bold">
-              Welcome to Career Compass 365, {user.name}!
+              Welcome to Career365Compass, {user.name}!
             </p>
             <p className="text-slate-300 leading-relaxed">
               As a newly registered student, please fill out this quick 5-minute survey. Your responses unlock tailored college suggestions and admission alerts right after completion.
@@ -684,22 +685,19 @@ export default function SurveyPage() {
               </div>
             </div>
 
-            {/* Q2: School Name */}
+            {/* Q2: School Name Dropdown */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-200">
+              <label htmlFor="q2_schoolName" className="block text-xs font-bold text-slate-200">
                 2. School Name <span className="text-red-400">*</span>
               </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. ZP High School, Uppal / Govt High School"
-                  value={formData.q2_schoolName}
-                  onChange={(e) => handleInputChange('q2_schoolName', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
-                />
-                <School className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-              </div>
+              <SchoolSelect
+                id="q2_schoolName"
+                name="q2_schoolName"
+                required
+                placeholder="-- Select Your 10th School from List --"
+                value={formData.q2_schoolName}
+                onChange={(val) => handleInputChange('q2_schoolName', val)}
+              />
             </div>
 
             {/* Q3: Class and Section */}
@@ -1360,7 +1358,7 @@ export default function SurveyPage() {
       {/* Footer Advisory */}
       <div className="text-center text-[11px] text-slate-500 space-y-1">
         <p>Participation is voluntary. Please complete the survey with your parent&apos;s or guardian&apos;s awareness.</p>
-        <p className="font-semibold text-slate-400">Career Compass 365 • Discover Your Path. Design Your Future.</p>
+        <p className="font-semibold text-slate-400">Career365Compass • Discover Your Path. Design Your Future.</p>
       </div>
 
       </div>

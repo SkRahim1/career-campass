@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100 text-lg">
               <Compass className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-              <span>Career Compass 365</span>
+              <span>Career365Compass</span>
             </div>
             <p className="text-sm leading-relaxed">
               A comprehensive career guidance and college discovery platform designed specifically for 10th class students. Find Intermediate streams, Polytechnic diplomas, ITI courses, and scholarships in Hyderabad.
@@ -81,7 +81,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <a href="mailto:support@careercompass.com" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">support@careercompass.com</a>
+                <a href="mailto:support@career365compass.com" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">support@career365compass.com</a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" />
@@ -93,7 +93,7 @@ export default function Footer() {
 
         <div className="border-t border-slate-200 dark:border-slate-900 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left text-slate-400 dark:text-slate-500">
-            <span>© {new Date().getFullYear()} Career Compass 365. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Career365Compass. All rights reserved.</span>
             <span className="hidden sm:inline text-slate-300 dark:text-slate-700">•</span>
             <span>
               A product of{' '}

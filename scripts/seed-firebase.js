@@ -116,7 +116,7 @@ async function main() {
   const defaultUsers = [
     {
       uid: 'admin-default-uid',
-      email: 'admin@careercompass.com',
+      email: 'admin@career365compass.com',
       password: 'admin123',
       displayName: 'Super Admin',
       role: 'SUPER_ADMIN',

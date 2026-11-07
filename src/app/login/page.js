@@ -67,7 +67,7 @@ export default function LoginPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           <Compass className="w-8 h-8 text-indigo-400 animate-spin-slow" />
-          <span>Career Compass 365</span>
+          <span>Career365Compass</span>
         </Link>
         <h2 className="text-3xl font-extrabold text-slate-100">Welcome Back</h2>
         <p className="text-slate-400 text-sm">
@@ -121,7 +121,7 @@ export default function LoginPage() {
                 </label>
                 <Link
                   href="#"
-                  onClick={() => alert('Demo simulation: Click "Get Started" and register a new student account, or use: admin@careercompass.com / admin123')}
+                  onClick={() => alert('Demo simulation: Click "Get Started" and register a new student account, or use: admin@career365compass.com / admin123')}
                   className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition"
                 >
                   Forgot Password?
@@ -158,7 +158,7 @@ export default function LoginPage() {
           <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 text-xs space-y-2">
             <span className="font-extrabold text-indigo-400 block uppercase tracking-wider">Demo Credentials</span>
             <div className="space-y-1 text-slate-400">
-              <p><span className="font-semibold text-slate-300">Admin:</span> admin@careercompass.com | admin123</p>
+              <p><span className="font-semibold text-slate-300">Admin:</span> admin@career365compass.com | admin123</p>
               <p><span className="font-semibold text-slate-300">Student:</span> rahul@gmail.com | student123</p>
             </div>
           </div>

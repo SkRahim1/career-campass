@@ -17,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Career Compass 365 | College Discovery & Career Guidance after 10th',
-  description: 'Career Compass 365 helps 10th class students explore Intermediate streams, Polytechnic diplomas, ITIs, and scholarships. Compare colleges and discover your career roadmap.',
+  title: 'Career365Compass | College Discovery & Career Guidance after 10th',
+  description: 'Career365Compass helps 10th class students explore Intermediate streams, Polytechnic diplomas, ITIs, and scholarships. Compare colleges and discover your career roadmap.',
   keywords: 'best intermediate colleges hyderabad, government junior colleges hyderabad, polytechnic colleges hyderabad, career guidance after 10th',
 };
 

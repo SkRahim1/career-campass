@@ -24,7 +24,7 @@ async function main() {
   const admin = await prisma.user.create({
     data: {
       name: 'Super Admin',
-      email: 'admin@careercompass.com',
+      email: 'admin@career365compass.com',
       passwordHash: adminPasswordHash,
       mobileNumber: '9999999999',
       role: 'SUPER_ADMIN',

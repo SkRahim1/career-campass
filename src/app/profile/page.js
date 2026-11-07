@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import CollegeCard from '@/components/CollegeCard';
+import SchoolSelect from '@/components/SchoolSelect';
 import { User, Settings, Sparkles, Save, GraduationCap, DollarSign, Home, Percent, Smartphone, Award, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
@@ -278,20 +279,16 @@ export default function ProfilePage() {
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* School Name */}
+                {/* School Name Dropdown */}
                 <div className="space-y-1.5">
                   <label className="block text-[10px] text-slate-400 uppercase font-bold tracking-wider">10th School Name</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      name="schoolName"
-                      value={formData.schoolName}
-                      onChange={handleChange}
-                      placeholder="e.g. ZP High School, Uppal"
-                      className="block w-full px-4 py-3 pl-10 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs transition"
-                    />
-                    <BookOpen className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
-                  </div>
+                  <SchoolSelect
+                    id="profileSchoolName"
+                    name="schoolName"
+                    value={formData.schoolName}
+                    placeholder="-- Select Your 10th School --"
+                    onChange={(schoolName) => setFormData(prev => ({ ...prev, schoolName }))}
+                  />
                 </div>
 
                 {/* 10th Marks Slider */}

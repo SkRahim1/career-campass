@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import SchoolSelect from '@/components/SchoolSelect';
 import { Mail, Lock, User, Phone, UserPlus, ArrowRight, AlertCircle, Compass } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -13,6 +14,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
+  const [schoolName, setSchoolName] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [redirectPath, setRedirectPath] = useState('');
@@ -57,6 +59,7 @@ export default function RegisterPage() {
         email,
         password,
         mobileNumber,
+        schoolName: schoolName || null,
       });
       router.push(redirectPath || '/survey?firstTime=true');
     } catch (err) {
@@ -71,7 +74,7 @@ export default function RegisterPage() {
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           <Compass className="w-8 h-8 text-indigo-400 animate-spin-slow" />
-          <span>Career Compass 365</span>
+          <span>Career365Compass</span>
         </Link>
         <h2 className="text-3xl font-extrabold text-slate-100">Create an Account</h2>
         <p className="text-slate-400 text-sm">
@@ -150,6 +153,20 @@ export default function RegisterPage() {
                   className="block w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                 />
               </div>
+            </div>
+
+            {/* School Dropdown */}
+            <div className="space-y-1.5">
+              <label htmlFor="registerSchool" className="block text-xs font-semibold text-slate-300">
+                10th Class School
+              </label>
+              <SchoolSelect
+                id="registerSchool"
+                name="schoolName"
+                value={schoolName}
+                onChange={setSchoolName}
+                placeholder="-- Select Your 10th School (Optional) --"
+              />
             </div>
 
             {/* Password */}

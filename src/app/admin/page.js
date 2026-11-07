@@ -34,9 +34,17 @@ import {
   Globe,
   MapPin,
   Sparkles,
-  Radio
+  Radio,
+  School
 } from 'lucide-react';
 import Link from 'next/link';
+import { 
+  getSchoolsList, 
+  addSchoolToFirestore, 
+  deleteSchoolFromFirestore, 
+  toggleSchoolActiveStatus, 
+  seedDefaultSchoolsToFirestore 
+} from '@/lib/schoolsService';
 
 export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -59,6 +67,22 @@ export default function AdminDashboardPage() {
   const [surveysLoading, setSurveysLoading] = useState(true);
   const [selectedSurvey, setSelectedSurvey] = useState(null);
   const [surveySearch, setSurveySearch] = useState('');
+
+  // Schools state
+  const [schools, setSchools] = useState([]);
+  const [schoolsLoading, setSchoolsLoading] = useState(true);
+  const [schoolSearch, setSchoolSearch] = useState('');
+  const [schoolCategoryFilter, setSchoolCategoryFilter] = useState('ALL');
+  const [schoolMsg, setSchoolMsg] = useState('');
+  const [showAddSchoolForm, setShowAddSchoolForm] = useState(false);
+  const [newSchool, setNewSchool] = useState({
+    name: '',
+    district: 'Hyderabad',
+    location: '',
+    category: 'Government High School',
+    medium: 'English & Telugu',
+    udiseCode: ''
+  });
 
   // Registered Colleges & Approvals state
   const [adminColleges, setAdminColleges] = useState([]);
@@ -133,8 +157,89 @@ export default function AdminDashboardPage() {
       fetchUpdates();
       fetchSurveys();
       fetchCollegesList();
+      fetchSchools();
     }
   }, [user]);
+
+  const fetchSchools = async () => {
+    setSchoolsLoading(true);
+    try {
+      const list = await getSchoolsList(true);
+      setSchools(list);
+    } catch (err) {
+      console.error('Error fetching schools:', err);
+    } finally {
+      setSchoolsLoading(false);
+    }
+  };
+
+  const handleAddSchool = async (e) => {
+    e.preventDefault();
+    if (!newSchool.name.trim()) {
+      alert('Please enter school name');
+      return;
+    }
+    try {
+      await addSchoolToFirestore({
+        ...newSchool,
+        createdBy: user?.email || 'admin@career365compass.com'
+      });
+      setSchoolMsg(`"${newSchool.name}" successfully added to the school directory!`);
+      setTimeout(() => setSchoolMsg(''), 4000);
+      setNewSchool({
+        name: '',
+        district: 'Hyderabad',
+        location: '',
+        category: 'Government High School',
+        medium: 'English & Telugu',
+        udiseCode: ''
+      });
+      setShowAddSchoolForm(false);
+      await fetchSchools();
+    } catch (err) {
+      console.error('Error adding school:', err);
+      alert('Error adding school: ' + err.message);
+    }
+  };
+
+  const handleDeleteSchool = async (schoolId, schoolName) => {
+    if (!confirm(`Are you sure you want to delete "${schoolName}"?`)) return;
+    try {
+      await deleteSchoolFromFirestore(schoolId);
+      setSchoolMsg(`"${schoolName}" deleted.`);
+      setTimeout(() => setSchoolMsg(''), 3000);
+      await fetchSchools();
+    } catch (err) {
+      console.error('Error deleting school:', err);
+      alert('Failed to delete school: ' + err.message);
+    }
+  };
+
+  const handleToggleSchoolStatus = async (schoolId, currentActive) => {
+    try {
+      await toggleSchoolActiveStatus(schoolId, currentActive);
+      await fetchSchools();
+    } catch (err) {
+      console.error('Error toggling school status:', err);
+      alert('Failed to update status: ' + err.message);
+    }
+  };
+
+  const handleSeedDefaultSchools = async () => {
+    if (!confirm('Populate verified high schools for Hyderabad & Telangana into Firestore?')) return;
+    try {
+      setSchoolsLoading(true);
+      const added = await seedDefaultSchoolsToFirestore(user?.email || 'admin@career365compass.com');
+      setSchoolMsg(`Successfully populated ${added.length} verified schools into Firestore!`);
+      setTimeout(() => setSchoolMsg(''), 4000);
+      await fetchSchools();
+    } catch (err) {
+      console.error('Error seeding schools:', err);
+      alert('Failed to seed schools: ' + err.message);
+    } finally {
+      setSchoolsLoading(false);
+    }
+  };
 
   const fetchCollegesList = async () => {
     setAdminCollegesLoading(true);
@@ -355,7 +460,7 @@ export default function AdminDashboardPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `career_compass_365_student_surveys_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', `career365compass_student_surveys_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -769,6 +874,7 @@ export default function AdminDashboardPage() {
       icon: Building2,
       badge: pendingCount
     },
+    { id: 'schools', label: `Schools Directory (${schools.length})`, icon: School },
     { id: 'surveys', label: `Survey Responses (${surveys.length})`, icon: ClipboardList },
     { id: 'reviews', label: 'Review Moderation', icon: CheckSquare },
     { id: 'updates', label: 'Admission updates', icon: Bell },
@@ -2294,6 +2400,378 @@ export default function AdminDashboardPage() {
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab: Schools Directory Management */}
+        {activeTab === 'schools' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+              <div>
+                <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
+                  <School className="w-5 h-5 text-indigo-400" />
+                  <span>High Schools Directory</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Add and manage 10th-grade high schools. All active schools added here will immediately be available as a select dropdown for students in registration, profile settings, and diagnostic surveys.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setShowAddSchoolForm(!showAddSchoolForm)}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>{showAddSchoolForm ? 'Close Form' : '+ Add New School'}</span>
+                </button>
+
+                <button
+                  onClick={handleSeedDefaultSchools}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+                  title="Batch load standard verified Telangana high schools into Firestore"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Seed Verified TS Schools</span>
+                </button>
+              </div>
+            </div>
+
+            {schoolMsg && (
+              <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-2 animate-fadeIn">
+                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <span>{schoolMsg}</span>
+              </div>
+            )}
+
+            {/* Quick KPI Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Schools</p>
+                <p className="text-xl font-extrabold text-white">{schools.length}</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Govt High Schools</p>
+                <p className="text-xl font-extrabold text-emerald-400">
+                  {schools.filter((s) => (s.category || '').toLowerCase().includes('government')).length}
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">ZPHS Schools</p>
+                <p className="text-xl font-extrabold text-blue-400">
+                  {schools.filter((s) => (s.category || '').toLowerCase().includes('zilla') || (s.name || '').includes('ZPHS')).length}
+                </p>
+              </div>
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-purple-400 tracking-wider">Model & Private</p>
+                <p className="text-xl font-extrabold text-purple-400">
+                  {schools.filter((s) => !(s.category || '').toLowerCase().includes('government') && !(s.category || '').toLowerCase().includes('zilla') && !(s.name || '').includes('ZPHS')).length}
+                </p>
+              </div>
+            </div>
+
+            {/* Add School Collapsible / Card Form */}
+            {showAddSchoolForm && (
+              <form onSubmit={handleAddSchool} className="p-5 sm:p-6 rounded-2xl bg-slate-950 border border-indigo-500/30 space-y-4 shadow-xl">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <PlusCircle className="w-4 h-4 text-indigo-400" />
+                    <span>Add New School to Student Dropdown</span>
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSchoolForm(false)}
+                    className="text-slate-500 hover:text-slate-300 text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* School Name */}
+                  <div className="sm:col-span-2 space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      School Name <span className="text-red-400">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Govt High School, Aliya or ZPHS Uppal"
+                      value={newSchool.name}
+                      onChange={(e) => setNewSchool({ ...newSchool, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* School Category */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Category / School Type
+                    </label>
+                    <select
+                      value={newSchool.category}
+                      onChange={(e) => setNewSchool({ ...newSchool, category: e.target.value })}
+                      className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="Government High School">Government High School</option>
+                      <option value="Zilla Parishad High School (ZPHS)">Zilla Parishad High School (ZPHS)</option>
+                      <option value="Telangana Model School">Telangana Model School</option>
+                      <option value="KGBV / Residential School">KGBV / Residential School</option>
+                      <option value="Private / Aided School">Private / Aided School</option>
+                      <option value="Private / Unaided School">Private / Unaided School</option>
+                      <option value="CBSE / ICSE School">CBSE / ICSE School</option>
+                    </select>
+                  </div>
+
+                  {/* District */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">District</label>
+                    <select
+                      value={newSchool.district}
+                      onChange={(e) => setNewSchool({ ...newSchool, district: e.target.value })}
+                      className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="Hyderabad">Hyderabad</option>
+                      <option value="Medchal-Malkajgiri">Medchal-Malkajgiri</option>
+                      <option value="Ranga Reddy">Ranga Reddy</option>
+                      <option value="Sangareddy">Sangareddy</option>
+                      <option value="Vikarabad">Vikarabad</option>
+                      <option value="Nizamabad">Nizamabad</option>
+                      <option value="Warangal">Warangal</option>
+                      <option value="Other District">Other District</option>
+                    </select>
+                  </div>
+
+                  {/* Location / Area */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Area / Landmark
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Gunfoundry, Uppal, Secunderabad"
+                      value={newSchool.location}
+                      onChange={(e) => setNewSchool({ ...newSchool, location: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Medium */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      Medium of Instruction
+                    </label>
+                    <select
+                      value={newSchool.medium}
+                      onChange={(e) => setNewSchool({ ...newSchool, medium: e.target.value })}
+                      className="w-full px-3 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="English & Telugu">English & Telugu</option>
+                      <option value="English Medium">English Medium</option>
+                      <option value="Telugu Medium">Telugu Medium</option>
+                      <option value="Urdu & English">Urdu & English</option>
+                      <option value="English, Urdu & Telugu">English, Urdu & Telugu</option>
+                    </select>
+                  </div>
+
+                  {/* U-DISE Code */}
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-300">
+                      U-DISE Code <span className="text-[10px] text-slate-500">(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 36200100101"
+                      value={newSchool.udiseCode}
+                      onChange={(e) => setNewSchool({ ...newSchool, udiseCode: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs sm:text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-900">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSchoolForm(false)}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/20"
+                  >
+                    Save School to Directory
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Filter & Search Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { key: 'ALL', label: `All (${schools.length})` },
+                  { key: 'GOVT', label: 'Government' },
+                  { key: 'ZPHS', label: 'ZPHS' },
+                  { key: 'MODEL', label: 'Model / KGBV' },
+                  { key: 'PRIVATE', label: 'Private / Aided' }
+                ].map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => setSchoolCategoryFilter(f.key)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                      schoolCategoryFilter === f.key
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative min-w-[260px]">
+                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Search by school name, area, or code..."
+                  value={schoolSearch}
+                  onChange={(e) => setSchoolSearch(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            {/* Schools List */}
+            {schoolsLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+              </div>
+            ) : schools.length === 0 ? (
+              <div className="text-center py-12 bg-slate-950 border border-slate-800 rounded-2xl p-8 space-y-3">
+                <School className="w-10 h-10 text-slate-600 mx-auto" />
+                <h4 className="text-slate-200 font-bold text-sm">No Schools Found</h4>
+                <p className="text-slate-400 text-xs max-w-sm mx-auto">
+                  Click the button below to automatically load the standard verified high schools for Hyderabad and Telangana.
+                </p>
+                <button
+                  onClick={handleSeedDefaultSchools}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition inline-flex items-center gap-1.5 cursor-pointer shadow-md"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Seed Verified Telangana Schools</span>
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {schools
+                  .filter((s) => {
+                    if (schoolCategoryFilter === 'GOVT') {
+                      return (s.category || '').toLowerCase().includes('government');
+                    }
+                    if (schoolCategoryFilter === 'ZPHS') {
+                      return (s.category || '').toLowerCase().includes('zilla') || (s.name || '').includes('ZPHS');
+                    }
+                    if (schoolCategoryFilter === 'MODEL') {
+                      return (s.category || '').toLowerCase().includes('model') || (s.category || '').toLowerCase().includes('kgbv');
+                    }
+                    if (schoolCategoryFilter === 'PRIVATE') {
+                      return (s.category || '').toLowerCase().includes('private');
+                    }
+                    return true;
+                  })
+                  .filter((s) => {
+                    if (!schoolSearch.trim()) return true;
+                    const q = schoolSearch.toLowerCase();
+                    return (
+                      (s.name || '').toLowerCase().includes(q) ||
+                      (s.district || '').toLowerCase().includes(q) ||
+                      (s.location || '').toLowerCase().includes(q) ||
+                      (s.udiseCode || '').toLowerCase().includes(q)
+                    );
+                  })
+                  .map((school) => {
+                    const isGovt = (school.category || '').toLowerCase().includes('government');
+                    const isZphs = (school.category || '').toLowerCase().includes('zilla') || (school.name || '').includes('ZPHS');
+                    const isModel = (school.category || '').toLowerCase().includes('model') || (school.category || '').toLowerCase().includes('kgbv');
+
+                    const categoryBadgeClass = isGovt
+                      ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      : isZphs
+                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      : isModel
+                      ? 'bg-purple-500/10 text-purple-400 border-purple-500/20'
+                      : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+
+                    return (
+                      <div
+                        key={school.id || school.name}
+                        className={`p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                          school.isActive === false ? 'opacity-60 bg-slate-950/40' : ''
+                        }`}
+                      >
+                        <div className="space-y-1 flex-grow">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-bold text-slate-100 text-sm">{school.name}</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${categoryBadgeClass}`}>
+                              {school.category || 'School'}
+                            </span>
+                            {school.udiseCode && (
+                              <span className="text-[10px] font-mono bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded">
+                                U-DISE: {school.udiseCode}
+                              </span>
+                            )}
+                            {school.isActive === false && (
+                              <span className="text-[10px] bg-red-950/40 text-red-400 border border-red-900/40 px-2 py-0.5 rounded-full">
+                                Inactive (Hidden from students)
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-slate-400">
+                            {school.location && <span>{school.location}</span>}
+                            {school.district && (
+                              <>
+                                <span>•</span>
+                                <span className="text-slate-300">{school.district}</span>
+                              </>
+                            )}
+                            {school.medium && (
+                              <>
+                                <span>•</span>
+                                <span className="text-indigo-400">{school.medium}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                          <button
+                            onClick={() => handleToggleSchoolStatus(school.id, school.isActive ?? true)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                              school.isActive !== false
+                                ? 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+                                : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                            }`}
+                            title={school.isActive !== false ? 'Deactivate school' : 'Activate school'}
+                          >
+                            {school.isActive !== false ? 'Deactivate' : 'Activate'}
+                          </button>
+
+                          <button
+                            onClick={() => handleDeleteSchool(school.id, school.name)}
+                            className="p-1.5 text-slate-600 hover:text-red-400 rounded-lg hover:bg-slate-900 transition cursor-pointer"
+                            title="Delete permanently"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </div>
                     );

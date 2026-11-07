@@ -289,7 +289,7 @@ export default function CollegeDetailClient({ id }) {
           <div className="flex flex-col sm:flex-row gap-2.5 shrink-0 self-stretch md:self-center">
             {(college.whatsappNumber || college.phone) && (
               <a
-                href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I found ${college.name} on Career Compass 365. I am interested in admission details and streams offered.`)}`}
+                href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I found ${college.name} on Career365Compass. I am interested in admission details and streams offered.`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition cursor-pointer"

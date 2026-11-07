@@ -1,6 +1,6 @@
-# Career Compass 365 - Project Documentation
+# Career365Compass - Project Documentation
 
-Career Compass 365 is a verified educational guidance portal designed specifically for 10th-class graduates in Hyderabad, Telangana. The platform provides transparent, objective, and verified information regarding Intermediate streams, Polytechnic diplomas, ITI trade programs, welfare scholarships, and government reservation quotas.
+Career365Compass is a verified educational guidance portal designed specifically for 10th-class graduates in Hyderabad, Telangana. The platform provides transparent, objective, and verified information regarding Intermediate streams, Polytechnic diplomas, ITI trade programs, welfare scholarships, and government reservation quotas.
 
 ---
 
@@ -21,7 +21,7 @@ The project is built using a modern, serverless, and highly scalable static arch
 
 ## 🏛️ Tri-Portal System Architecture
 
-Career Compass 365 is organized into three interconnected portals:
+Career365Compass is organized into three interconnected portals:
 
 ### 1. Student Portal (Public-Facing Platform)
 - **Directory & Exploration**: Class 10 graduates browse and filter Junior Colleges, Polytechnics, and ITIs across Hyderabad.
@@ -98,7 +98,7 @@ Queries Firestore to generate customized matches based on the student's profile 
 - Admin dashboard tab with search filter and instant CSV export for reporting.
 
 ### 6. About Us, Leadership & Excellence Voices Initiative
-- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career Compass 365 (Contact: `+91 92843 06159`).
+- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career365Compass (Contact: `+91 92843 06159`).
 - **Our Aim**: Zero educational confusion, unbiased guidance, and equal access to higher education for every Class 10 student regardless of socioeconomic background.
 - **How We Help**: Stream roadmaps, verified college discovery, government scholarship & fee reimbursement navigation (ePASS/Gurukulam), entrance exam preparation (POLYCET, TG APRJC CET), and one-on-one counseling.
 

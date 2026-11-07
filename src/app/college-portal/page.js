@@ -485,7 +485,7 @@ export default function CollegePortalPage() {
                       <Building2 className="w-4 h-4 text-indigo-400" />
                       <span>College Registration & Institutional Details</span>
                     </h2>
-                    <p className="text-xs text-slate-400">Institutional credentials verified by Career Compass Super Admin.</p>
+                    <p className="text-xs text-slate-400">Institutional credentials verified by Career365Compass Super Admin.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

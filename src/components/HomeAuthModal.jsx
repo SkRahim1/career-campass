@@ -60,7 +60,7 @@ export default function HomeAuthModal() {
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <Compass className="w-3.5 h-3.5 animate-spin-slow" />
-            <span>Welcome to Career Compass 365</span>
+            <span>Welcome to Career365Compass</span>
           </div>
 
           <button

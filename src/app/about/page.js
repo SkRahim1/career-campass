@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Us | Career Compass 365 & Excellence Voices',
-  description: 'Learn about Career Compass 365, co-founded with Excellence Voices by Rahim Shaikh. Discover our aim, mission, and how we empower Class 10 students with transparent educational pathways.',
+  title: 'About Us | Career365Compass & Excellence Voices',
+  description: 'Learn about Career365Compass, co-founded with Excellence Voices by Rahim Shaikh. Discover our aim, mission, and how we empower Class 10 students with transparent educational pathways.',
 };
 
 export default function AboutPage() {
@@ -115,7 +115,7 @@ export default function AboutPage() {
           </h1>
 
           <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-            Career Compass 365, powered in collaboration with <strong className="text-slate-200">Excellence Voices</strong>, is dedicated to guiding 10th-grade students through the crucial transition to Intermediate, Polytechnic, and beyond with honesty, transparency, and empathy.
+            Career365Compass, powered in collaboration with <strong className="text-slate-200">Excellence Voices</strong>, is dedicated to guiding 10th-grade students through the crucial transition to Intermediate, Polytechnic, and beyond with honesty, transparency, and empathy.
           </p>
 
           {/* Quick Stats Grid */}
@@ -167,7 +167,7 @@ export default function AboutPage() {
                   <span>Call: 9284306159</span>
                 </a>
                 <a
-                  href="https://wa.me/919284306159?text=Hello%20Rahim%2C%20I%20am%20reaching%20out%20from%20Career%20Compass%20365%20for%20guidance."
+                  href="https://wa.me/919284306159?text=Hello%20Rahim%2C%20I%20am%20reaching%20out%20from%20Career365Compass%20for%20guidance."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/30 transition active:scale-95 cursor-pointer"
@@ -186,12 +186,12 @@ export default function AboutPage() {
               </div>
 
               <blockquote className="text-base sm:text-lg text-slate-200 italic font-medium leading-relaxed border-l-4 border-indigo-500 pl-4 py-1">
-                &ldquo;Every year, thousands of talented Class 10 students pick the wrong stream simply because of peer pressure or lack of awareness. At Excellence Voices and Career Compass 365, our aim is crystal clear: to walk beside every student, break down complex career paths into simple steps, and give them the confidence to build a future they truly love.&rdquo;
+                &ldquo;Every year, thousands of talented Class 10 students pick the wrong stream simply because of peer pressure or lack of awareness. At Excellence Voices and Career365Compass, our aim is crystal clear: to walk beside every student, break down complex career paths into simple steps, and give them the confidence to build a future they truly love.&rdquo;
               </blockquote>
 
               <div className="space-y-3 text-slate-300 text-sm leading-relaxed">
                 <p>
-                  As the co-founder of <strong>Excellence Voices</strong>, <strong>Rahim Shaikh</strong> has been actively involved in youth development, student outreach, and grassroots educational drives. Seeing the confusion students and parents face right after the 10th board exams, he helped shape Career Compass 365 into a practical, localized guidance platform.
+                  As the co-founder of <strong>Excellence Voices</strong>, <strong>Rahim Shaikh</strong> has been actively involved in youth development, student outreach, and grassroots educational drives. Seeing the confusion students and parents face right after the 10th board exams, he helped shape Career365Compass into a practical, localized guidance platform.
                 </p>
                 <p>
                   Whether a student wants to prepare for government residential colleges, crack POLYCET, explore high-paying IT careers without a conventional degree, or secure 100% fee reimbursement via government scholarships, Rahim and the mentoring team ensure no question goes unanswered.
@@ -209,7 +209,7 @@ export default function AboutPage() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-indigo-400" />
-                  <a href="mailto:support@careercompass.com" className="hover:text-indigo-300 transition">support@careercompass.com</a>
+                  <a href="mailto:support@career365compass.com" className="hover:text-indigo-300 transition">support@career365compass.com</a>
                 </span>
               </div>
             </div>
@@ -223,7 +223,7 @@ export default function AboutPage() {
               What Is Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">Aim?</span>
             </h2>
             <p className="text-slate-400 text-sm sm:text-base">
-              The purpose driving Career Compass 365 and Excellence Voices every single day.
+              The purpose driving Career365Compass and Excellence Voices every single day.
             </p>
           </div>
 
