@@ -1,3 +1,3 @@
 :HL["/career-campass/_next/static/css/ee484fbc2849c09c.css","style"]
-:HL["/career-campass/_next/static/css/eff51480d4fe48de.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"colleges","param":null,"prefetchHints":0,"slots":{"children":{"name":"id","param":{"type":"d","key":"6554","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"hcSvGyNsk1JkDSti1gm_m"}
+:HL["/career-campass/_next/static/css/e37466428ea1f90f.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"colleges","param":null,"prefetchHints":0,"slots":{"children":{"name":"id","param":{"type":"d","key":"6554","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"COFr_GLOFqQw6PfJx8LKB"}
