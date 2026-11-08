@@ -298,7 +298,7 @@ export default function Navbar() {
               </div>
               <div className="space-y-0.5">
                 <p className="font-extrabold text-xs text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">About Us</p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">Our aim, Excellence Voices & Rahim Shaikh</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Our aim, Excellence Voices & Directors</p>
               </div>
               <ChevronRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>

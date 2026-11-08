@@ -66,28 +66,57 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact Details */}
+          {/* Leadership & Directors */}
           <div>
-            <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-sm tracking-wider uppercase mb-4">Leadership & Contact</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="space-y-0.5">
-                <span className="text-xs font-semibold uppercase text-slate-500 tracking-wider">Mentorship Lead</span>
-                <p className="font-bold text-slate-800 dark:text-slate-100">Rahim Shaikh</p>
-                <p className="text-xs text-indigo-600 dark:text-indigo-400">Co-founder, Excellence Voices</p>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <a href="tel:9284306159" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium">+91 92843 06159</a>
-              </li>
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                <a href="mailto:support@career365compass.com" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">support@career365compass.com</a>
-              </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400 mt-0.5 shrink-0" />
-                <span>Hyderabad, Telangana, India</span>
-              </li>
-            </ul>
+            <h3 className="text-slate-800 dark:text-slate-100 font-semibold text-sm tracking-wider uppercase mb-4">Leadership & Directors</h3>
+            <div className="space-y-3 text-xs">
+              <div className="space-y-0.5 border-b border-slate-200 dark:border-slate-850 pb-2.5">
+                <div className="flex items-center justify-between">
+                  <p className="font-bold text-sm text-slate-800 dark:text-slate-100">Rahim Shaikh</p>
+                  <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase">Director</span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Co-founder, Excellence Voices</p>
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <a href="tel:9284306159" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-slate-700 dark:text-slate-300">+91 92843 06159</a>
+                </div>
+              </div>
+
+              <div className="space-y-0.5 border-b border-slate-200 dark:border-slate-850 pb-2.5">
+                <div className="flex items-center justify-between">
+                  <p className="font-bold text-sm text-slate-800 dark:text-slate-100">Raviteja Pendem</p>
+                  <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase">Director</span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Director</p>
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <a href="tel:6304300983" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-slate-700 dark:text-slate-300">+91 63043 00983</a>
+                </div>
+              </div>
+
+              <div className="space-y-0.5 border-b border-slate-200 dark:border-slate-850 pb-2.5">
+                <div className="flex items-center justify-between">
+                  <p className="font-bold text-sm text-slate-800 dark:text-slate-100">Lakshya Rana</p>
+                  <span className="text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase">Director</span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Director</p>
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <a href="tel:8125318601" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-slate-700 dark:text-slate-300">+91 81253 18601</a>
+                </div>
+              </div>
+
+              <div className="pt-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <a href="mailto:support@career365compass.com" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition truncate text-slate-600 dark:text-slate-400">support@career365compass.com</a>
+                </div>
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <span>Hyderabad, India</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -98,7 +98,11 @@ Queries Firestore to generate customized matches based on the student's profile 
 - Admin dashboard tab with search filter and instant CSV export for reporting.
 
 ### 6. About Us, Leadership & Excellence Voices Initiative
-- **Rahim Shaikh**: Co-founder of **Excellence Voices** & Lead Youth Mentor at Career365Compass (Contact: `+91 92843 06159`).
+- **Board of Directors**:
+  - **Rahim Shaikh**: Co-founder of **Excellence Voices** & Director / Lead Youth Mentor at Career365Compass (Contact: `+91 92843 06159`).
+  - **Raviteja Pendem**: Director (Contact: `+91 63043 00983`).
+  - **Lakshya Rana**: Director (Contact: `+91 81253 18601`).
+- **Address**: Hyderabad, India.
 - **Our Aim**: Zero educational confusion, unbiased guidance, and equal access to higher education for every Class 10 student regardless of socioeconomic background.
 - **How We Help**: Stream roadmaps, verified college discovery, government scholarship & fee reimbursement navigation (ePASS/Gurukulam), entrance exam preparation (POLYCET, TG APRJC CET), and one-on-one counseling.
 

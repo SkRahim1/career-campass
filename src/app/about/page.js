@@ -23,8 +23,8 @@ import {
 } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Us | Career365Compass & Excellence Voices',
-  description: 'Learn about Career365Compass, co-founded with Excellence Voices by Rahim Shaikh. Discover our aim, mission, and how we empower Class 10 students with transparent educational pathways.',
+  title: 'About Us & Leadership | Career365Compass & Excellence Voices',
+  description: 'Learn about Career365Compass and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.',
 };
 
 export default function AboutPage() {
@@ -153,7 +153,7 @@ export default function AboutPage() {
 
               <div>
                 <h3 className="text-2xl font-black text-white">Rahim Shaikh</h3>
-                <p className="text-sm font-semibold text-indigo-400 mt-0.5">Co-Founder, Excellence Voices</p>
+                <p className="text-sm font-semibold text-indigo-400 mt-0.5">Co-Founder, Excellence Voices & Director</p>
                 <p className="text-xs text-slate-400 mt-1">Lead Youth Mentor & Career Strategist</p>
               </div>
 
@@ -191,7 +191,7 @@ export default function AboutPage() {
 
               <div className="space-y-3 text-slate-300 text-sm leading-relaxed">
                 <p>
-                  As the co-founder of <strong>Excellence Voices</strong>, <strong>Rahim Shaikh</strong> has been actively involved in youth development, student outreach, and grassroots educational drives. Seeing the confusion students and parents face right after the 10th board exams, he helped shape Career365Compass into a practical, localized guidance platform.
+                  As the co-founder of <strong>Excellence Voices</strong> and Director at Career365Compass, <strong>Rahim Shaikh</strong> has been actively involved in youth development, student outreach, and grassroots educational drives. Seeing the confusion students and parents face right after the 10th board exams, he helped shape Career365Compass into a practical, localized guidance platform.
                 </p>
                 <p>
                   Whether a student wants to prepare for government residential colleges, crack POLYCET, explore high-paying IT careers without a conventional degree, or secure 100% fee reimbursement via government scholarships, Rahim and the mentoring team ensure no question goes unanswered.
@@ -201,7 +201,7 @@ export default function AboutPage() {
               <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-400 border-t border-slate-800/80">
                 <span className="flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-pink-400" />
-                  <span>Hyderabad, Telangana</span>
+                  <span>Hyderabad, India</span>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
@@ -211,6 +211,156 @@ export default function AboutPage() {
                   <Mail className="w-3.5 h-3.5 text-indigo-400" />
                   <a href="mailto:support@career365compass.com" className="hover:text-indigo-300 transition">support@career365compass.com</a>
                 </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* BOARD OF DIRECTORS */}
+        <div className="space-y-8">
+          <div className="text-center space-y-3 max-w-2xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/60 border border-indigo-800 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+              <Users className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Leadership Team</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
+              Board of <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">Directors</span>
+            </h2>
+            <p className="text-slate-400 text-sm sm:text-base">
+              The visionaries steering Career365Compass to deliver transparent educational pathways and dedicated student mentorship across Hyderabad, India.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Director 1: Rahim Shaikh */}
+            <div className="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 flex flex-col justify-between hover:border-indigo-500/40 transition backdrop-blur-md group">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white font-black text-xl shadow-lg">
+                  RS
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition">Rahim Shaikh</h3>
+                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Director</span>
+                  </div>
+                  <p className="text-xs text-indigo-400 font-semibold mt-0.5">Co-Founder, Excellence Voices & Director</p>
+                  <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+                    Lead Youth Mentor directing student outreach campaigns, school career orientation sessions, and counseling roadmaps.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-5 mt-5 border-t border-slate-800/80 space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                  <span>Hyderabad, India</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <a
+                    href="tel:9284306159"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>+91 92843 06159</span>
+                  </a>
+                  <a
+                    href="https://wa.me/919284306159?text=Hello%20Rahim%2C%20reaching%20out%20from%20Career365Compass."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition flex items-center justify-center"
+                    title="Chat on WhatsApp"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Director 2: Raviteja Pendem */}
+            <div className="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 flex flex-col justify-between hover:border-purple-500/40 transition backdrop-blur-md group">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-pink-600 flex items-center justify-center text-white font-black text-xl shadow-lg">
+                  RP
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition">Raviteja Pendem</h3>
+                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Director</span>
+                  </div>
+                  <p className="text-xs text-purple-400 font-semibold mt-0.5">Director</p>
+                  <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+                    Spearheading strategic execution, operations, and scaling digital career discovery tools for students and schools.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-5 mt-5 border-t border-slate-800/80 space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                  <span>Hyderabad, India</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <a
+                    href="tel:6304300983"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>+91 63043 00983</span>
+                  </a>
+                  <a
+                    href="https://wa.me/916304300983?text=Hello%20Raviteja%2C%20reaching%20out%20from%20Career365Compass."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition flex items-center justify-center"
+                    title="Chat on WhatsApp"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Director 3: Lakshya Rana */}
+            <div className="rounded-3xl bg-slate-900/60 border border-slate-800 p-6 flex flex-col justify-between hover:border-pink-500/40 transition backdrop-blur-md group">
+              <div className="space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-600 to-rose-600 flex items-center justify-center text-white font-black text-xl shadow-lg">
+                  LR
+                </div>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-white group-hover:text-pink-300 transition">Lakshya Rana</h3>
+                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">Director</span>
+                  </div>
+                  <p className="text-xs text-pink-400 font-semibold mt-0.5">Director</p>
+                  <p className="text-xs text-slate-400 mt-2.5 leading-relaxed">
+                    Driving student engagement, institutional alignment, and expanding personalized youth counseling programs.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-5 mt-5 border-t border-slate-800/80 space-y-2.5 text-xs text-slate-300">
+                <div className="flex items-center gap-2 text-slate-400">
+                  <MapPin className="w-3.5 h-3.5 text-pink-400 shrink-0" />
+                  <span>Hyderabad, India</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 pt-2">
+                  <a
+                    href="tel:8125318601"
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-700 transition"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>+91 81253 18601</span>
+                  </a>
+                  <a
+                    href="https://wa.me/918125318601?text=Hello%20Lakshya%2C%20reaching%20out%20from%20Career365Compass."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 transition flex items-center justify-center"
+                    title="Chat on WhatsApp"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
