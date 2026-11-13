@@ -103,7 +103,7 @@ export default function AuthRequiredGate({
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>25-Question Diagnostic Survey with instant matches</span>
+            <span>Diagnostic Student Survey with instant matches</span>
           </div>
         </div>
 

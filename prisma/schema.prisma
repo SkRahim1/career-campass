@@ -163,3 +163,56 @@ model AdmissionUpdate {
   publishedDate DateTime @default(now())
   isPinned      Boolean  @default(false)
 }
+
+// 10. Competitive Exam Model
+model CompetitiveExam {
+  id                             Int      @id @default(autoincrement())
+  slug                           String   @unique
+  name                           String
+  shortCode                      String
+  conductingBody                 String
+  stage                          String   // "AFTER_10TH", "AFTER_12TH"
+  category                       String   // "DIPLOMA_POLYTECHNIC", "RESIDENTIAL_INTER", "ENGINEERING", "MEDICAL", "DEFENSE", "GOVT_JOBS", "LAW", "SCHOLARSHIP"
+  level                          String   @default("STATE") // "STATE", "NATIONAL"
+  mode                           String   @default("OFFLINE_OMR") // "OFFLINE_OMR", "ONLINE_CBT"
+  description                    String
+  badge                          String?
+  
+  // Eligibility
+  eligibilityMinEducation        String
+  eligibilityAgeLimit            String
+  eligibilityMinMarks            String?
+  eligibilityDomicile            String?
+  eligibilitySubjectRequirements String?
+  
+  // Application details
+  howToApplySteps                String   // JSON string array
+  documentsRequired              String   // JSON string array
+  officialWebsite                String
+  applicationPortalUrl           String
+  offlineCentres                 String?
+  helplineContact                String?
+  applicationFee                 String?
+  
+  // Dates & Status
+  examDate                       String?
+  applicationStartDate           String?
+  applicationEndDate             String?
+  status                         String   @default("UPCOMING") // "APPLICATIONS_OPEN", "UPCOMING", "CLOSED"
+  
+  // Pattern & Syllabus
+  examDuration                   String?
+  totalMarks                     String?
+  markingScheme                  String?
+  examPattern                    String?  // JSON string array of subjects
+  syllabusSummary                String?
+  
+  // Target
+  targetColleges                 String?
+  coursesOffered                 String?
+  notificationPdfUrl             String?
+  isFeatured                     Boolean  @default(false)
+  
+  createdAt                      DateTime @default(now())
+  updatedAt                      DateTime @updatedAt
+}

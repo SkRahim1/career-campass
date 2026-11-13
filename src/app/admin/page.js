@@ -35,7 +35,8 @@ import {
   MapPin,
   Sparkles,
   Radio,
-  School
+  School,
+  Trophy
 } from 'lucide-react';
 import Link from 'next/link';
 import { 
@@ -45,6 +46,13 @@ import {
   toggleSchoolActiveStatus, 
   seedDefaultSchoolsToFirestore 
 } from '@/lib/schoolsService';
+import {
+  getAllCompetitiveExams,
+  addCompetitiveExamToFirestore,
+  updateCompetitiveExamInFirestore,
+  deleteCompetitiveExamFromFirestore,
+  seedDefaultCompetitiveExamsToFirestore
+} from '@/lib/examsService';
 
 export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -82,6 +90,48 @@ export default function AdminDashboardPage() {
     category: 'Government High School',
     medium: 'English & Telugu',
     udiseCode: ''
+  });
+
+  // Competitive Exams State
+  const [adminExams, setAdminExams] = useState([]);
+  const [adminExamsLoading, setAdminExamsLoading] = useState(true);
+  const [examSearch, setExamSearch] = useState('');
+  const [examStageFilter, setExamStageFilter] = useState('ALL');
+  const [examMsg, setExamMsg] = useState('');
+  const [showAddExamForm, setShowAddExamForm] = useState(false);
+  const [newExam, setNewExam] = useState({
+    name: '',
+    shortCode: '',
+    slug: '',
+    conductingBody: '',
+    stage: 'AFTER_10TH',
+    category: 'DIPLOMA_POLYTECHNIC',
+    level: 'STATE',
+    mode: 'OFFLINE_OMR',
+    description: '',
+    badge: '',
+    eligibilityMinEducation: 'Passed 10th Class / SSC from recognized board.',
+    eligibilityAgeLimit: 'Minimum 15 years old. No upper age limit.',
+    eligibilityMinMarks: 'Minimum 35% marks in SSC.',
+    eligibilityDomicile: 'Candidates must satisfy Telangana State Local / Non-Local criteria.',
+    eligibilitySubjectRequirements: 'Mathematics and Science studied at SSC level.',
+    officialWebsite: '',
+    applicationPortalUrl: '',
+    offlineCentres: 'Any authorized MeeSeva or TS Online center in Telangana.',
+    helplineContact: '',
+    applicationFee: '₹500 for OC/BC; ₹250 for SC/ST',
+    examDate: '',
+    applicationStartDate: '',
+    applicationEndDate: '',
+    status: 'APPLICATIONS_OPEN',
+    examDuration: '2 Hours 30 Minutes',
+    totalMarks: '120 Marks',
+    markingScheme: '+1 mark per correct answer. No negative marking.',
+    syllabusSummary: 'Class 10 State Board syllabus in Mathematics, Physics, and Chemistry.',
+    targetColleges: 'Government and Private Polytechnics / Junior Colleges across Telangana.',
+    coursesOffered: 'Diploma in Engineering / Technical streams.',
+    notificationPdfUrl: '',
+    isFeatured: true
   });
 
   // Registered Colleges & Approvals state
@@ -158,8 +208,148 @@ export default function AdminDashboardPage() {
       fetchSurveys();
       fetchCollegesList();
       fetchSchools();
+      fetchCompetitiveExams();
     }
   }, [user]);
+
+  const fetchCompetitiveExams = async () => {
+    setAdminExamsLoading(true);
+    try {
+      const list = await getAllCompetitiveExams();
+      setAdminExams(list);
+    } catch (err) {
+      console.error('Error fetching competitive exams:', err);
+    } finally {
+      setAdminExamsLoading(false);
+    }
+  };
+
+  const handleCreateExam = async (e) => {
+    e.preventDefault();
+    if (!newExam.name || !newExam.shortCode || !newExam.conductingBody) {
+      setExamMsg('Please fill in Exam Name, Short Code, and Conducting Body.');
+      return;
+    }
+    const slug = newExam.slug || newExam.shortCode.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const examPayload = {
+      ...newExam,
+      slug,
+      howToApplySteps: [
+        {
+          stepNumber: 1,
+          title: 'Online Registration & Details Entry',
+          detail: 'Visit the official examination portal and register with candidate identification and hall ticket number.'
+        },
+        {
+          stepNumber: 2,
+          title: 'Upload Scanned Photo & Signature',
+          detail: 'Upload scanned passport photograph and signature as per size specifications.'
+        },
+        {
+          stepNumber: 3,
+          title: 'Pay Application Fee Online / MeeSeva',
+          detail: 'Pay the required registration fee via Net Banking, Debit Card, UPI, or TS Online / MeeSeva centre.'
+        },
+        {
+          stepNumber: 4,
+          title: 'Download & Print Confirmation Page',
+          detail: 'Print the computer-generated registration confirmation receipt and download hall ticket when available.'
+        }
+      ],
+      documentsRequired: [
+        'SSC / Qualifying Examination Marks Memo and Hall Ticket Number',
+        'Aadhaar Card',
+        'Passport Size Photograph (< 50KB)',
+        'Scanned Signature (< 30KB)',
+        'MeeSeva Caste Certificate (for reservation)',
+        'MeeSeva Income Certificate (for fee concession)'
+      ],
+      examPattern: [
+        { subject: 'Main Subjects & Core Concepts', questions: 100, marks: 100 }
+      ]
+    };
+
+    const res = await addCompetitiveExamToFirestore(examPayload);
+    if (res.success) {
+      setExamMsg(`Exam "${newExam.shortCode}" added successfully to live directory!`);
+      setShowAddExamForm(false);
+      fetchCompetitiveExams();
+      setNewExam({
+        name: '',
+        shortCode: '',
+        slug: '',
+        conductingBody: '',
+        stage: 'AFTER_10TH',
+        category: 'DIPLOMA_POLYTECHNIC',
+        level: 'STATE',
+        mode: 'OFFLINE_OMR',
+        description: '',
+        badge: '',
+        eligibilityMinEducation: 'Passed 10th Class / SSC from recognized board.',
+        eligibilityAgeLimit: 'Minimum 15 years old. No upper age limit.',
+        eligibilityMinMarks: 'Minimum 35% marks in SSC.',
+        eligibilityDomicile: 'Candidates must satisfy Telangana State Local / Non-Local criteria.',
+        eligibilitySubjectRequirements: 'Mathematics and Science studied at SSC level.',
+        officialWebsite: '',
+        applicationPortalUrl: '',
+        offlineCentres: 'Any authorized MeeSeva or TS Online center in Telangana.',
+        helplineContact: '',
+        applicationFee: '₹500 for OC/BC; ₹250 for SC/ST',
+        examDate: '',
+        applicationStartDate: '',
+        applicationEndDate: '',
+        status: 'APPLICATIONS_OPEN',
+        examDuration: '2 Hours 30 Minutes',
+        totalMarks: '120 Marks',
+        markingScheme: '+1 mark per correct answer. No negative marking.',
+        syllabusSummary: 'Class 10 State Board syllabus in Mathematics, Physics, and Chemistry.',
+        targetColleges: 'Government and Private Polytechnics / Junior Colleges across Telangana.',
+        coursesOffered: 'Diploma in Engineering / Technical streams.',
+        notificationPdfUrl: '',
+        isFeatured: true
+      });
+    } else {
+      setExamMsg('Failed to add exam: ' + res.error);
+    }
+  };
+
+  const handleToggleExamStatus = async (exam) => {
+    const nextStatus = exam.status === 'APPLICATIONS_OPEN' 
+      ? 'CLOSED' 
+      : exam.status === 'CLOSED' 
+      ? 'UPCOMING' 
+      : 'APPLICATIONS_OPEN';
+
+    const res = await updateCompetitiveExamInFirestore(exam.slug || exam.id, { status: nextStatus });
+    if (res.success) {
+      fetchCompetitiveExams();
+    } else {
+      setExamMsg('Status update failed: ' + res.error);
+    }
+  };
+
+  const handleDeleteExam = async (exam) => {
+    if (!confirm(`Are you sure you want to delete ${exam.shortCode} from the live portal?`)) return;
+    const res = await deleteCompetitiveExamFromFirestore(exam.slug || exam.id);
+    if (res.success) {
+      setExamMsg(`Deleted ${exam.shortCode} from live portal.`);
+      fetchCompetitiveExams();
+    } else {
+      setExamMsg('Delete failed: ' + res.error);
+    }
+  };
+
+  const handleSeedDefaultExams = async () => {
+    if (!confirm('This will synchronize all 12 verified default competitive entrance exams into Cloud Firestore. Proceed?')) return;
+    setExamMsg('Syncing default exams to Cloud Firestore...');
+    const res = await seedDefaultCompetitiveExamsToFirestore();
+    if (res.success) {
+      setExamMsg(`Successfully synced ${res.count} competitive exams to Cloud Firestore!`);
+      fetchCompetitiveExams();
+    } else {
+      setExamMsg('Sync failed: ' + res.error);
+    }
+  };
 
   const fetchSchools = async () => {
     setSchoolsLoading(true);
@@ -417,6 +607,9 @@ export default function AdminDashboardPage() {
       'Heard Entrance Exams?',
       'Exams Known',
       'Planning Entrance Exam?',
+      'Competitive Exams Interest (JEE/NEET)',
+      'JEE/NEET Prep Plan',
+      'JEE/NEET Familiarity',
       'Need Exam Guidance?',
       'Colleges Awareness',
       'College Type Pref',
@@ -446,14 +639,17 @@ export default function AdminDashboardPage() {
       `"${(s.q15_entranceExamsAwareness || '').replace(/"/g, '""')}"`,
       `"${(s.q16_entranceExamsKnown || '').replace(/"/g, '""')}"`,
       `"${(s.q17_planningEntranceExam || '').replace(/"/g, '""')}"`,
-      `"${(s.q18_needExamGuidance || '').replace(/"/g, '""')}"`,
-      `"${(s.q19_collegesAwareness || '').replace(/"/g, '""')}"`,
-      `"${(s.q20_collegeTypePreference || '').replace(/"/g, '""')}"`,
-      `"${(s.q21_studyLocationPreference || '').replace(/"/g, '""')}"`,
-      `"${(s.q22_annualBudget || '').replace(/"/g, '""')}"`,
-      `"${(s.q23_govtScholarshipInfoInterest || '').replace(/"/g, '""')}"`,
-      `"${((s.q24_guidanceAreas || []).join('; ')).replace(/"/g, '""')}"`,
-      `"${(s.q25_biggestConfusion || '').replace(/"/g, '""')}"`
+      `"${(s.q18_competitiveExamsInterest || '').replace(/"/g, '""')}"`,
+      `"${(s.q19_jeeNeetPrepPlan || '').replace(/"/g, '""')}"`,
+      `"${(s.q20_jeeNeetFamiliarity || '').replace(/"/g, '""')}"`,
+      `"${(s.q21_needExamGuidance || s.q18_needExamGuidance || '').replace(/"/g, '""')}"`,
+      `"${(s.q22_collegesAwareness || s.q19_collegesAwareness || '').replace(/"/g, '""')}"`,
+      `"${(s.q23_collegeTypePreference || s.q20_collegeTypePreference || '').replace(/"/g, '""')}"`,
+      `"${(s.q24_studyLocationPreference || s.q21_studyLocationPreference || '').replace(/"/g, '""')}"`,
+      `"${(s.q25_annualBudget || s.q22_annualBudget || '').replace(/"/g, '""')}"`,
+      `"${(s.q26_govtScholarshipInfoInterest || s.q23_govtScholarshipInfoInterest || '').replace(/"/g, '""')}"`,
+      `"${((s.q27_guidanceAreas || s.q24_guidanceAreas || []).join('; ')).replace(/"/g, '""')}"`,
+      `"${(s.q28_biggestConfusion || s.q25_biggestConfusion || '').replace(/"/g, '""')}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -874,6 +1070,7 @@ export default function AdminDashboardPage() {
       icon: Building2,
       badge: pendingCount
     },
+    { id: 'competitive-exams', label: `Competitive Exams (${adminExams.length})`, icon: Trophy },
     { id: 'schools', label: `Schools Directory (${schools.length})`, icon: School },
     { id: 'surveys', label: `Survey Responses (${surveys.length})`, icon: ClipboardList },
     { id: 'reviews', label: 'Review Moderation', icon: CheckSquare },
@@ -1023,7 +1220,7 @@ export default function AdminDashboardPage() {
                   <span>Class 10 Student Survey Responses</span>
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  View and export all 25-question student career and education survey submissions.
+                  View and export all student career and education survey submissions (28 questions).
                 </p>
               </div>
 
@@ -1140,7 +1337,7 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            {/* Modal Dialog to View Full 25 Questions */}
+            {/* Modal Dialog to View Full 28 Questions */}
             {selectedSurvey && (
               <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
                 <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl text-left">
@@ -1208,10 +1405,13 @@ export default function AdminDashboardPage() {
                     <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 4: Entrance Examinations</h4>
                       <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">15. Heard about exams:</strong> {selectedSurvey.q15_entranceExamsAwareness}</p>
-                        <p><strong className="text-slate-200">16. Exams known:</strong> {selectedSurvey.q16_entranceExamsKnown}</p>
-                        <p><strong className="text-slate-200">17. Planning to write:</strong> {selectedSurvey.q17_planningEntranceExam}</p>
-                        <p><strong className="text-slate-200">18. Need exam guidance:</strong> {selectedSurvey.q18_needExamGuidance}</p>
+                        <p><strong className="text-slate-200">15. Heard about exams:</strong> {selectedSurvey.q15_entranceExamsAwareness || 'N/A'}</p>
+                        <p><strong className="text-slate-200">16. Exams known:</strong> {selectedSurvey.q16_entranceExamsKnown || 'N/A'}</p>
+                        <p><strong className="text-slate-200">17. Planning to write:</strong> {selectedSurvey.q17_planningEntranceExam || 'N/A'}</p>
+                        <p><strong className="text-slate-200">18. Competitive exams interest:</strong> <span className="text-indigo-400 font-semibold">{selectedSurvey.q18_competitiveExamsInterest || 'N/A'}</span></p>
+                        <p><strong className="text-slate-200">19. JEE/NEET prep plan:</strong> {selectedSurvey.q19_jeeNeetPrepPlan || 'N/A'}</p>
+                        <p><strong className="text-slate-200">20. JEE/NEET familiarity:</strong> {selectedSurvey.q20_jeeNeetFamiliarity || 'N/A'}</p>
+                        <p><strong className="text-slate-200">21. Need exam guidance:</strong> {selectedSurvey.q21_needExamGuidance || selectedSurvey.q18_needExamGuidance || 'N/A'}</p>
                       </div>
                     </div>
 
@@ -1219,21 +1419,21 @@ export default function AdminDashboardPage() {
                     <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 5: College Preferences</h4>
                       <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">19. Colleges awareness:</strong> {selectedSurvey.q19_collegesAwareness}</p>
-                        <p><strong className="text-slate-200">20. College type preference:</strong> {selectedSurvey.q20_collegeTypePreference}</p>
-                        <p><strong className="text-slate-200">21. Study location preference:</strong> {selectedSurvey.q21_studyLocationPreference}</p>
-                        <p><strong className="text-slate-200">22. Annual budget:</strong> <span className="text-emerald-400 font-bold">{selectedSurvey.q22_annualBudget}</span></p>
+                        <p><strong className="text-slate-200">22. Colleges awareness:</strong> {selectedSurvey.q22_collegesAwareness || selectedSurvey.q19_collegesAwareness || 'N/A'}</p>
+                        <p><strong className="text-slate-200">23. College type preference:</strong> {selectedSurvey.q23_collegeTypePreference || selectedSurvey.q20_collegeTypePreference || 'N/A'}</p>
+                        <p><strong className="text-slate-200">24. Study location preference:</strong> {selectedSurvey.q24_studyLocationPreference || selectedSurvey.q21_studyLocationPreference || 'N/A'}</p>
+                        <p><strong className="text-slate-200">25. Annual budget:</strong> <span className="text-emerald-400 font-bold">{selectedSurvey.q25_annualBudget || selectedSurvey.q22_annualBudget || 'N/A'}</span></p>
                       </div>
                     </div>
 
                     {/* Section 6 */}
                     <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-3">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 6: Career Guidance</h4>
-                      <p><strong className="text-slate-200">23. Govt scholarships interest:</strong> {selectedSurvey.q23_govtScholarshipInfoInterest}</p>
+                      <p><strong className="text-slate-200">26. Govt scholarships interest:</strong> {selectedSurvey.q26_govtScholarshipInfoInterest || selectedSurvey.q23_govtScholarshipInfoInterest || 'N/A'}</p>
                       <div>
-                        <strong className="text-slate-200 block mb-1">24. Guidance areas needed:</strong>
+                        <strong className="text-slate-200 block mb-1">27. Guidance areas needed:</strong>
                         <div className="flex flex-wrap gap-1.5">
-                          {(selectedSurvey.q24_guidanceAreas || []).map((area, idx) => (
+                          {(selectedSurvey.q27_guidanceAreas || selectedSurvey.q24_guidanceAreas || []).map((area, idx) => (
                             <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
                               ✓ {area}
                             </span>
@@ -1241,9 +1441,9 @@ export default function AdminDashboardPage() {
                         </div>
                       </div>
                       <div className="border-t border-slate-900 pt-2">
-                        <strong className="text-slate-200 block mb-1">25. Biggest confusion / concern:</strong>
+                        <strong className="text-slate-200 block mb-1">28. Biggest confusion / concern:</strong>
                         <p className="bg-slate-900/60 p-3 rounded-xl border border-slate-850 text-slate-300 italic leading-relaxed">
-                          &quot;{selectedSurvey.q25_biggestConfusion || 'No specific confusion noted.'}&quot;
+                          &quot;{selectedSurvey.q28_biggestConfusion || selectedSurvey.q25_biggestConfusion || 'No specific confusion noted.'}&quot;
                         </p>
                       </div>
                     </div>
@@ -2769,6 +2969,442 @@ export default function AdminDashboardPage() {
                             onClick={() => handleDeleteSchool(school.id, school.name)}
                             className="p-1.5 text-slate-600 hover:text-red-400 rounded-lg hover:bg-slate-900 transition cursor-pointer"
                             title="Delete permanently"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab: Competitive Exams Management */}
+        {activeTab === 'competitive-exams' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+              <div>
+                <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
+                  <Trophy className="w-5 h-5 text-amber-400" />
+                  <span>Competitive & Entrance Exams Control</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Manage all entrance examinations for 10th and 12th class students. Control active application windows, update dates, or publish new state & national entrances.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setShowAddExamForm(!showAddExamForm)}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>{showAddExamForm ? 'Close Form' : '+ Add New Exam'}</span>
+                </button>
+
+                <button
+                  onClick={handleSeedDefaultExams}
+                  className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition border border-slate-700 flex items-center gap-1.5 cursor-pointer"
+                  title="Synchronize all default verified exams into Firestore"
+                >
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Sync Defaults to Firestore</span>
+                </button>
+              </div>
+            </div>
+
+            {examMsg && (
+              <div className="p-3.5 bg-indigo-950/60 border border-indigo-800 text-indigo-300 rounded-xl text-xs flex items-center justify-between">
+                <span>{examMsg}</span>
+                <button onClick={() => setExamMsg('')} className="text-slate-400 hover:text-white">✕</button>
+              </div>
+            )}
+
+            {/* ADD EXAM FORM */}
+            {showAddExamForm && (
+              <form onSubmit={handleCreateExam} className="bg-slate-950 border border-slate-800 rounded-2xl p-6 space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                    <Trophy className="w-4 h-4 text-indigo-400" />
+                    <span>Create & Publish New Competitive Exam</span>
+                  </h3>
+                  <span className="text-xs text-indigo-400 font-semibold">Publishes Live Directly</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Name */}
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Full Exam Name *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Telangana Polytechnic Common Entrance Test (TS POLYCET 2026)"
+                      value={newExam.name}
+                      onChange={(e) => setNewExam({ ...newExam, name: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Short Code */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Short Code *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. TS POLYCET"
+                      value={newExam.shortCode}
+                      onChange={(e) => setNewExam({ ...newExam, shortCode: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Conducting Body */}
+                  <div className="space-y-1 sm:col-span-2">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Conducting Body / Authority *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. State Board of Technical Education and Training (SBTET), Hyderabad"
+                      value={newExam.conductingBody}
+                      onChange={(e) => setNewExam({ ...newExam, conductingBody: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Stage */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Target Stage</label>
+                    <select
+                      value={newExam.stage}
+                      onChange={(e) => setNewExam({ ...newExam, stage: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="AFTER_10TH">After 10th Class</option>
+                      <option value="AFTER_12TH">After Intermediate / 12th</option>
+                    </select>
+                  </div>
+
+                  {/* Category */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Stream / Category</label>
+                    <select
+                      value={newExam.category}
+                      onChange={(e) => setNewExam({ ...newExam, category: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="DIPLOMA_POLYTECHNIC">Polytechnic & Diploma</option>
+                      <option value="RESIDENTIAL_INTER">Free Residential Junior Colleges</option>
+                      <option value="ENGINEERING">Engineering & Technology</option>
+                      <option value="MEDICAL">Medical & Life Sciences</option>
+                      <option value="DEFENSE">Defence & Armed Forces</option>
+                      <option value="GOVT_JOBS">Central Government Jobs</option>
+                      <option value="SCHOLARSHIP">Scholarship Entrance</option>
+                      <option value="LAW">Law (NLUs)</option>
+                    </select>
+                  </div>
+
+                  {/* Level */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Jurisdiction Level</label>
+                    <select
+                      value={newExam.level}
+                      onChange={(e) => setNewExam({ ...newExam, level: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="STATE">Telangana State</option>
+                      <option value="NATIONAL">National Level</option>
+                    </select>
+                  </div>
+
+                  {/* Mode */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Exam Mode</label>
+                    <select
+                      value={newExam.mode}
+                      onChange={(e) => setNewExam({ ...newExam, mode: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="OFFLINE_OMR">Offline (OMR Sheet)</option>
+                      <option value="ONLINE_CBT">Online (Computer Based Test)</option>
+                    </select>
+                  </div>
+
+                  {/* Status */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Application Status</label>
+                    <select
+                      value={newExam.status}
+                      onChange={(e) => setNewExam({ ...newExam, status: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="APPLICATIONS_OPEN">Applications Open</option>
+                      <option value="UPCOMING">Upcoming</option>
+                      <option value="CLOSED">Closed</option>
+                    </select>
+                  </div>
+
+                  {/* Badge */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Badge / Highlight Tag</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. 100% Free Food & Hostel"
+                      value={newExam.badge}
+                      onChange={(e) => setNewExam({ ...newExam, badge: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Application End Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Application Deadline</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. April 28, 2026"
+                      value={newExam.applicationEndDate}
+                      onChange={(e) => setNewExam({ ...newExam, applicationEndDate: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Exam Date */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Exam Date</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. May 17, 2026"
+                      value={newExam.examDate}
+                      onChange={(e) => setNewExam({ ...newExam, examDate: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Official Website */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Official Portal URL *</label>
+                    <input
+                      type="url"
+                      placeholder="https://polycet.sbtet.telangana.gov.in"
+                      value={newExam.officialWebsite}
+                      onChange={(e) => setNewExam({ ...newExam, officialWebsite: e.target.value, applicationPortalUrl: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Registration Fee */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Registration Fee</label>
+                    <input
+                      type="text"
+                      placeholder="₹500 for OC/BC; ₹250 for SC/ST"
+                      value={newExam.applicationFee}
+                      onChange={(e) => setNewExam({ ...newExam, applicationFee: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Helpline */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Helpline Contact</label>
+                    <input
+                      type="text"
+                      placeholder="040-23222192 | help@telangana.gov.in"
+                      value={newExam.helplineContact}
+                      onChange={(e) => setNewExam({ ...newExam, helplineContact: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Education Eligibility */}
+                  <div className="space-y-1 sm:col-span-3">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Education Eligibility Details *</label>
+                    <textarea
+                      rows={2}
+                      value={newExam.eligibilityMinEducation}
+                      onChange={(e) => setNewExam({ ...newExam, eligibilityMinEducation: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                  {/* Description */}
+                  <div className="space-y-1 sm:col-span-3">
+                    <label className="text-[11px] font-bold uppercase text-slate-400">Exam Overview & Target Career *</label>
+                    <textarea
+                      rows={2}
+                      value={newExam.description}
+                      onChange={(e) => setNewExam({ ...newExam, description: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+
+                </div>
+
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddExamForm(false)}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md"
+                  >
+                    Publish Exam to Student Portal
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Filters Bar */}
+            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Filter exams..."
+                  value={examSearch}
+                  onChange={(e) => setExamSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <button
+                  onClick={() => setExamStageFilter('ALL')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    examStageFilter === 'ALL' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+                  }`}
+                >
+                  All ({adminExams.length})
+                </button>
+                <button
+                  onClick={() => setExamStageFilter('AFTER_10TH')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    examStageFilter === 'AFTER_10TH' ? 'bg-purple-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+                  }`}
+                >
+                  After 10th
+                </button>
+                <button
+                  onClick={() => setExamStageFilter('AFTER_12TH')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition ${
+                    examStageFilter === 'AFTER_12TH' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-white'
+                  }`}
+                >
+                  After 12th
+                </button>
+              </div>
+            </div>
+
+            {/* EXAMS LIST */}
+            {adminExamsLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-slate-950 rounded-xl animate-pulse" />
+                ))}
+              </div>
+            ) : adminExams.length === 0 ? (
+              <div className="text-center py-12 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+                <Trophy className="w-10 h-10 text-slate-600 mx-auto" />
+                <p className="text-xs text-slate-400">No competitive exams found in the live database.</p>
+                <button
+                  onClick={handleSeedDefaultExams}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition"
+                >
+                  Load 12 Default Telangana & National Exams
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {adminExams
+                  .filter((e) => {
+                    if (examStageFilter !== 'ALL' && e.stage !== examStageFilter) return false;
+                    if (examSearch.trim()) {
+                      const q = examSearch.toLowerCase();
+                      return (
+                        (e.name || '').toLowerCase().includes(q) ||
+                        (e.shortCode || '').toLowerCase().includes(q) ||
+                        (e.conductingBody || '').toLowerCase().includes(q)
+                      );
+                    }
+                    return true;
+                  })
+                  .map((exam) => {
+                    const isOpen = exam.status === 'APPLICATIONS_OPEN';
+                    const isUpcoming = exam.status === 'UPCOMING';
+
+                    return (
+                      <div
+                        key={exam.slug || exam.id}
+                        className="p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-extrabold text-sm text-indigo-400 font-display">
+                              {exam.shortCode}
+                            </span>
+                            <span className="text-xs font-bold text-slate-200">
+                              {exam.name}
+                            </span>
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
+                              {exam.stage === 'AFTER_10TH' ? 'After 10th' : 'After 12th'}
+                            </span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                              isOpen
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                                : isUpcoming
+                                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                                : 'bg-slate-800 text-slate-400 border-slate-700'
+                            }`}>
+                              {isOpen ? 'Active Application' : isUpcoming ? 'Upcoming' : 'Closed'}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-400 pt-0.5">
+                            <span className="truncate max-w-sm">{exam.conductingBody}</span>
+                            <span>•</span>
+                            <span>Deadline: <strong className="text-slate-300">{exam.applicationEndDate || 'TBA'}</strong></span>
+                            <span>•</span>
+                            <span>Exam: <strong className="text-indigo-300">{exam.examDate || 'TBA'}</strong></span>
+                          </div>
+                        </div>
+
+                        {/* Controls */}
+                        <div className="flex items-center gap-2 self-end md:self-center shrink-0">
+                          {/* Live Portal View Link */}
+                          <Link
+                            href={`/competitive-exams/${exam.slug}`}
+                            target="_blank"
+                            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-900 border border-slate-800 transition"
+                            title="View Public Profile on Student Portal"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </Link>
+
+                          {/* Toggle Status Button */}
+                          <button
+                            onClick={() => handleToggleExamStatus(exam)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
+                              isOpen
+                                ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                                : isUpcoming
+                                ? 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20'
+                                : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'
+                            }`}
+                            title="Click to cycle status between Open, Closed, and Upcoming"
+                          >
+                            {isOpen ? 'Mark Closed' : isUpcoming ? 'Mark Open' : 'Mark Upcoming'}
+                          </button>
+
+                          {/* Delete Exam */}
+                          <button
+                            onClick={() => handleDeleteExam(exam)}
+                            className="p-2 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-slate-900 transition cursor-pointer"
+                            title="Delete exam permanently"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

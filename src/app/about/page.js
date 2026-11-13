@@ -72,7 +72,7 @@ export default function AboutPage() {
     },
     {
       icon: Lightbulb,
-      title: '25-Question Diagnostic Survey',
+      title: 'Diagnostic Career Survey',
       desc: 'A groundbreaking student survey that pinpoints personal interests, family budget constraints, and post-10th confusions to provide instant college matches.'
     },
     {
@@ -448,7 +448,7 @@ export default function AboutPage() {
               Want Excellence Voices to visit your school or community?
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm max-w-xl leading-relaxed">
-              We conduct interactive career orientation workshops, live 25-question student diagnostics, and scholarship awareness seminars for Class 10 batches.
+              We conduct interactive career orientation workshops, live student diagnostics, and scholarship awareness seminars for Class 10 batches.
             </p>
           </div>
 
@@ -483,7 +483,7 @@ export default function AboutPage() {
               href="/survey"
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/30 transition active:scale-95 cursor-pointer"
             >
-              <span>Start 25-Question Survey</span>
+              <span>Start Diagnostic Survey</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link

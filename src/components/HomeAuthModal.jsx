@@ -92,7 +92,7 @@ export default function HomeAuthModal() {
               <ClipboardList className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-200">25-Question Class 10 Survey</p>
+              <p className="text-xs font-bold text-slate-200">Class 10 Student Survey</p>
               <p className="text-[11px] text-slate-400">Discover matching colleges based on your stream and budget</p>
             </div>
           </div>

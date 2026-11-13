@@ -119,6 +119,23 @@ async function main() {
   }
   console.log('Admission updates seeded.');
 
+  // -- SEED COMPETITIVE EXAMS --
+  console.log('Fetching competitive exams from SQLite...');
+  const sqliteExams = await prisma.competitiveExam.findMany();
+  console.log(`Found ${sqliteExams.length} competitive exams. Seeding to Firestore...`);
+  for (const exam of sqliteExams) {
+    const { id, createdAt, updatedAt, ...rest } = exam;
+    await setDoc(doc(db, 'competitive-exams', exam.slug), {
+      ...rest,
+      howToApplySteps: typeof rest.howToApplySteps === 'string' ? JSON.parse(rest.howToApplySteps) : rest.howToApplySteps,
+      documentsRequired: typeof rest.documentsRequired === 'string' ? JSON.parse(rest.documentsRequired) : rest.documentsRequired,
+      examPattern: typeof rest.examPattern === 'string' ? JSON.parse(rest.examPattern) : rest.examPattern,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString()
+    });
+  }
+  console.log('Competitive exams seeded.');
+
   // Seed profile document templates for default users
   console.log('Seeding default profiles into "users" collection...');
   

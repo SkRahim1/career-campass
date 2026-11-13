@@ -38,6 +38,9 @@ export default function Footer() {
               <li>
                 <Link href="/scholarships" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">Scholarships Directory</Link>
               </li>
+              <li>
+                <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-semibold text-indigo-600 dark:text-indigo-400">Competitive & Entrance Exams</Link>
+              </li>
             </ul>
           </div>
 

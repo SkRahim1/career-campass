@@ -4,8 +4,9 @@ import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
 import CareerCard from '@/components/CareerCard';
 import ScholarshipCard from '@/components/ScholarshipCard';
+import ExamCard from '@/components/ExamCard';
 import HomeAuthModal from '@/components/HomeAuthModal';
-import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList } from 'lucide-react';
+import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList, Trophy } from 'lucide-react';
 
 export default async function LandingPage() {
   const updates = await prisma.admissionUpdate.findMany({
@@ -39,6 +40,18 @@ export default async function LandingPage() {
   const careers = await prisma.career.findMany({
     take: 3
   });
+
+  const rawCompetitiveExams = await prisma.competitiveExam.findMany({
+    take: 3,
+    orderBy: { id: 'asc' }
+  });
+
+  const competitiveExams = rawCompetitiveExams.map(e => ({
+    ...e,
+    howToApplySteps: typeof e.howToApplySteps === 'string' ? JSON.parse(e.howToApplySteps) : e.howToApplySteps,
+    documentsRequired: typeof e.documentsRequired === 'string' ? JSON.parse(e.documentsRequired) : e.documentsRequired,
+    examPattern: typeof e.examPattern === 'string' ? JSON.parse(e.examPattern) : e.examPattern
+  }));
 
   const faqs = [
     {
@@ -357,6 +370,36 @@ export default async function LandingPage() {
         </div>
       </section>
 
+      {/* Competitive & Entrance Exams Section */}
+      <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              <Trophy className="w-3.5 h-3.5 text-amber-500" />
+              <span>Official Entrance Gateways</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
+              Upcoming Competitive & Entrance Exams
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl">
+              Complete guides for TS POLYCET, TG APRJC Residential CET, NDA, and national entrances. Check eligibility rules, where to apply, and step-by-step application walkthroughs.
+            </p>
+          </div>
+          <Link href="/competitive-exams" className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center gap-1 group shrink-0">
+            <span>Explore All Exams ({competitiveExams.length}+)</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {competitiveExams.map((exam) => (
+            <div key={exam.slug || exam.id}>
+              <ExamCard exam={exam} />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Class 10 Student Survey Feature Banner */}
       <section className="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-purple-900/20 via-indigo-900/30 to-pink-900/20 dark:from-purple-950/60 dark:via-indigo-950/60 dark:to-pink-950/40 border border-purple-500/25 dark:border-purple-500/30 rounded-3xl p-6 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-md text-left">
@@ -369,7 +412,7 @@ export default async function LandingPage() {
               Tell Us About Your Goals & Educational Preferences
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
-              Take our 25-question guidance survey to receive personalized stream matches, college suggestions in Hyderabad, and scholarship notifications tailored to your future plans.
+              Take our student guidance survey to receive personalized stream matches, college suggestions in Hyderabad, and scholarship notifications tailored to your future plans.
             </p>
           </div>
           <Link

@@ -16,6 +16,7 @@ async function main() {
   await prisma.career.deleteMany({});
   await prisma.scholarship.deleteMany({});
   await prisma.admissionUpdate.deleteMany({});
+  await prisma.competitiveExam.deleteMany({});
 
   // 2. Create Users (Super Admin and Student)
   const adminPasswordHash = await bcrypt.hash('admin123', 10);
@@ -970,6 +971,52 @@ async function main() {
   }
 
   console.log('Admission Updates seeded.');
+
+  // 8. Seed Competitive & Entrance Exams
+  console.log('Seeding Competitive & Entrance Exams...');
+  const { COMPETITIVE_EXAMS_DATA } = require('../src/data/competitiveExamsData.js');
+  for (const exam of COMPETITIVE_EXAMS_DATA) {
+    await prisma.competitiveExam.create({
+      data: {
+        slug: exam.slug,
+        name: exam.name,
+        shortCode: exam.shortCode,
+        conductingBody: exam.conductingBody,
+        stage: exam.stage,
+        category: exam.category,
+        level: exam.level || 'STATE',
+        mode: exam.mode || 'OFFLINE_OMR',
+        description: exam.description,
+        badge: exam.badge,
+        eligibilityMinEducation: exam.eligibilityMinEducation,
+        eligibilityAgeLimit: exam.eligibilityAgeLimit,
+        eligibilityMinMarks: exam.eligibilityMinMarks,
+        eligibilityDomicile: exam.eligibilityDomicile,
+        eligibilitySubjectRequirements: exam.eligibilitySubjectRequirements,
+        howToApplySteps: JSON.stringify(exam.howToApplySteps),
+        documentsRequired: JSON.stringify(exam.documentsRequired),
+        officialWebsite: exam.officialWebsite,
+        applicationPortalUrl: exam.applicationPortalUrl,
+        offlineCentres: exam.offlineCentres,
+        helplineContact: exam.helplineContact,
+        applicationFee: exam.applicationFee,
+        examDate: exam.examDate,
+        applicationStartDate: exam.applicationStartDate,
+        applicationEndDate: exam.applicationEndDate,
+        status: exam.status,
+        examDuration: exam.examDuration,
+        totalMarks: exam.totalMarks,
+        markingScheme: exam.markingScheme,
+        examPattern: JSON.stringify(exam.examPattern),
+        syllabusSummary: exam.syllabusSummary,
+        targetColleges: exam.targetColleges,
+        coursesOffered: exam.coursesOffered,
+        notificationPdfUrl: exam.notificationPdfUrl,
+        isFeatured: !!exam.isFeatured
+      }
+    });
+  }
+  console.log(`Competitive Exams seeded (${COMPETITIVE_EXAMS_DATA.length} exams).`);
   console.log('Database seeded successfully!');
 }
 

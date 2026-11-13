@@ -31,6 +31,7 @@ Career365Compass is organized into three interconnected portals:
 - **Documents & Downloads**: Instant download access to official College Prospectuses, Approved Fee Structure circulars, and brochures.
 - **Side-by-Side Comparison**: Compare up to 4 institutions side-by-side on fees, facilities, established year, and affiliation.
 - **25-Question Diagnostic Survey**: Personalized recommendation engine mapping stream preferences, budgets, and location proximity.
+- **Competitive & Entrance Exams Directory (`/competitive-exams`)**: Comprehensive guidance for Telangana and National entrance examinations (TS POLYCET, TG APRJC CET, TSWREIS Inter CET, AGRICET, NMMS, SSC MTS, TG EAPCET, JEE Main, NEET-UG, NDA & NA, CLAT). Includes detailed educational & age eligibility criteria, 5-step visual "How to Apply" walkthroughs, verified official portal links ("Where to Apply"), exam patterns, subject-wise marking breakdowns, and target college opportunities.
 
 ### 2. College Portal (Self-Registration & Institutional Management Dashboard)
 - **Self-Registration for Institutions (`/college-portal`)**:

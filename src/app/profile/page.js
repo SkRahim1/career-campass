@@ -195,7 +195,7 @@ export default function ProfilePage() {
               Take the Class 10 Educational Guidance Survey
             </h3>
             <p className="text-slate-300 text-xs leading-relaxed">
-              Complete your 25-question student survey to unlock instant college suggestions, stream eligibility roadmaps, and scholarship updates tailored to your career goal.
+              Complete your student survey to unlock instant college suggestions, stream eligibility roadmaps, and scholarship updates tailored to your career goal.
             </p>
           </div>
           <Link

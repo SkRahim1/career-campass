@@ -63,18 +63,21 @@ export default function SurveyPage() {
     q15_entranceExamsAwareness: '',
     q16_entranceExamsKnown: '',
     q17_planningEntranceExam: '',
-    q18_needExamGuidance: '',
+    q18_competitiveExamsInterest: '',
+    q19_jeeNeetPrepPlan: '',
+    q20_jeeNeetFamiliarity: '',
+    q21_needExamGuidance: '',
 
     // Section 5: College Preferences
-    q19_collegesAwareness: '',
-    q20_collegeTypePreference: '',
-    q21_studyLocationPreference: '',
-    q22_annualBudget: '',
+    q22_collegesAwareness: '',
+    q23_collegeTypePreference: '',
+    q24_studyLocationPreference: '',
+    q25_annualBudget: '',
 
     // Section 6: Career Guidance
-    q23_govtScholarshipInfoInterest: '',
-    q24_guidanceAreas: [], // Multi-select array
-    q25_biggestConfusion: '' // Long answer
+    q26_govtScholarshipInfoInterest: '',
+    q27_guidanceAreas: [], // Multi-select array
+    q28_biggestConfusion: '' // Long answer
   });
 
   const sections = [
@@ -125,16 +128,21 @@ export default function SurveyPage() {
       if (!formData.q15_entranceExamsAwareness) return 'Please answer Q15 about entrance exams.';
       if (!formData.q16_entranceExamsKnown) return 'Please answer Q16 about which exams you have heard about.';
       if (!formData.q17_planningEntranceExam) return 'Please answer Q17 about planning to write entrance exams.';
-      if (!formData.q18_needExamGuidance) return 'Please answer Q18 about entrance examination guidance.';
+      if (!formData.q18_competitiveExamsInterest) return 'Please answer Q18 about your interest in competitive entrance examinations.';
+      if (['JEE (Engineering)', 'NEET (Medical)', 'Both JEE and NEET'].includes(formData.q18_competitiveExamsInterest) && !formData.q19_jeeNeetPrepPlan) {
+        return 'Please select how you plan to prepare for JEE or NEET (Q19).';
+      }
+      if (!formData.q20_jeeNeetFamiliarity) return 'Please answer Q20 about your familiarity with JEE and NEET.';
+      if (!formData.q21_needExamGuidance) return 'Please answer Q21 about entrance examination guidance.';
     } else if (currentSection === 5) {
-      if (!formData.q19_collegesAwareness) return 'Please answer Q19 about colleges awareness.';
-      if (!formData.q20_collegeTypePreference) return 'Please answer Q20 about college type preference.';
-      if (!formData.q21_studyLocationPreference) return 'Please answer Q21 about preferred study location.';
-      if (!formData.q22_annualBudget) return 'Please answer Q22 about your annual education budget.';
+      if (!formData.q22_collegesAwareness) return 'Please answer Q22 about colleges awareness.';
+      if (!formData.q23_collegeTypePreference) return 'Please answer Q23 about college type preference.';
+      if (!formData.q24_studyLocationPreference) return 'Please answer Q24 about preferred study location.';
+      if (!formData.q25_annualBudget) return 'Please answer Q25 about your annual education budget.';
     } else if (currentSection === 6) {
-      if (!formData.q23_govtScholarshipInfoInterest) return 'Please answer Q23 about scholarships information.';
-      if (formData.q24_guidanceAreas.length === 0) return 'Please select at least one area where you need guidance (Q24).';
-      // Q25 is long answer - recommended
+      if (!formData.q26_govtScholarshipInfoInterest) return 'Please answer Q26 about scholarships information.';
+      if (formData.q27_guidanceAreas.length === 0) return 'Please select at least one area where you need guidance (Q27).';
+      // Q28 is long answer - recommended
     }
     return null;
   };
@@ -279,14 +287,17 @@ export default function SurveyPage() {
       q15_entranceExamsAwareness: '',
       q16_entranceExamsKnown: '',
       q17_planningEntranceExam: '',
-      q18_needExamGuidance: '',
-      q19_collegesAwareness: '',
-      q20_collegeTypePreference: '',
-      q21_studyLocationPreference: '',
-      q22_annualBudget: '',
-      q23_govtScholarshipInfoInterest: '',
-      q24_guidanceAreas: [],
-      q25_biggestConfusion: ''
+      q18_competitiveExamsInterest: '',
+      q19_jeeNeetPrepPlan: '',
+      q20_jeeNeetFamiliarity: '',
+      q21_needExamGuidance: '',
+      q22_collegesAwareness: '',
+      q23_collegeTypePreference: '',
+      q24_studyLocationPreference: '',
+      q25_annualBudget: '',
+      q26_govtScholarshipInfoInterest: '',
+      q27_guidanceAreas: [],
+      q28_biggestConfusion: ''
     });
     setCurrentSection(1);
     setSubmitted(false);
@@ -360,7 +371,7 @@ export default function SurveyPage() {
     return (
       <AuthRequiredGate
         featureName="Class 10 Student Survey"
-        featureDescription="Sign in or register to take the 25-Question Class 10 diagnostic survey and get personalized college suggestions."
+        featureDescription="Sign in or register to take the 28-Question Class 10 diagnostic survey and get personalized college suggestions."
         iconName="survey"
         redirectPath="/survey"
       >
@@ -403,7 +414,7 @@ export default function SurveyPage() {
               </div>
               <div>
                 <span className="text-slate-500 block text-[10px] uppercase">Annual Budget:</span>
-                <span className="text-slate-200 font-bold">{formData.q22_annualBudget || 'Not specified'}</span>
+                <span className="text-slate-200 font-bold">{formData.q25_annualBudget || formData.q22_annualBudget || 'Not specified'}</span>
               </div>
             </div>
           </div>
@@ -566,7 +577,7 @@ export default function SurveyPage() {
   return (
     <AuthRequiredGate
       featureName="Class 10 Student Survey"
-      featureDescription="Sign in or register to take the 25-Question Class 10 diagnostic survey and get personalized college suggestions."
+      featureDescription="Sign in or register to take the 28-Question Class 10 diagnostic survey and get personalized college suggestions."
       iconName="survey"
       redirectPath="/survey"
     >
@@ -591,7 +602,7 @@ export default function SurveyPage() {
       <div className="space-y-3 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 px-3.5 py-1 rounded-full text-xs font-semibold">
           <ClipboardList className="w-4 h-4" />
-          <span>Class 10 Student Survey • 25 Questions · 5–7 Minutes</span>
+          <span>Class 10 Student Survey • 28 Questions · 5–7 Minutes</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 font-display">
           Discover Your Path. Design Your Future.
@@ -1016,7 +1027,7 @@ export default function SurveyPage() {
         )}
 
         {/* ============================================================
-            SECTION 4: Entrance Examinations (Q15 - Q18)
+            SECTION 4: Entrance Examinations (Q15 - Q21)
         ============================================================ */}
         {currentSection === 4 && (
           <div className="space-y-8">
@@ -1097,7 +1108,82 @@ export default function SurveyPage() {
             {/* Q18 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                18. Would you like guidance about entrance examinations, eligibility and preparation? <span className="text-red-400">*</span>
+                18. Are you interested in appearing for any of the following competitive entrance examinations after Class 10? <span className="text-red-400">*</span>
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {[
+                  'JEE (Engineering)',
+                  'NEET (Medical)',
+                  'Both JEE and NEET',
+                  'Other entrance examinations',
+                  'Not interested in competitive exams',
+                  'Not sure yet'
+                ].map(opt => (
+                  <OptionCard
+                    key={opt}
+                    field="q18_competitiveExamsInterest"
+                    value={opt}
+                    label={opt}
+                    isSelected={formData.q18_competitiveExamsInterest === opt}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Q19 */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="block text-xs font-bold text-slate-200">
+                  19. If you are interested in JEE or NEET, how are you planning to prepare for the examination? {['JEE (Engineering)', 'NEET (Medical)', 'Both JEE and NEET'].includes(formData.q18_competitiveExamsInterest) ? <span className="text-red-400">*</span> : <span className="text-[10px] text-slate-500 font-normal">(Optional if not interested)</span>}
+                </label>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {[
+                  'Joining a coaching institute',
+                  'Taking online coaching/classes',
+                  'Preparing through self-study',
+                  'Joining a junior college with integrated coaching',
+                  'Preparing with school/college guidance',
+                  'Have not decided yet'
+                ].map(opt => (
+                  <OptionCard
+                    key={opt}
+                    field="q19_jeeNeetPrepPlan"
+                    value={opt}
+                    label={opt}
+                    isSelected={formData.q19_jeeNeetPrepPlan === opt}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Q20 */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-slate-200">
+                20. How familiar are you with the preparation process, eligibility and career opportunities associated with JEE and NEET? <span className="text-red-400">*</span>
+              </label>
+              <div className="space-y-2">
+                {[
+                  'I know everything about them.',
+                  'I have basic knowledge.',
+                  'I have heard about them but don\'t know much.',
+                  'I have no idea and need guidance.'
+                ].map(opt => (
+                  <OptionCard
+                    key={opt}
+                    field="q20_jeeNeetFamiliarity"
+                    value={opt}
+                    label={opt}
+                    isSelected={formData.q20_jeeNeetFamiliarity === opt}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Q21 */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold text-slate-200">
+                21. Would you like guidance about entrance examinations, eligibility and preparation? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                 {[
@@ -1107,10 +1193,10 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <CompactOptionCard
                     key={opt}
-                    field="q18_needExamGuidance"
+                    field="q21_needExamGuidance"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q18_needExamGuidance === opt}
+                    isSelected={formData.q21_needExamGuidance === opt}
                   />
                 ))}
               </div>
@@ -1119,7 +1205,7 @@ export default function SurveyPage() {
         )}
 
         {/* ============================================================
-            SECTION 5: College Preferences (Q19 - Q22)
+            SECTION 5: College Preferences (Q22 - Q25)
         ============================================================ */}
         {currentSection === 5 && (
           <div className="space-y-8">
@@ -1129,10 +1215,10 @@ export default function SurveyPage() {
               <p className="text-xs text-slate-400 mt-0.5">Budget, locations, and type of institution.</p>
             </div>
 
-            {/* Q19 */}
+            {/* Q22 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                19. Do you know any colleges where you can study after Class 10? <span className="text-red-400">*</span>
+                22. Do you know any colleges where you can study after Class 10? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
                 {[
@@ -1142,19 +1228,19 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <OptionCard
                     key={opt}
-                    field="q19_collegesAwareness"
+                    field="q22_collegesAwareness"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q19_collegesAwareness === opt}
+                    isSelected={formData.q22_collegesAwareness === opt}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Q20 */}
+            {/* Q23 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                20. What type of college would you prefer? <span className="text-red-400">*</span>
+                23. What type of college would you prefer? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {[
@@ -1167,19 +1253,19 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <OptionCard
                     key={opt}
-                    field="q20_collegeTypePreference"
+                    field="q23_collegeTypePreference"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q20_collegeTypePreference === opt}
+                    isSelected={formData.q23_collegeTypePreference === opt}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Q21 */}
+            {/* Q24 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                21. Where would you prefer to study? <span className="text-red-400">*</span>
+                24. Where would you prefer to study? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {[
@@ -1191,19 +1277,19 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <OptionCard
                     key={opt}
-                    field="q21_studyLocationPreference"
+                    field="q24_studyLocationPreference"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q21_studyLocationPreference === opt}
+                    isSelected={formData.q24_studyLocationPreference === opt}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Q22 */}
+            {/* Q25 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                22. What is your preferred annual education budget? <span className="text-red-400">*</span>
+                25. What is your preferred annual education budget? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {[
@@ -1217,10 +1303,10 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <OptionCard
                     key={opt}
-                    field="q22_annualBudget"
+                    field="q25_annualBudget"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q22_annualBudget === opt}
+                    isSelected={formData.q25_annualBudget === opt}
                   />
                 ))}
               </div>
@@ -1229,7 +1315,7 @@ export default function SurveyPage() {
         )}
 
         {/* ============================================================
-            SECTION 6: Career Guidance (Q23 - Q25)
+            SECTION 6: Career Guidance (Q26 - Q28)
         ============================================================ */}
         {currentSection === 6 && (
           <div className="space-y-8">
@@ -1239,10 +1325,10 @@ export default function SurveyPage() {
               <p className="text-xs text-slate-400 mt-0.5">Let us know how we can best support your aspirations.</p>
             </div>
 
-            {/* Q23 */}
+            {/* Q26 */}
             <div className="space-y-3">
               <label className="block text-xs font-bold text-slate-200">
-                23. Would you like information about government colleges, scholarships and fee reimbursement schemes? <span className="text-red-400">*</span>
+                26. Would you like information about government colleges, scholarships and fee reimbursement schemes? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                 {[
@@ -1252,20 +1338,20 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <CompactOptionCard
                     key={opt}
-                    field="q23_govtScholarshipInfoInterest"
+                    field="q26_govtScholarshipInfoInterest"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q23_govtScholarshipInfoInterest === opt}
+                    isSelected={formData.q26_govtScholarshipInfoInterest === opt}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Q24 - MULTI SELECT */}
+            {/* Q27 - MULTI SELECT */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="block text-xs font-bold text-slate-200">
-                  24. Which areas do you need guidance in? <span className="text-red-400">*</span>
+                  27. Which areas do you need guidance in? <span className="text-red-400">*</span>
                 </label>
                 <span className="text-[10px] text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded font-bold">
                   Select all that apply
@@ -1284,27 +1370,27 @@ export default function SurveyPage() {
                 ].map(opt => (
                   <MultiOptionCard
                     key={opt}
-                    field="q24_guidanceAreas"
+                    field="q27_guidanceAreas"
                     value={opt}
                     label={opt}
-                    isSelected={formData.q24_guidanceAreas.includes(opt)}
+                    isSelected={formData.q27_guidanceAreas.includes(opt)}
                   />
                 ))}
               </div>
             </div>
 
-            {/* Q25 - LONG ANSWER */}
+            {/* Q28 - LONG ANSWER */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 <label className="block text-xs font-bold text-slate-200">
-                  25. What is your biggest confusion or concern about your future after Class 10?
+                  28. What is your biggest confusion or concern about your future after Class 10?
                 </label>
                 <span className="text-[10px] text-slate-500">Long Answer</span>
               </div>
               <textarea
                 rows={4}
-                value={formData.q25_biggestConfusion}
-                onChange={(e) => handleInputChange('q25_biggestConfusion', e.target.value)}
+                value={formData.q28_biggestConfusion}
+                onChange={(e) => handleInputChange('q28_biggestConfusion', e.target.value)}
                 placeholder="Share your doubts freely, e.g. 'I am confused whether to choose MPC or Polytechnic', or 'I am worried about private college fee expenses'..."
                 className="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm leading-relaxed transition"
               />

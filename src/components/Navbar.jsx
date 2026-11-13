@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList, Info } from 'lucide-react';
+import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList, Info, Trophy } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -52,6 +52,10 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-5">
               <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Explore Colleges</Link>
               <Link href="/government-colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Govt Colleges</Link>
+              <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm flex items-center gap-1.5 text-indigo-600 dark:text-indigo-300 font-semibold">
+                <Trophy className="w-4 h-4 text-amber-500" />
+                <span>Competitive Exams</span>
+              </Link>
               <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Career Library</Link>
               <Link href="/scholarships" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Scholarships</Link>
               <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm flex items-center gap-1.5">
@@ -207,6 +211,25 @@ export default function Navbar() {
               <ChevronRight className="w-4 h-4 text-slate-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
+            {/* 3. Competitive Exams */}
+            <Link
+              href="/competitive-exams"
+              onClick={toggleMenu}
+              className="flex items-center gap-3.5 p-3 rounded-2xl bg-indigo-50/50 hover:bg-indigo-50 dark:bg-indigo-950/30 dark:hover:bg-indigo-950/50 border border-indigo-200/80 dark:border-indigo-800/80 hover:border-indigo-400 transition group text-left"
+            >
+              <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform shrink-0">
+                <Trophy className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-extrabold text-xs text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition flex items-center gap-1.5">
+                  <span>Competitive Exams</span>
+                  <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded bg-amber-400 text-slate-950">New</span>
+                </p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">POLYCET, APRJC, NDA & JEE guides</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
             {/* 3. Career Roadmaps */}
             <Link
               href="/careers"
@@ -266,7 +289,7 @@ export default function Navbar() {
               </div>
               <div className="space-y-0.5">
                 <p className="font-extrabold text-xs text-indigo-700 dark:text-indigo-300 transition">Student Survey</p>
-                <p className="text-[10px] text-slate-600 dark:text-slate-400">Class 10 guidance survey (25 questions)</p>
+                <p className="text-[10px] text-slate-600 dark:text-slate-400">Class 10 guidance survey (28 questions)</p>
               </div>
               <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
