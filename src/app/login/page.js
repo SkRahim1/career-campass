@@ -62,36 +62,21 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickLogin = async (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setError('');
-    setSubmitting(true);
-    try {
-      const loggedInUser = await login(demoEmail, demoPassword);
-      router.push(getRedirectTarget(loggedInUser.role));
-    } catch (err) {
-      setError(err.message || 'Login failed');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
-    <div className="relative min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-grid-pattern bg-radial-gradient">
+    <div className="relative min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-grid-pattern bg-radial-gradient transition-colors">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <Link href="/" className="inline-flex items-center gap-2 font-extrabold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
           <Compass className="w-8 h-8 text-indigo-400 animate-spin-slow" />
           <span>Career365Compass</span>
         </Link>
-        <h2 className="text-3xl font-extrabold text-slate-100">Welcome Back</h2>
-        <p className="text-slate-400 text-sm">
+        <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Welcome Back</h2>
+        <p className="text-slate-600 dark:text-slate-400 text-sm">
           Sign in to access saved colleges, compare options, and track recommendations.
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl py-8 px-6 sm:px-10 shadow-xl space-y-6">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl py-8 px-6 sm:px-10 shadow-xl space-y-6 text-slate-800 dark:text-slate-100">
           {redirectPath && (
             <div className="bg-indigo-500/10 border border-indigo-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-indigo-300">
               <Compass className="w-4 h-4 shrink-0 mt-0.5 text-indigo-400" />
@@ -109,7 +94,7 @@ export default function LoginPage() {
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Address */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-semibold text-slate-300">
+              <label htmlFor="email" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                 Email Address
               </label>
               <div className="relative rounded-xl shadow-sm">
@@ -123,7 +108,7 @@ export default function LoginPage() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                  className="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                 />
               </div>
             </div>
@@ -131,12 +116,15 @@ export default function LoginPage() {
             {/* Password */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label htmlFor="password" className="block text-xs font-semibold text-slate-300">
+                <label htmlFor="password" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                   Password
                 </label>
                 <Link
                   href="#"
-                  onClick={() => alert('Demo simulation: Click "Get Started" and register a new student account, or use: admin@career365compass.com / admin123')}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    alert('To reset your password, please contact administrator support at support@career365compass.com or create a new student account.');
+                  }}
                   className="text-xs font-medium text-indigo-400 hover:text-indigo-300 transition"
                 >
                   Forgot Password?
@@ -153,7 +141,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
+                  className="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                 />
               </div>
             </div>
@@ -168,48 +156,6 @@ export default function LoginPage() {
               <LogIn className="w-4 h-4" />
             </button>
           </form>
-
-          {/* 1-Click Zero-Error Demo Logins */}
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-indigo-400 block uppercase tracking-wider text-[11px]">Instant 1-Click Demo Sign In</span>
-              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.5 rounded-full">
-                Zero Error
-              </span>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('rahul@gmail.com', 'student123')}
-                disabled={submitting}
-                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition cursor-pointer"
-              >
-                <span className="block font-bold text-slate-200">👨‍🎓 Student</span>
-                <span className="text-[10px] text-slate-400">rahul@gmail.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin@career365compass.com', 'admin123')}
-                disabled={submitting}
-                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-purple-500/50 text-left transition cursor-pointer"
-              >
-                <span className="block font-bold text-slate-200">🛡️ Super Admin</span>
-                <span className="text-[10px] text-slate-400">admin@career...</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('college@career365compass.com', 'college123')}
-                disabled={submitting}
-                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition cursor-pointer"
-              >
-                <span className="block font-bold text-slate-200">🏛️ College</span>
-                <span className="text-[10px] text-slate-400">Representative</span>
-              </button>
-            </div>
-          </div>
 
           {/* College Portal Quick Link */}
           <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-xs text-center space-y-1">

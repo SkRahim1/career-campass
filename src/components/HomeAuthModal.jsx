@@ -46,26 +46,26 @@ export default function HomeAuthModal() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 dark:bg-slate-950/80 backdrop-blur-md animate-fadeIn">
       <div 
-        className="relative w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl text-left space-y-6 overflow-hidden animate-scaleUp"
+        className="relative w-full max-w-lg rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-2xl text-left space-y-6 overflow-hidden animate-scaleUp transition-colors"
         role="dialog"
         aria-modal="true"
       >
         {/* Background glow decoration */}
-        <div className="absolute -top-20 -right-20 w-44 h-44 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-44 h-44 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-20 -right-20 w-44 h-44 bg-indigo-600/10 dark:bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-44 h-44 bg-purple-600/10 dark:bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
         {/* Top bar with badge and close button */}
         <div className="flex items-center justify-between">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
             <Compass className="w-3.5 h-3.5 animate-spin-slow" />
             <span>Welcome to Career365Compass</span>
           </div>
 
           <button
             onClick={handleDismiss}
-            className="p-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/60 text-slate-400 hover:text-white transition cursor-pointer"
+            className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700/60 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
             aria-label="Close dialog"
           >
             <X className="w-4 h-4" />
@@ -74,46 +74,46 @@ export default function HomeAuthModal() {
 
         {/* Main Heading & Intro */}
         <div className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-snug">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-snug">
             Sign In to Unlock{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
               Personalized Guidance
             </span>
           </h2>
-          <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
             Please sign in to take the Class 10 student survey, search verified colleges, and explore customized career roadmaps.
           </p>
         </div>
 
         {/* Key Features Quick List */}
         <div className="space-y-2.5">
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div className="p-2 rounded-lg bg-indigo-600/20 text-indigo-400 shrink-0">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80">
+            <div className="p-2 rounded-lg bg-indigo-100 dark:bg-indigo-600/20 text-indigo-600 dark:text-indigo-400 shrink-0">
               <ClipboardList className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-200">Class 10 Student Survey</p>
-              <p className="text-[11px] text-slate-400">Discover matching colleges based on your stream and budget</p>
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Class 10 Student Survey</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Discover matching colleges based on your stream and budget</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div className="p-2 rounded-lg bg-purple-600/20 text-purple-400 shrink-0">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80">
+            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-600/20 text-purple-600 dark:text-purple-400 shrink-0">
               <Building2 className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-200">Search 54+ Verified Colleges</p>
-              <p className="text-[11px] text-slate-400">Fees, facilities, streams, and student ratings across Hyderabad</p>
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Search 54+ Verified Colleges</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Fees, facilities, streams, and student ratings across Hyderabad</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
-            <div className="p-2 rounded-lg bg-pink-600/20 text-pink-400 shrink-0">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80">
+            <div className="p-2 rounded-lg bg-pink-100 dark:bg-pink-600/20 text-pink-600 dark:text-pink-400 shrink-0">
               <BookOpen className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-slate-200">50+ Career Roadmaps</p>
-              <p className="text-[11px] text-slate-400">Clear eligibility, salary ranges, and step-by-step guides</p>
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-200">50+ Career Roadmaps</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Clear eligibility, salary ranges, and step-by-step guides</p>
             </div>
           </div>
         </div>
@@ -133,18 +133,18 @@ export default function HomeAuthModal() {
           <Link
             href="/register"
             onClick={handleDismiss}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-sm transition active:scale-[0.98] cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-bold text-sm transition active:scale-[0.98] cursor-pointer"
           >
-            <UserPlus className="w-4 h-4 text-purple-400" />
+            <UserPlus className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             <span>Create Free Student Account</span>
           </Link>
         </div>
 
         {/* Cancel / Browse Preview Link */}
-        <div className="text-center pt-1 border-t border-slate-800/60">
+        <div className="text-center pt-1 border-t border-slate-200 dark:border-slate-800/60">
           <button
             onClick={handleDismiss}
-            className="text-xs text-slate-400 hover:text-slate-200 transition font-medium cursor-pointer"
+            className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition font-medium cursor-pointer"
           >
             Maybe later, browse preview first →
           </button>

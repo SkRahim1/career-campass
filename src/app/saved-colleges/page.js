@@ -61,7 +61,7 @@ export default function SavedCollegesPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex-grow flex items-center justify-center bg-slate-950 min-h-[60vh]">
+      <div className="flex-grow flex items-center justify-center bg-slate-50 dark:bg-slate-950 min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
       </div>
     );
@@ -82,9 +82,9 @@ export default function SavedCollegesPage() {
 
   if (user.role === 'SUPER_ADMIN') {
     return (
-      <div className="flex-grow bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh]">
+      <div className="flex-grow bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh]">
         <Heart className="w-16 h-16 text-slate-700 mb-4" />
-        <h2 className="text-2xl font-bold text-slate-200">Admin Account</h2>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">Admin Account</h2>
         <p className="text-slate-500 max-w-sm mt-2 mb-6">Bookmarking colleges is only available for student accounts.</p>
         <Link href="/admin" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition cursor-pointer">
           Go to Admin Panel
@@ -94,7 +94,7 @@ export default function SavedCollegesPage() {
   }
 
   return (
-    <div className="flex-grow bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
+    <div className="flex-grow bg-slate-50 dark:bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Bookmark className="w-6 h-6 text-yellow-500" />
@@ -104,9 +104,9 @@ export default function SavedCollegesPage() {
       </div>
 
       {colleges.length === 0 ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center max-w-md mx-auto space-y-4 shadow-md">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center max-w-md mx-auto space-y-4 shadow-md">
           <Sparkles className="w-10 h-10 text-indigo-400 mx-auto" />
-          <h2 className="text-lg font-bold text-slate-200">No saved colleges yet</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">No saved colleges yet</h2>
           <p className="text-slate-500 text-xs">Browse the college directory and tap the heart icon to save colleges for future reference.</p>
           <Link href="/colleges" className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition cursor-pointer">
             Explore Colleges

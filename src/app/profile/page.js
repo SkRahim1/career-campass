@@ -140,7 +140,7 @@ export default function ProfilePage() {
 
   if (authLoading) {
     return (
-      <div className="flex-grow flex items-center justify-center bg-slate-950 min-h-[60vh]">
+      <div className="flex-grow flex items-center justify-center bg-slate-50 dark:bg-slate-950 min-h-[60vh]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500"></div>
       </div>
     );
@@ -148,9 +148,9 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="flex-grow bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh] bg-radial-gradient bg-grid-pattern">
+      <div className="flex-grow bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh] bg-radial-gradient bg-grid-pattern">
         <User className="w-16 h-16 text-slate-700 mb-4" />
-        <h2 className="text-2xl font-bold text-slate-200">Sign in to view your profile</h2>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">Sign in to view your profile</h2>
         <p className="text-slate-500 max-w-sm mt-2 mb-6">Create a profile to save colleges, compare options, and track recommendations.</p>
         <Link href="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition cursor-pointer">
           Sign In
@@ -171,7 +171,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-grid-pattern bg-radial-gradient flex-grow">
+    <div className="bg-slate-50 dark:bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-grid-pattern bg-radial-gradient flex-grow">
       
       {/* Title */}
       <div className="space-y-3 text-left">
@@ -194,7 +194,7 @@ export default function ProfilePage() {
             <h3 className="text-slate-100 font-extrabold text-base">
               Take the Class 10 Educational Guidance Survey
             </h3>
-            <p className="text-slate-300 text-xs leading-relaxed">
+            <p className="text-slate-700 dark:text-slate-300 text-xs leading-relaxed">
               Complete your student survey to unlock instant college suggestions, stream eligibility roadmaps, and scholarship updates tailored to your career goal.
             </p>
           </div>
@@ -211,8 +211,8 @@ export default function ProfilePage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Side: Profile Form */}
-        <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md text-left">
-          <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-6 border-b border-slate-850 pb-4">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md text-left">
+          <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 mb-6 border-b border-slate-200 dark:border-slate-850 pb-4">
             <Settings className="w-5 h-5 text-indigo-400" />
             <span>Profile Details & Preferences</span>
           </h2>
@@ -247,7 +247,7 @@ export default function ProfilePage() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="block w-full px-4 py-3 pl-10 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-indigo-500 text-xs transition"
+                      className="block w-full px-4 py-3 pl-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 text-xs transition"
                     />
                     <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
                   </div>
@@ -263,7 +263,7 @@ export default function ProfilePage() {
                       required
                       value={formData.mobileNumber}
                       onChange={handleChange}
-                      className="block w-full px-4 py-3 pl-10 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-indigo-500 text-xs transition"
+                      className="block w-full px-4 py-3 pl-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 text-xs transition"
                     />
                     <Smartphone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
                   </div>
@@ -272,7 +272,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Section B: Academic Parameters */}
-            <div className="space-y-6 border-t border-slate-850 pt-6">
+            <div className="space-y-6 border-t border-slate-200 dark:border-slate-850 pt-6">
               <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
                 <Award className="w-3.5 h-3.5 text-indigo-400" />
                 <span>2. Academic Background</span>
@@ -308,7 +308,7 @@ export default function ProfilePage() {
                     name="percentage10th"
                     value={formData.percentage10th}
                     onChange={handleChange}
-                    className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-full h-1.5 bg-slate-50 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                   />
                   <div className="flex justify-between text-[8px] text-slate-500">
                     <span>35% (Pass)</span>
@@ -319,7 +319,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Section C: Preferred Stream selection grid */}
-            <div className="space-y-4 border-t border-slate-850 pt-6">
+            <div className="space-y-4 border-t border-slate-200 dark:border-slate-850 pt-6">
               <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
                 <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
                 <span>3. Preferred Educational Path</span>
@@ -336,7 +336,7 @@ export default function ProfilePage() {
                       className={`p-4 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center gap-1 select-none ${
                         isSelected
                           ? 'bg-indigo-600/15 border-indigo-500 text-indigo-300 shadow-md shadow-indigo-550/5'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-350'
+                          : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-400 hover:text-slate-350'
                       }`}
                     >
                       <span className="font-extrabold text-sm block">{stream.id}</span>
@@ -348,7 +348,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Section D: Budget & Preferences */}
-            <div className="space-y-6 border-t border-slate-850 pt-6">
+            <div className="space-y-6 border-t border-slate-200 dark:border-slate-850 pt-6">
               <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
                 <DollarSign className="w-3.5 h-3.5 text-indigo-400" />
                 <span>4. Admission & Budget Preferences</span>
@@ -369,7 +369,7 @@ export default function ProfilePage() {
                     name="budget"
                     value={formData.budget}
                     onChange={handleChange}
-                    className="w-full h-1.5 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500"
+                    className="w-full h-1.5 bg-slate-50 dark:bg-slate-950 rounded-lg appearance-none cursor-pointer accent-indigo-500"
                   />
                   <div className="flex justify-between text-[8px] text-slate-500">
                     <span>₹1,000</span>
@@ -387,7 +387,7 @@ export default function ProfilePage() {
                       value={formData.preferredLocation}
                       onChange={handleChange}
                       placeholder="e.g. Madhapur, Uppal, Secunderabad"
-                      className="block w-full px-4 py-3 pl-10 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-650 focus:outline-none focus:border-indigo-500 text-xs transition"
+                      className="block w-full px-4 py-3 pl-10 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 placeholder-slate-650 focus:outline-none focus:border-indigo-500 text-xs transition"
                     />
                     <Home className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
                   </div>
@@ -404,7 +404,7 @@ export default function ProfilePage() {
                     className={`py-3 px-4 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
                       formData.hostelRequired
                         ? 'bg-indigo-650/15 border-indigo-500 text-indigo-300'
-                        : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-300'
+                        : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 text-slate-400 hover:text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <span>Required</span>
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                     className={`py-3 px-4 rounded-xl border text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
                       !formData.hostelRequired
                         ? 'bg-indigo-650/15 border-indigo-500 text-indigo-300'
-                        : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-slate-300'
+                        : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 text-slate-400 hover:text-slate-700 dark:text-slate-300'
                     }`}
                   >
                     <span>Not Required</span>
@@ -438,7 +438,7 @@ export default function ProfilePage() {
 
         {/* Right Side: Recommendations Panel */}
         <div className="space-y-6 text-left">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-md space-y-6">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 shadow-md space-y-6">
             <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-indigo-400 animate-pulse" />
               <span>Personalized Matches</span>
@@ -452,13 +452,13 @@ export default function ProfilePage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
               </div>
             ) : recommendations.length === 0 ? (
-              <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
+              <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
                 No matching colleges found. Try increasing your fee budget or modifying filters.
               </div>
             ) : (
               <div className="space-y-4">
                 {recommendations.map((college) => (
-                  <div key={college.id} className="relative bg-slate-950 border border-slate-800 rounded-2xl p-4 hover:border-indigo-500/30 transition group flex flex-col justify-between gap-4">
+                  <div key={college.id} className="relative bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 hover:border-indigo-500/30 transition group flex flex-col justify-between gap-4">
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="text-[9px] font-extrabold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded">
@@ -478,7 +478,7 @@ export default function ProfilePage() {
                       </p>
                     </div>
                     
-                    <div className="flex justify-between items-center border-t border-slate-800/60 pt-2 text-[10px]">
+                    <div className="flex justify-between items-center border-t border-slate-200 dark:border-slate-800/60 pt-2 text-[10px]">
                       <span className="font-bold text-slate-350">
                         ₹{college.streams.find(s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase())?.annualFee.toLocaleString('en-IN') || 'TBD'} / yr
                       </span>

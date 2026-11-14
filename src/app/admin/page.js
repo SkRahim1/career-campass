@@ -431,6 +431,27 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Robust college status helpers
+  const isCollegeRejected = (c) => {
+    if (!c) return false;
+    const status = String(c.status || '').toUpperCase();
+    return status === 'REJECTED';
+  };
+
+  const isCollegeApproved = (c) => {
+    if (!c) return false;
+    if (isCollegeRejected(c)) return false;
+    const status = String(c.status || '').toUpperCase();
+    return (c.isApproved === true || c.isApproved === 'true' || status === 'APPROVED') && c.isLive !== false;
+  };
+
+  const isCollegePending = (c) => {
+    if (!c) return false;
+    if (isCollegeRejected(c)) return false;
+    if (isCollegeApproved(c)) return false;
+    return true;
+  };
+
   const fetchCollegesList = async () => {
     setAdminCollegesLoading(true);
     try {
@@ -441,10 +462,33 @@ export default function AdminDashboardPage() {
       snap.forEach((doc) => {
         list.push({ id: doc.id, ...doc.data() });
       });
+
+      // Synchronize & merge any locally registered / pending colleges from browser storage
+      if (typeof window !== 'undefined') {
+        try {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith('career365_college_')) {
+              const localCol = JSON.parse(localStorage.getItem(k));
+              if (localCol && localCol.id) {
+                const existingIdx = list.findIndex(c => String(c.id) === String(localCol.id));
+                if (existingIdx >= 0) {
+                  list[existingIdx] = { ...list[existingIdx], ...localCol };
+                } else {
+                  list.push(localCol);
+                }
+              }
+            }
+          }
+        } catch (storageErr) {
+          console.warn('LocalStorage college sync warning:', storageErr);
+        }
+      }
+
       // Sort: PENDING first, then by createdAt / id desc
       list.sort((a, b) => {
-        const aPending = a.status === 'PENDING' || (!a.isApproved && a.registeredByEmail);
-        const bPending = b.status === 'PENDING' || (!b.isApproved && b.registeredByEmail);
+        const aPending = isCollegePending(a);
+        const bPending = isCollegePending(b);
         if (aPending && !bPending) return -1;
         if (!aPending && bPending) return 1;
         return (b.createdAt || 0) > (a.createdAt || 0) ? 1 : -1;
@@ -469,6 +513,23 @@ export default function AdminDashboardPage() {
         approvedAt: new Date().toISOString(),
         publishedAt: new Date().toISOString()
       });
+
+      // Update in localStorage cache if present
+      if (typeof window !== 'undefined') {
+        const localKey = `career365_college_${collegeId}`;
+        const item = localStorage.getItem(localKey);
+        if (item) {
+          try {
+            const parsed = JSON.parse(item);
+            parsed.status = 'APPROVED';
+            parsed.isApproved = true;
+            parsed.verified = true;
+            parsed.isLive = true;
+            localStorage.setItem(localKey, JSON.stringify(parsed));
+          } catch (e) {}
+        }
+      }
+
       setApprovalMsg('College approved and published live to Student Directory!');
       setTimeout(() => setApprovalMsg(''), 4000);
       fetchCollegesList();
@@ -493,6 +554,21 @@ export default function AdminDashboardPage() {
         isApproved: newLive,
         publishedAt: newLive ? new Date().toISOString() : null
       });
+
+      if (typeof window !== 'undefined') {
+        const localKey = `career365_college_${collegeId}`;
+        const item = localStorage.getItem(localKey);
+        if (item) {
+          try {
+            const parsed = JSON.parse(item);
+            parsed.isLive = newLive;
+            parsed.status = newLive ? 'APPROVED' : 'UNPUBLISHED';
+            parsed.isApproved = newLive;
+            localStorage.setItem(localKey, JSON.stringify(parsed));
+          } catch (e) {}
+        }
+      }
+
       setApprovalMsg(newLive ? 'College is now PUBLISHED LIVE on Student Directory!' : 'College has been UNPUBLISHED (taken offline).');
       setTimeout(() => setApprovalMsg(''), 4500);
       fetchCollegesList();
@@ -523,6 +599,23 @@ export default function AdminDashboardPage() {
         rejectionRemarks: remarks || 'Institutional details need revision',
         rejectedAt: new Date().toISOString()
       });
+
+      if (typeof window !== 'undefined') {
+        const localKey = `career365_college_${collegeId}`;
+        const item = localStorage.getItem(localKey);
+        if (item) {
+          try {
+            const parsed = JSON.parse(item);
+            parsed.status = 'REJECTED';
+            parsed.isApproved = false;
+            parsed.verified = false;
+            parsed.isLive = false;
+            parsed.rejectionRemarks = remarks || 'Institutional details need revision';
+            localStorage.setItem(localKey, JSON.stringify(parsed));
+          } catch (e) {}
+        }
+      }
+
       setApprovalMsg('College marked as rejected / revisions requested.');
       setTimeout(() => setApprovalMsg(''), 4000);
       setShowRejectInput(false);
@@ -558,6 +651,11 @@ export default function AdminDashboardPage() {
       const { doc, deleteDoc } = await import('firebase/firestore');
       const { db } = await import('@/lib/firebase');
       await deleteDoc(doc(db, 'colleges', String(collegeId)));
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem(`career365_college_${collegeId}`);
+      }
+
       fetchCollegesList();
       fetchMetrics();
       setSelectedReviewCollege(null);
@@ -688,9 +786,18 @@ export default function AdminDashboardPage() {
       });
 
       const collegesList = [];
+      let pendingCollegesCount = 0;
       collegesSnap.forEach((doc) => {
-        collegesList.push({ id: doc.id, ...doc.data() });
+        const item = { id: doc.id, ...doc.data() };
+        collegesList.push(item);
+        if (isCollegePending(item)) {
+          pendingCollegesCount++;
+        }
       });
+
+      if (adminColleges.length === 0 && collegesList.length > 0) {
+        setAdminColleges(collegesList);
+      }
 
       const mostSavedColleges = Object.keys(bookmarkCounts)
         .map(id => {
@@ -734,6 +841,7 @@ export default function AdminDashboardPage() {
         totalReviews,
         totalStudents,
         totalSurveys,
+        pendingCount: pendingCollegesCount,
         mostSavedColleges,
         topRatedColleges
       });
@@ -998,6 +1106,12 @@ export default function AdminDashboardPage() {
 
       await setDoc(doc(db, 'colleges', String(nextId)), payload);
 
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem(`career365_college_${nextId}`, JSON.stringify(payload));
+        } catch (e) {}
+      }
+
       setCreatedCollegeSuccess({
         id: String(nextId),
         name: payload.name,
@@ -1057,9 +1171,7 @@ export default function AdminDashboardPage() {
     );
   }
 
-  const pendingColleges = adminColleges.filter(
-    (c) => c.status === 'PENDING' || (!c.isApproved && c.registeredByEmail)
-  );
+  const pendingColleges = adminColleges.filter(isCollegePending);
   const pendingCount = pendingColleges.length;
 
   const tabs = [
@@ -1079,48 +1191,113 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient bg-grid-pattern flex-grow text-left">
+    <div className="py-6 sm:py-8 lg:py-10 px-3 sm:px-6 lg:px-8 xl:px-10 w-full max-w-[1600px] mx-auto space-y-6 sm:space-y-8 bg-radial-gradient bg-grid-pattern flex-grow text-left transition-colors">
       
-      {/* Title */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <LayoutDashboard className="w-8 h-8 text-purple-400" />
-          <h1 className="text-3xl font-extrabold text-slate-100 font-display">Super Admin Dashboard</h1>
+      {/* Title & Quick Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-900 pb-5">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 shrink-0">
+              <LayoutDashboard className="w-6 h-6 sm:w-7 sm:h-7" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display tracking-tight">Super Admin Dashboard</h1>
+              <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                Moderate colleges, verify applications, manage high schools, and publish live admission updates.
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-slate-400 text-sm">
-          Publish admission announcements, moderate student reviews, review analytical metrics, and expand directories.
-        </p>
+
+        {/* Quick Shortcut Pills */}
+        <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+          <button
+            type="button"
+            onClick={() => setActiveTab('add-college')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer shadow-md ${
+              activeTab === 'add-college'
+                ? 'bg-purple-600 text-white shadow-purple-600/30'
+                : 'bg-purple-50 hover:bg-purple-600 text-purple-700 hover:text-white dark:bg-purple-600/15 dark:hover:bg-purple-600 dark:text-purple-300 dark:hover:text-white border border-purple-200 dark:border-purple-500/30'
+            }`}
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>+ Add College</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab('colleges-approvals');
+              setCollegeFilter('PENDING');
+            }}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition cursor-pointer ${
+              pendingCount > 0
+                ? 'bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40 dark:hover:bg-amber-500/30 animate-pulse'
+                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+            <span>Pending Approvals {pendingCount > 0 && `(${pendingCount})`}</span>
+          </button>
+        </div>
       </div>
 
-      {/* Tabs list */}
-      <div className="flex overflow-x-auto gap-2 border-b border-slate-900 pb-2">
+      {/* Mobile Tab Selector (shown only on small screens) */}
+      <div className="sm:hidden space-y-1.5">
+        <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Navigate Dashboard Section</label>
+        <div className="relative">
+          <select
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value)}
+            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-bold text-xs rounded-xl py-3 pl-4 pr-10 appearance-none focus:outline-none focus:border-purple-500 shadow-sm cursor-pointer"
+          >
+            {tabs.map((tab) => (
+              <option key={tab.id} value={tab.id}>
+                {tab.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+            <span className="text-xs">▼</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs list (Horizontal scroll on sm and desktop) */}
+      <div className="flex overflow-x-auto gap-2 border-b border-slate-200 dark:border-slate-900 pb-3 scrollbar-none snap-x">
         {tabs.map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-purple-600 text-white shadow-md shadow-purple-500/10'
-                  : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200'
+              className={`px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 snap-start cursor-pointer ${
+                isActive
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
+                  : 'bg-white dark:bg-slate-900/90 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-850 shadow-xs'
               }`}
             >
-              <Icon className="w-4 h-4" />
+              <Icon className="w-4 h-4 shrink-0" />
               <span>{tab.label}</span>
+              {tab.badge > 0 && (
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-amber-500 text-slate-950 font-black">
+                  {tab.badge}
+                </span>
+              )}
             </button>
           );
         })}
       </div>
 
       {/* Control Tab Panels */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md">
+      <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800/90 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl backdrop-blur-xs text-slate-800 dark:text-slate-100 transition-colors">
         
         {/* Tab 1: Analytics */}
         {activeTab === 'analytics' && (
           <div className="space-y-8">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
-              <BarChart3 className="w-5 h-5 text-purple-400" />
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+              <BarChart3 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               <span>Application KPIs</span>
             </h2>
 
@@ -1133,29 +1310,34 @@ export default function AdminDashboardPage() {
             ) : (
               <div className="space-y-8">
                 {/* Visual Counters */}
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
-                    <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Colleges Listed</span>
-                    <p className="text-slate-200 text-2xl sm:text-3xl font-extrabold">{metrics.totalColleges}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-center space-y-1">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Colleges Listed</span>
+                    <p className="text-slate-900 dark:text-slate-200 text-xl sm:text-2xl lg:text-3xl font-extrabold">{metrics.totalColleges}</p>
                   </div>
                   <div
-                    onClick={() => setActiveTab('colleges-approvals')}
-                    className="bg-slate-950 border border-amber-500/30 rounded-2xl p-5 text-center space-y-1.5 cursor-pointer hover:border-amber-500 transition"
+                    onClick={() => {
+                      setActiveTab('colleges-approvals');
+                      setCollegeFilter('PENDING');
+                    }}
+                    className="bg-amber-50 dark:bg-slate-950 border border-amber-300 dark:border-amber-500/30 rounded-2xl p-4 sm:p-5 text-center space-y-1 cursor-pointer hover:border-amber-500 transition hover:bg-amber-100 dark:hover:bg-amber-500/5 shadow-xs"
                   >
-                    <span className="text-amber-400 text-[10px] uppercase font-bold tracking-wide">Pending Verifications</span>
-                    <p className="text-amber-400 text-2xl sm:text-3xl font-extrabold">{pendingCount}</p>
+                    <span className="text-amber-800 dark:text-amber-400 text-[10px] uppercase font-bold tracking-wide">Pending Verifications</span>
+                    <p className="text-amber-700 dark:text-amber-400 text-xl sm:text-2xl lg:text-3xl font-extrabold">
+                      {adminColleges.length > 0 ? pendingCount : (metrics.pendingCount ?? pendingCount)}
+                    </p>
                   </div>
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
-                    <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Registered Students</span>
-                    <p className="text-slate-200 text-2xl sm:text-3xl font-extrabold">{metrics.totalStudents}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-center space-y-1">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Registered Students</span>
+                    <p className="text-slate-900 dark:text-slate-200 text-xl sm:text-2xl lg:text-3xl font-extrabold">{metrics.totalStudents}</p>
                   </div>
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
-                    <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Survey Responses</span>
-                    <p className="text-purple-400 text-2xl sm:text-3xl font-extrabold">{metrics.totalSurveys ?? 0}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-center space-y-1">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Survey Responses</span>
+                    <p className="text-purple-600 dark:text-purple-400 text-xl sm:text-2xl lg:text-3xl font-extrabold">{metrics.totalSurveys ?? 0}</p>
                   </div>
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 text-center space-y-1.5">
-                    <span className="text-slate-500 text-[10px] uppercase font-bold tracking-wide">Total Reviews</span>
-                    <p className="text-slate-200 text-2xl sm:text-3xl font-extrabold">{metrics.totalReviews}</p>
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 text-center space-y-1 col-span-2 sm:col-span-1">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Total Reviews</span>
+                    <p className="text-slate-900 dark:text-slate-200 text-xl sm:text-2xl lg:text-3xl font-extrabold">{metrics.totalReviews}</p>
                   </div>
                 </div>
 
@@ -1163,18 +1345,18 @@ export default function AdminDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
                   {/* Saved Ranking */}
                   <div className="space-y-4">
-                    <h3 className="text-slate-100 font-bold text-sm flex items-center gap-2">
-                      <Heart className="w-4 h-4 text-red-400 fill-current" />
+                    <h3 className="text-slate-900 dark:text-slate-900 dark:text-slate-100 font-bold text-sm flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-red-500 fill-current" />
                       <span>Most Bookmarked Colleges</span>
                     </h3>
-                    <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 divide-y divide-slate-900/60">
+                    <div className="bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 divide-y divide-slate-200 dark:divide-slate-900/60 shadow-xs">
                       {metrics.mostSavedColleges.length === 0 ? (
                         <p className="text-slate-500 text-xs py-4 text-center">No bookmarks recorded yet.</p>
                       ) : (
                         metrics.mostSavedColleges.map((c, idx) => (
                           <div key={idx} className="py-2.5 flex justify-between items-center text-xs">
-                            <span className="font-semibold text-slate-300">{c.name}</span>
-                            <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded font-bold">{c.count} saves</span>
+                            <span className="font-semibold text-slate-800 dark:text-slate-200">{c.name}</span>
+                            <span className="bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 px-2 py-0.5 rounded font-bold">{c.count} saves</span>
                           </div>
                         ))
                       )}
@@ -1183,21 +1365,21 @@ export default function AdminDashboardPage() {
 
                   {/* Rating ranking */}
                   <div className="space-y-4">
-                    <h3 className="text-slate-100 font-bold text-sm flex items-center gap-2">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <h3 className="text-slate-900 dark:text-slate-900 dark:text-slate-100 font-bold text-sm flex items-center gap-2">
+                      <Star className="w-4 h-4 text-amber-500 fill-current" />
                       <span>Highest Rated Colleges</span>
                     </h3>
-                    <div className="bg-slate-950 rounded-2xl border border-slate-800 p-4 divide-y divide-slate-900/60">
+                    <div className="bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 divide-y divide-slate-200 dark:divide-slate-900/60 shadow-xs">
                       {metrics.topRatedColleges.length === 0 ? (
                         <p className="text-slate-500 text-xs py-4 text-center">No ratings approved yet.</p>
                       ) : (
                         metrics.topRatedColleges.map((c, idx) => (
                           <div key={idx} className="py-2.5 flex justify-between items-center text-xs">
-                            <span className="font-semibold text-slate-300">{c.name}</span>
-                            <div className="flex items-center gap-1.5 font-bold text-yellow-400">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200">{c.name}</span>
+                            <div className="flex items-center gap-1.5 font-bold text-amber-500 dark:text-yellow-400">
                               <Star className="w-3.5 h-3.5 fill-current" />
                               <span>{c.rating}</span>
-                              <span className="text-slate-500 text-[10px] font-normal">({c.reviewsCount} reviews)</span>
+                              <span className="text-slate-500 dark:text-slate-400 text-[10px] font-normal">({c.reviewsCount} reviews)</span>
                             </div>
                           </div>
                         ))
@@ -1213,9 +1395,9 @@ export default function AdminDashboardPage() {
         {/* Tab: Survey Responses */}
         {activeTab === 'surveys' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <ClipboardList className="w-5 h-5 text-purple-400" />
                   <span>Class 10 Student Survey Responses</span>
                 </h2>
@@ -1235,7 +1417,7 @@ export default function AdminDashboardPage() {
                 </button>
                 <button
                   onClick={fetchSurveys}
-                  className="bg-slate-950 hover:bg-slate-850 text-slate-300 border border-slate-800 font-bold px-3 py-2.5 rounded-xl text-xs transition cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 dark:hover:bg-slate-850 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 font-bold px-3 py-2.5 rounded-xl text-xs transition cursor-pointer"
                   title="Refresh"
                 >
                   ↻ Refresh
@@ -1250,7 +1432,7 @@ export default function AdminDashboardPage() {
                 placeholder="Search by student name, school, career, or area..."
                 value={surveySearch}
                 onChange={(e) => setSurveySearch(e.target.value)}
-                className="w-full sm:w-80 px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-500 text-xs focus:outline-none focus:border-purple-500"
+                className="w-full sm:w-80 px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 text-xs focus:outline-none focus:border-purple-500"
               />
               <span className="text-xs text-slate-500 font-semibold self-start sm:self-center">
                 Total Submissions: <strong className="text-purple-400">{surveys.length}</strong>
@@ -1262,16 +1444,16 @@ export default function AdminDashboardPage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
               </div>
             ) : surveys.length === 0 ? (
-              <div className="bg-slate-950 rounded-2xl border border-slate-800 p-12 text-center space-y-2">
+              <div className="bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-12 text-center space-y-2">
                 <ClipboardList className="w-10 h-10 text-slate-600 mx-auto" />
-                <p className="text-slate-300 font-bold text-sm">No survey responses recorded yet.</p>
+                <p className="text-slate-800 dark:text-slate-300 font-bold text-sm">No survey responses recorded yet.</p>
                 <p className="text-slate-500 text-xs">Share the survey link with 10th-class students to start collecting guidance data.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-slate-800">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                    <tr className="bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
                       <th className="p-4">Student</th>
                       <th className="p-4">School & Class</th>
                       <th className="p-4">Career Goal</th>
@@ -1281,7 +1463,7 @@ export default function AdminDashboardPage() {
                       <th className="p-4 text-center">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-slate-900/40">
                     {surveys
                       .filter(s => {
                         if (!surveySearch.trim()) return true;
@@ -1294,13 +1476,13 @@ export default function AdminDashboardPage() {
                         );
                       })
                       .map((s) => (
-                        <tr key={s.id} className="hover:bg-slate-950/20 transition">
+                        <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/20 transition">
                           <td className="p-4">
-                            <p className="font-bold text-slate-200">{s.q1_fullName || 'N/A'}</p>
+                            <p className="font-bold text-slate-900 dark:text-slate-200">{s.q1_fullName || 'N/A'}</p>
                             <p className="text-[10px] text-slate-500">{s.q5_location || ''} {s.q4_mobileNumber ? `• ${s.q4_mobileNumber}` : ''}</p>
                           </td>
                           <td className="p-4">
-                            <p className="font-semibold text-slate-300">{s.q2_schoolName || 'N/A'}</p>
+                            <p className="font-semibold text-slate-800 dark:text-slate-300">{s.q2_schoolName || 'N/A'}</p>
                             <span className="text-[10px] bg-slate-950 text-slate-400 border border-slate-800 px-2 py-0.5 rounded font-bold">
                               {s.q3_classSection || '10th'}
                             </span>
@@ -1315,7 +1497,7 @@ export default function AdminDashboardPage() {
                               {s.q12_intermediateStream || 'N/A'}
                             </span>
                           </td>
-                          <td className="p-4 text-slate-300 font-medium">
+                          <td className="p-4 text-slate-700 dark:text-slate-300 font-medium">
                             {s.q22_annualBudget || 'N/A'}
                           </td>
                           <td className="p-4 text-slate-500 text-[10px]">
@@ -1340,15 +1522,15 @@ export default function AdminDashboardPage() {
             {/* Modal Dialog to View Full 28 Questions */}
             {selectedSurvey && (
               <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl text-left">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl text-left text-slate-800 dark:text-slate-100">
                   
                   {/* Modal Header */}
-                  <div className="flex justify-between items-start border-b border-slate-800 pb-4">
+                  <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
                     <div>
                       <span className="text-[10px] uppercase font-extrabold tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-full">
                         Class 10 Guidance Profile
                       </span>
-                      <h3 className="text-xl font-bold text-slate-100 mt-1">
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
                         {selectedSurvey.q1_fullName}
                       </h3>
                       <p className="text-xs text-slate-400">
@@ -1367,7 +1549,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-6 text-xs text-slate-300">
                     
                     {/* Section 1 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 1: Student Information</h4>
                       <div className="grid grid-cols-2 gap-2 text-slate-400">
                         <p><strong className="text-slate-200">1. Full Name:</strong> {selectedSurvey.q1_fullName}</p>
@@ -1379,7 +1561,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Section 2 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 2: Career Aspirations</h4>
                       <div className="space-y-1.5 text-slate-400">
                         <p><strong className="text-slate-200">6. Future Goal:</strong> <span className="text-purple-300 font-bold">{selectedSurvey.q6_careerGoal}</span></p>
@@ -1391,7 +1573,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Section 3 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 3: Education After Class 10</h4>
                       <div className="space-y-1.5 text-slate-400">
                         <p><strong className="text-slate-200">11. Path after 10th:</strong> {selectedSurvey.q11_pathAfter10th}</p>
@@ -1402,7 +1584,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Section 4 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 4: Entrance Examinations</h4>
                       <div className="space-y-1.5 text-slate-400">
                         <p><strong className="text-slate-200">15. Heard about exams:</strong> {selectedSurvey.q15_entranceExamsAwareness || 'N/A'}</p>
@@ -1416,7 +1598,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Section 5 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-2">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 5: College Preferences</h4>
                       <div className="space-y-1.5 text-slate-400">
                         <p><strong className="text-slate-200">22. Colleges awareness:</strong> {selectedSurvey.q22_collegesAwareness || selectedSurvey.q19_collegesAwareness || 'N/A'}</p>
@@ -1427,7 +1609,7 @@ export default function AdminDashboardPage() {
                     </div>
 
                     {/* Section 6 */}
-                    <div className="bg-slate-950 p-4 rounded-2xl border border-slate-850 space-y-3">
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-3">
                       <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 6: Career Guidance</h4>
                       <p><strong className="text-slate-200">26. Govt scholarships interest:</strong> {selectedSurvey.q26_govtScholarshipInfoInterest || selectedSurvey.q23_govtScholarshipInfoInterest || 'N/A'}</p>
                       <div>
@@ -1469,7 +1651,7 @@ export default function AdminDashboardPage() {
         {/* Tab 2: Reviews Moderation */}
         {activeTab === 'reviews' && (
           <div className="space-y-6">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
               <CheckSquare className="w-5 h-5 text-purple-400" />
               <span>Reviews Queue & Moderation</span>
             </h2>
@@ -1481,10 +1663,10 @@ export default function AdminDashboardPage() {
             ) : reviews.length === 0 ? (
               <p className="text-slate-500 text-xs py-8 text-center">No student reviews written in the system yet.</p>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-slate-850">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+                    <tr className="bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
                       <th className="p-4">Student</th>
                       <th className="p-4">College</th>
                       <th className="p-4">Rating</th>
@@ -1493,19 +1675,19 @@ export default function AdminDashboardPage() {
                       <th className="p-4 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-slate-900/40">
                     {reviews.map((r) => (
-                      <tr key={r.id} className="hover:bg-slate-950/20 transition">
+                      <tr key={r.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/20 transition">
                         <td className="p-4">
-                          <p className="font-bold text-slate-200">{r.user?.name}</p>
+                          <p className="font-bold text-slate-900 dark:text-slate-200">{r.user?.name}</p>
                           <p className="text-[10px] text-slate-500">{r.user?.email}</p>
                         </td>
-                        <td className="p-4 font-semibold text-slate-300">{r.college?.name}</td>
+                        <td className="p-4 font-semibold text-slate-800 dark:text-slate-300">{r.college?.name}</td>
                         <td className="p-4 font-bold text-yellow-400 flex items-center gap-0.5 mt-1.5">
                           <Star className="w-3.5 h-3.5 fill-current" />
                           <span>{r.rating}</span>
                         </td>
-                        <td className="p-4 text-slate-400 max-w-xs truncate" title={r.reviewText}>
+                        <td className="p-4 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={r.reviewText}>
                           {r.reviewText}
                         </td>
                         <td className="p-4 font-bold">
@@ -1546,14 +1728,14 @@ export default function AdminDashboardPage() {
         {/* Tab 3: Admission Updates News */}
         {activeTab === 'updates' && (
           <div className="space-y-8">
-            <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
               <Bell className="w-5 h-5 text-purple-400" />
               <span>Publish Admission update</span>
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
               {/* Form */}
-              <form onSubmit={handlePublishUpdate} className="lg:col-span-1 bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+              <form onSubmit={handlePublishUpdate} className="lg:col-span-1 bg-slate-50 dark:bg-slate-950 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
                 <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 flex items-center gap-1">
                   <Megaphone className="w-4 h-4 text-purple-400" />
                   <span>Create Announcement</span>
@@ -1637,7 +1819,7 @@ export default function AdminDashboardPage() {
                 ) : updates.length === 0 ? (
                   <p className="text-slate-500 text-xs text-center py-8">No announcements published.</p>
                 ) : (
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 divide-y divide-slate-900/60 max-h-96 overflow-y-auto">
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 divide-y divide-slate-200 dark:divide-slate-900/60 max-h-96 overflow-y-auto">
                     {updates.map((u) => (
                       <div key={u.id} className="py-3 flex justify-between items-start gap-4 text-xs">
                         <div className="space-y-1">
@@ -1667,9 +1849,9 @@ export default function AdminDashboardPage() {
         {/* Tab 4: Add New College Profile */}
         {activeTab === 'add-college' && (
           <div className="space-y-6">
-            <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <PlusCircle className="w-5 h-5 text-purple-400" />
                   <span>Create & Publish College Profile</span>
                 </h2>
@@ -1681,7 +1863,7 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 onClick={() => setActiveTab('colleges-approvals')}
-                className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition cursor-pointer self-start sm:self-auto flex items-center gap-1.5"
               >
                 <Building2 className="w-3.5 h-3.5 text-purple-400" />
                 <span>View College Directory</span>
@@ -1743,19 +1925,22 @@ export default function AdminDashboardPage() {
               </div>
             )}
 
-            <form onSubmit={handleCreateCollege} className="space-y-8">
+            <form onSubmit={handleCreateCollege} className="space-y-6 sm:space-y-8 w-full">
               {collegeMsg && !createdCollegeSuccess && (
-                <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs p-3 rounded-xl max-w-xl">
+                <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs p-3 rounded-xl w-full">
                   {collegeMsg}
                 </div>
               )}
 
               {/* 1. Basic specifications */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">1. Institutional Identity & Demographics</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
-                  <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">College Name <span className="text-red-400">*</span></label>
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-purple-400" />
+                  <span>1. Institutional Identity & Demographics</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 text-xs">
+                  <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">College Name <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="name"
@@ -1763,17 +1948,17 @@ export default function AdminDashboardPage() {
                       value={collegeForm.name}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Methodist Junior College"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Ownership Type</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Ownership Type</label>
                     <select
                       name="ownership"
                       value={collegeForm.ownership}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition cursor-pointer"
                     >
                       <option value="GOVERNMENT">Government Only</option>
                       <option value="PRIVATE">Private Only</option>
@@ -1782,12 +1967,12 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Course Category</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Course Category</label>
                     <select
                       name="category"
                       value={collegeForm.category}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition cursor-pointer"
                     >
                       <option value="JUNIOR_COLLEGE">Junior College (11th & 12th)</option>
                       <option value="POLYTECHNIC">Polytechnic Diploma</option>
@@ -1798,12 +1983,12 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">District</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">District</label>
                     <select
                       name="district"
                       value={collegeForm.district}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition cursor-pointer"
                     >
                       <option value="Hyderabad">Hyderabad</option>
                       <option value="Medchal-Malkajgiri">Medchal-Malkajgiri</option>
@@ -1819,48 +2004,48 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Affiliation & Board</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Affiliation & Board</label>
                     <input
                       type="text"
                       name="affiliation"
                       value={collegeForm.affiliation}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Board of Intermediate Education, Telangana (TSBIE)"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Board / College Code</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Board / College Code</label>
                     <input
                       type="text"
                       name="boardCode"
                       value={collegeForm.boardCode}
                       onChange={handleCollegeChange}
                       placeholder="e.g. TS-HYD-5021"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition font-mono"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Established Year</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Established Year</label>
                     <input
                       type="number"
                       name="establishedYear"
                       value={collegeForm.establishedYear}
                       onChange={handleCollegeChange}
                       placeholder="e.g. 1995"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Gender Demographics</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Gender Demographics</label>
                     <select
                       name="genderType"
                       value={collegeForm.genderType}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition cursor-pointer"
                     >
                       <option value="CO_ED">Co-Education</option>
                       <option value="BOYS">Boys Only</option>
@@ -1869,8 +2054,8 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
 
-                <div className="space-y-1.5 text-xs">
-                  <label className="font-semibold text-slate-300">Description <span className="text-red-400">*</span></label>
+                <div className="space-y-1.5 text-xs pt-1">
+                  <label className="font-semibold text-slate-700 dark:text-slate-300">Description <span className="text-red-400">*</span></label>
                   <textarea
                     name="description"
                     rows="3"
@@ -1878,17 +2063,20 @@ export default function AdminDashboardPage() {
                     value={collegeForm.description}
                     onChange={handleCollegeChange}
                     placeholder="Provide a brief historical and academic description of the institution..."
-                    className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                   ></textarea>
                 </div>
               </div>
 
               {/* 2. Contact and Location specifications */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">2. Campus Address & Admissions Helpline</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs">
-                  <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Street Address <span className="text-red-400">*</span></label>
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-purple-400" />
+                  <span>2. Campus Address & Admissions Helpline</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 text-xs">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Street Address <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="address"
@@ -1896,24 +2084,24 @@ export default function AdminDashboardPage() {
                       value={collegeForm.address}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Abids, Hyderabad, TS 500001"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Nearby Landmark / Area</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Nearby Landmark / Area</label>
                     <input
                       type="text"
                       name="nearbyLandmark"
                       value={collegeForm.nearbyLandmark}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Near GPO / Metro Station"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Official Phone Number <span className="text-red-400">*</span></label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Official Phone Number <span className="text-red-400">*</span></label>
                     <input
                       type="text"
                       name="phone"
@@ -1921,7 +2109,7 @@ export default function AdminDashboardPage() {
                       value={collegeForm.phone}
                       onChange={handleCollegeChange}
                       placeholder="e.g. 040-12345678 or 9876543210"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
@@ -1936,158 +2124,167 @@ export default function AdminDashboardPage() {
                       value={collegeForm.whatsappNumber}
                       onChange={handleCollegeChange}
                       placeholder="e.g. +91 98765 43210"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-emerald-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Contact Email</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Contact Email</label>
                     <input
                       type="email"
                       name="email"
                       value={collegeForm.email}
                       onChange={handleCollegeChange}
                       placeholder="e.g. admissions@college.edu.in"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Official Website URL</label>
+                  <div className="space-y-1.5 sm:col-span-2 lg:col-span-3">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Official Website URL</label>
                     <input
                       type="url"
                       name="website"
                       value={collegeForm.website}
                       onChange={handleCollegeChange}
                       placeholder="e.g. https://www.college.edu.in"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
                 </div>
               </div>
 
               {/* 3. Leadership & Authorized Representative */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">3. Institutional Leadership & Principal</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-purple-400" />
+                  <span>3. Institutional Leadership & Principal</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-xs">
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Principal / Head of Institution Name</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Principal / Head of Institution Name</label>
                     <input
                       type="text"
                       name="principalName"
                       value={collegeForm.principalName}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Dr. K. Radhakrishna, M.Sc., Ph.D."
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Designation / Role</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Designation / Role</label>
                     <input
                       type="text"
                       name="principalDesignation"
                       value={collegeForm.principalDesignation}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Principal / Campus Director"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2 text-xs">
-                    <label className="font-semibold text-slate-300">Principal Message / Institutional Motto</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Principal Message / Institutional Motto</label>
                     <input
                       type="text"
                       name="principalMessage"
                       value={collegeForm.principalMessage}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Committed to academic excellence and nurturing future technocrats and civil servants."
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
                 </div>
               </div>
 
               {/* 4. Admissions, Key Dates & Scholarships */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">4. Admissions Key Dates, Scholarships & Documents</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-purple-400" />
+                  <span>4. Admissions Key Dates, Scholarships & Documents</span>
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-xs">
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Application Cycle Start Date</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Application Cycle Start Date</label>
                     <input
                       type="date"
                       name="admissionStartDate"
                       value={collegeForm.admissionStartDate}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="font-semibold text-slate-300">Application Last Date / Deadline</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Application Last Date / Deadline</label>
                     <input
                       type="date"
                       name="admissionEndDate"
                       value={collegeForm.admissionEndDate}
                       onChange={handleCollegeChange}
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="font-semibold text-slate-300">Admission Procedure & Walk-in Instructions</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Admission Procedure & Walk-in Instructions</label>
                     <input
                       type="text"
                       name="admissionProcedure"
                       value={collegeForm.admissionProcedure}
                       onChange={handleCollegeChange}
                       placeholder="e.g. Direct walk-in with SSC 10th Marks Memo, Transfer Certificate, and 3 passport photos."
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="font-semibold text-slate-300">Online Application / Admission Form URL</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Online Application / Admission Form URL</label>
                     <input
                       type="url"
                       name="applicationLink"
                       value={collegeForm.applicationLink}
                       onChange={handleCollegeChange}
                       placeholder="e.g. https://www.college.edu.in/admissions/apply"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="font-semibold text-slate-300">Available Scholarships & Concessions</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Available Scholarships & Concessions</label>
                     <textarea
                       name="scholarships"
                       rows="2"
                       value={collegeForm.scholarships}
                       onChange={handleCollegeChange}
                       placeholder="e.g. 50% tuition waiver for >9.5 GPA in 10th class, Telangana ePASS post-matric reimbursement, sports concessions."
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     ></textarea>
                   </div>
 
                   <div className="space-y-1.5 sm:col-span-2">
-                    <label className="font-semibold text-slate-300">College Prospectus / Brochure PDF URL</label>
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">College Prospectus / Brochure PDF URL</label>
                     <input
                       type="url"
                       name="prospectusUrl"
                       value={collegeForm.prospectusUrl}
                       onChange={handleCollegeChange}
                       placeholder="e.g. https://www.college.edu.in/brochure-2026.pdf"
-                      className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                     />
                   </div>
                 </div>
               </div>
 
               {/* 5. Facilities flags */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">5. Campus Facilities & Infrastructure</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-slate-300 bg-slate-950 p-5 rounded-2xl border border-slate-850">
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  <span>5. Campus Facilities & Infrastructure</span>
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 text-xs text-slate-300 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                   {[
                     { key: 'hasHostel', label: 'Hostel' },
                     { key: 'hasTransport', label: 'Transport Bus' },
@@ -2096,12 +2293,12 @@ export default function AdminDashboardPage() {
                     { key: 'hasSports', label: 'Sports' },
                     { key: 'hasPlayground', label: 'Playground' },
                     { key: 'hasWifi', label: 'Campus Wi-Fi' },
-                    { key: 'hasSmartClassroom', label: 'Smart Classrooms' },
-                    { key: 'hasCctv', label: 'CCTV Surveillance' },
+                    { key: 'hasSmartClassroom', label: 'Smart Class' },
+                    { key: 'hasCctv', label: 'CCTV' },
                     { key: 'hasComputerLabs', label: 'Computer Labs' },
-                    { key: 'hasCafeteria', label: 'Cafeteria Canteen' },
+                    { key: 'hasCafeteria', label: 'Cafeteria' },
                   ].map((fac) => (
-                    <div key={fac.key} className="flex items-center gap-2">
+                    <div key={fac.key} className="flex items-center gap-2 py-1">
                       <input
                         type="checkbox"
                         id={`form-${fac.key}`}
@@ -2110,32 +2307,35 @@ export default function AdminDashboardPage() {
                         onChange={handleCollegeChange}
                         className="w-4 h-4 bg-slate-900 border-slate-800 rounded text-purple-600 focus:ring-0 cursor-pointer"
                       />
-                      <label htmlFor={`form-${fac.key}`} className="select-none cursor-pointer">{fac.label}</label>
+                      <label htmlFor={`form-${fac.key}`} className="select-none cursor-pointer text-slate-200">{fac.label}</label>
                     </div>
                   ))}
                 </div>
 
-                <div className="space-y-1.5 text-xs">
-                  <label className="font-semibold text-slate-300">Facility Description / Notes</label>
+                <div className="space-y-1.5 text-xs pt-1">
+                  <label className="font-semibold text-slate-700 dark:text-slate-300">Facility Description / Notes</label>
                   <input
                     type="text"
                     name="facilityNotes"
                     value={collegeForm.facilityNotes}
                     onChange={handleCollegeChange}
                     placeholder="e.g. AC computer labs with 100+ terminals, RO purified water, separate hostel for girls."
-                    className="block w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-purple-500"
+                    className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
                   />
                 </div>
               </div>
 
               {/* 6. Stream sub-form */}
-              <div className="space-y-4">
-                <div className="flex justify-between items-center border-b border-slate-850 pb-2">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400">6. Academic Streams & Fee Configurations</h3>
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-850 pb-2">
+                  <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 flex items-center gap-2">
+                    <GraduationCap className="w-4 h-4 text-purple-400" />
+                    <span>6. Academic Streams & Fee Configurations</span>
+                  </h3>
                   <button
                     type="button"
                     onClick={addStreamField}
-                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1 rounded-lg text-[10px] transition cursor-pointer"
+                    className="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition cursor-pointer self-start sm:self-auto"
                   >
                     + Add Stream
                   </button>
@@ -2143,24 +2343,24 @@ export default function AdminDashboardPage() {
 
                 <div className="space-y-4">
                   {streamsList.map((s, idx) => (
-                    <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3 relative">
+                    <div key={idx} className="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 space-y-3 relative">
                       {streamsList.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeStreamField(idx)}
-                          className="absolute top-3 right-3 text-slate-500 hover:text-red-400 transition cursor-pointer text-xs"
+                          className="absolute top-3 right-3 text-slate-400 hover:text-red-400 transition cursor-pointer text-xs font-semibold px-2 py-0.5 rounded bg-slate-950/50"
                         >
-                          Remove
+                          ✕ Remove
                         </button>
                       )}
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                         <div className="space-y-1.5">
                           <label className="font-semibold text-slate-400">Stream Name</label>
                           <select
                             value={s.streamName}
                             onChange={(e) => handleStreamChange(idx, 'streamName', e.target.value)}
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none"
+                            className="block w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none text-xs"
                           >
                             <option value="MPC">MPC (Maths, Physics, Chem)</option>
                             <option value="BiPC">BiPC (Biology, Physics, Chem)</option>
@@ -2181,7 +2381,7 @@ export default function AdminDashboardPage() {
                             value={s.annualFee}
                             onChange={(e) => handleStreamChange(idx, 'annualFee', e.target.value)}
                             placeholder="e.g. 35000"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                            className="block w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 text-xs"
                           />
                         </div>
 
@@ -2190,7 +2390,7 @@ export default function AdminDashboardPage() {
                           <select
                             value={s.admissionType}
                             onChange={(e) => handleStreamChange(idx, 'admissionType', e.target.value)}
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                            className="block w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 text-xs"
                           >
                             <option value="DIRECT">Direct Walk-in Admission</option>
                             <option value="MERIT_BASED">Merit-Based (SSC Marks)</option>
@@ -2205,7 +2405,7 @@ export default function AdminDashboardPage() {
                             value={s.requiredMarks}
                             onChange={(e) => handleStreamChange(idx, 'requiredMarks', e.target.value)}
                             placeholder="e.g. Pass or 7.5 GPA"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                            className="block w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 text-xs"
                           />
                         </div>
 
@@ -2216,7 +2416,7 @@ export default function AdminDashboardPage() {
                             value={s.reservationInfo}
                             onChange={(e) => handleStreamChange(idx, 'reservationInfo', e.target.value)}
                             placeholder="e.g. Standard Telangana state quotas apply"
-                            className="block w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500"
+                            className="block w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 focus:outline-none focus:border-purple-500 text-xs"
                           />
                         </div>
                       </div>
@@ -2226,17 +2426,20 @@ export default function AdminDashboardPage() {
               </div>
 
               {/* 7. PUBLICATION & LIVE STATUS TOGGLE */}
-              <div className="space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-slate-400 border-b border-slate-850 pb-2">7. Publication & Live Status</h3>
+              <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-4 shadow-xs">
+                <h3 className="font-bold text-xs uppercase tracking-wider text-purple-400 border-b border-slate-850 pb-2 flex items-center gap-2">
+                  <Radio className="w-4 h-4 text-purple-400" />
+                  <span>7. Publication & Live Status</span>
+                </h3>
                 
-                <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-950/40 via-slate-950 to-emerald-950/20 border border-purple-500/30 space-y-4">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-purple-950/40 via-slate-950 to-emerald-950/20 border border-purple-500/30 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Radio className={`w-4 h-4 ${collegeForm.isLive ? 'text-emerald-400 animate-pulse' : 'text-slate-500'}`} />
                         <h4 className="text-sm font-bold text-slate-100">Publish LIVE Immediately on Student Portal</h4>
                       </div>
-                      <p className="text-xs text-slate-400 max-w-xl">
+                      <p className="text-xs text-slate-400">
                         When enabled, this college will immediately appear on the public Student Search Directory (<code className="text-purple-300">/colleges</code>), College Comparison tool, and its public profile will be live right away.
                       </p>
                     </div>
@@ -2260,7 +2463,7 @@ export default function AdminDashboardPage() {
                     <div className="space-y-0.5">
                       <div className="flex items-center gap-2">
                         <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                        <span className="text-xs font-bold text-slate-200">Grant Verified Institution Badge</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-slate-200">Grant Verified Institution Badge</span>
                       </div>
                       <p className="text-[11px] text-slate-400">
                         Displays the green verified shield on the college listing card and public profile.
@@ -2284,11 +2487,11 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+              {/* Submit Buttons Bar */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
                 <button
                   type="submit"
-                  className={`w-full sm:w-auto font-bold py-3.5 px-8 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center justify-center gap-2 ${
+                  className={`w-full sm:w-auto font-bold py-3.5 px-8 rounded-xl text-xs sm:text-sm shadow-md transition cursor-pointer flex items-center justify-center gap-2 ${
                     collegeForm.isLive
                       ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20'
                       : 'bg-purple-600 hover:bg-purple-700 text-white shadow-purple-600/20'
@@ -2310,7 +2513,7 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTab('colleges-approvals')}
-                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+                  className="w-full sm:w-auto px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer text-center"
                 >
                   Cancel / Back to Directory
                 </button>
@@ -2322,13 +2525,13 @@ export default function AdminDashboardPage() {
         {/* Tab: College Directory & Approvals */}
         {activeTab === 'colleges-approvals' && (
           <div className="space-y-6">
-            <div className="border-b border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="border-b border-slate-200 dark:border-slate-850 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <h2 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-purple-400" />
+                <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   <span>College Directory & Institutional Approvals</span>
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
                   Verify self-registered colleges, inspect representative credentials, review fee structures, and approve profiles to go live on the Student Portal.
                 </p>
               </div>
@@ -2346,7 +2549,7 @@ export default function AdminDashboardPage() {
 
                 <button
                   onClick={fetchCollegesList}
-                  className="px-3.5 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 hover:text-white transition cursor-pointer"
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 dark:hover:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 transition cursor-pointer"
                 >
                   Refresh List
                 </button>
@@ -2355,7 +2558,7 @@ export default function AdminDashboardPage() {
 
             {/* Notification alert banner */}
             {approvalMsg && (
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 animate-fade-in">
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs flex items-center gap-2 animate-fade-in">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>{approvalMsg}</span>
               </div>
@@ -2368,8 +2571,8 @@ export default function AdminDashboardPage() {
                 {[
                   { id: 'ALL', label: `All (${adminColleges.length})` },
                   { id: 'PENDING', label: `Pending Verification (${pendingCount})`, highlight: pendingCount > 0 },
-                  { id: 'APPROVED', label: `Approved & Live (${adminColleges.filter(c => c.status === 'APPROVED' || c.isApproved).length})` },
-                  { id: 'REJECTED', label: `Rejected (${adminColleges.filter(c => c.status === 'REJECTED').length})` }
+                  { id: 'APPROVED', label: `Approved & Live (${adminColleges.filter(isCollegeApproved).length})` },
+                  { id: 'REJECTED', label: `Rejected (${adminColleges.filter(isCollegeRejected).length})` }
                 ].map((f) => (
                   <button
                     key={f.id}
@@ -2378,8 +2581,8 @@ export default function AdminDashboardPage() {
                       collegeFilter === f.id
                         ? 'bg-purple-600 text-white shadow-sm'
                         : f.highlight
-                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                        : 'bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-200'
+                        ? 'bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30'
+                        : 'bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:text-slate-900 dark:hover:text-slate-200'
                     }`}
                   >
                     {f.label}
@@ -2389,13 +2592,13 @@ export default function AdminDashboardPage() {
 
               {/* Search input */}
               <div className="relative sm:w-72">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
                 <input
                   type="text"
                   placeholder="Search college, principal, email..."
                   value={collegeSearch}
                   onChange={(e) => setCollegeSearch(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-600 focus:outline-hidden focus:border-purple-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-purple-500"
                 />
               </div>
             </div>
@@ -2413,9 +2616,9 @@ export default function AdminDashboardPage() {
               <div className="space-y-3">
                 {adminColleges
                   .filter((c) => {
-                    if (collegeFilter === 'PENDING') return c.status === 'PENDING' || (!c.isApproved && c.registeredByEmail);
-                    if (collegeFilter === 'APPROVED') return c.status === 'APPROVED' || c.isApproved;
-                    if (collegeFilter === 'REJECTED') return c.status === 'REJECTED';
+                    if (collegeFilter === 'PENDING') return isCollegePending(c);
+                    if (collegeFilter === 'APPROVED') return isCollegeApproved(c);
+                    if (collegeFilter === 'REJECTED') return isCollegeRejected(c);
                     return true;
                   })
                   .filter((c) => {
@@ -2429,37 +2632,37 @@ export default function AdminDashboardPage() {
                     );
                   })
                   .map((col) => {
-                    const isPending = col.status === 'PENDING' || (!col.isApproved && col.registeredByEmail);
-                    const isApproved = col.status === 'APPROVED' || col.isApproved;
-                    const isRejected = col.status === 'REJECTED';
+                    const isPending = isCollegePending(col);
+                    const isApproved = isCollegeApproved(col);
+                    const isRejected = isCollegeRejected(col);
 
                     return (
                       <div
                         key={col.id}
-                        className={`bg-slate-950 border rounded-2xl p-4 sm:p-5 transition space-y-4 ${
+                        className={`border rounded-2xl p-4 sm:p-5 transition space-y-4 shadow-xs ${
                           isPending
-                            ? 'border-amber-500/40 bg-amber-500/[0.02]'
+                            ? 'border-amber-300 dark:border-amber-500/40 bg-amber-50/60 dark:bg-amber-500/[0.03]'
                             : isApproved
-                            ? 'border-slate-800 hover:border-slate-700'
-                            : 'border-red-500/30 bg-red-500/[0.02]'
+                            ? 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/70 hover:border-slate-300 dark:hover:border-slate-700'
+                            : 'border-red-300 dark:border-red-500/30 bg-red-50/60 dark:bg-red-500/[0.03]'
                         }`}
                       >
                         {/* Header Row */}
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div className="space-y-1">
                             <div className="flex flex-wrap items-center gap-2">
-                              <h3 className="font-bold text-slate-100 text-sm sm:text-base">{col.name}</h3>
-                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                              <h3 className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base">{col.name}</h3>
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/20">
                                 {col.ownership} • {col.category?.replace('_', ' ')}
                               </span>
                               {col.verified && (
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-1">
                                   <ShieldCheck className="w-3 h-3" />
                                   <span>Verified Badge</span>
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-400 flex items-center gap-2">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
                               <span>📍 {col.address || col.district || 'Hyderabad'}</span>
                               {col.boardCode && <span>• Board Code: {col.boardCode}</span>}
                             </p>
@@ -2468,17 +2671,17 @@ export default function AdminDashboardPage() {
                           {/* Status Pill */}
                           <div className="shrink-0">
                             {isPending ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-500/30">
                                 <Clock className="w-3.5 h-3.5" />
                                 <span>Pending Verification</span>
                               </span>
                             ) : isApproved ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30">
                                 <CheckCircle2 className="w-3.5 h-3.5" />
                                 <span>Approved & Live</span>
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/30">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-300 dark:border-red-500/30">
                                 <AlertTriangle className="w-3.5 h-3.5" />
                                 <span>Rejected / Needs Revision</span>
                               </span>
@@ -2487,50 +2690,50 @@ export default function AdminDashboardPage() {
                         </div>
 
                         {/* Details Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-900/60 border border-slate-850 text-xs">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-850 text-xs">
                           <div>
                             <span className="text-[10px] text-slate-500 uppercase font-semibold block">Representative</span>
-                            <p className="text-slate-200 font-medium">
+                            <p className="text-slate-800 dark:text-slate-200 font-medium">
                               {col.principalName || col.registeredByName || 'Official Rep'}
                             </p>
-                            <p className="text-slate-400 text-[11px]">{col.principalDesignation || 'Authorised Contact'}</p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[11px]">{col.principalDesignation || 'Authorised Contact'}</p>
                           </div>
                           <div>
                             <span className="text-[10px] text-slate-500 uppercase font-semibold block">Contact Details</span>
-                            <p className="text-slate-200">{col.email || col.registeredByEmail || 'No email'}</p>
-                            <p className="text-slate-400 text-[11px]">{col.phone || col.whatsappNumber || 'No phone'}</p>
+                            <p className="text-slate-800 dark:text-slate-200">{col.email || col.registeredByEmail || 'No email'}</p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[11px]">{col.phone || col.whatsappNumber || 'No phone'}</p>
                           </div>
                           <div>
                             <span className="text-[10px] text-slate-500 uppercase font-semibold block">Academic Streams & Affiliation</span>
-                            <p className="text-slate-200 font-medium">
+                            <p className="text-slate-800 dark:text-slate-200 font-medium">
                               {col.streams?.map(s => s.streamName).join(', ') || 'No streams set'}
                             </p>
-                            <p className="text-slate-400 text-[11px] truncate">{col.affiliation || 'TSBIE'}</p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[11px] truncate">{col.affiliation || 'TSBIE'}</p>
                           </div>
                         </div>
 
                         {/* Rejection remarks notice if present */}
                         {col.rejectionRemarks && (
-                          <div className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400">
+                          <div className="p-2.5 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-xs text-red-600 dark:text-red-400">
                             <strong>Super Admin Remarks:</strong> {col.rejectionRemarks}
                           </div>
                         )}
 
                         {/* Actions Row */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-900">
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200 dark:border-slate-900">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setSelectedReviewCollege(col)}
-                              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+                              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
                             >
-                              <Eye className="w-3.5 h-3.5 text-purple-400" />
+                              <Eye className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                               <span>Review Full Dossier</span>
                             </button>
 
                             <Link
                               href={`/colleges/${col.id}`}
                               target="_blank"
-                              className="px-3 py-1.5 text-slate-400 hover:text-slate-200 text-xs font-medium flex items-center gap-1"
+                              className="px-3 py-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-medium flex items-center gap-1"
                             >
                               <span>Public Page</span>
                               <ExternalLink className="w-3 h-3" />
@@ -2542,7 +2745,7 @@ export default function AdminDashboardPage() {
                             {col.isLive !== false && isApproved ? (
                               <button
                                 onClick={() => handleToggleCollegeLive(col.id, true)}
-                                className="px-2.5 py-1.5 bg-slate-900 hover:bg-amber-500/20 text-slate-400 hover:text-amber-400 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                                className="px-2.5 py-1.5 bg-slate-100 hover:bg-amber-50 dark:bg-slate-900 dark:hover:bg-amber-500/20 text-slate-700 hover:text-amber-700 dark:text-slate-400 dark:hover:text-amber-400 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
                                 title="Temporarily take this college offline from Student Directory"
                               >
                                 <span>Pause / Unpublish</span>
@@ -2550,10 +2753,10 @@ export default function AdminDashboardPage() {
                             ) : (
                               <button
                                 onClick={() => handleToggleCollegeLive(col.id, false)}
-                                className="px-2.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-500/30 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
+                                className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-600 dark:bg-emerald-600/20 dark:hover:bg-emerald-600 text-emerald-700 hover:text-white dark:text-emerald-400 dark:hover:text-white border border-emerald-200 dark:border-emerald-500/30 rounded-xl text-xs font-semibold transition cursor-pointer flex items-center gap-1"
                                 title="Make this college live on Student Directory"
                               >
-                                <Radio className="w-3 h-3 text-emerald-400" />
+                                <Radio className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                                 <span>Make Live</span>
                               </button>
                             )}
@@ -2576,7 +2779,7 @@ export default function AdminDashboardPage() {
                                   const reason = prompt('Enter rejection / revision remarks for the college representative:');
                                   if (reason) handleRejectCollege(col.id, reason);
                                 }}
-                                className="px-3 py-1.5 bg-slate-900 hover:bg-red-500/20 text-slate-400 hover:text-red-400 border border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-red-50 dark:bg-slate-900 dark:hover:bg-red-500/20 text-slate-600 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold transition cursor-pointer"
                               >
                                 Reject / Revision
                               </button>
@@ -2585,7 +2788,7 @@ export default function AdminDashboardPage() {
                             {/* Toggle Verified Badge */}
                             <button
                               onClick={() => handleToggleCollegeVerify(col.id, col.verified)}
-                              className="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 rounded-xl text-xs transition cursor-pointer"
+                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 border border-slate-200 dark:border-slate-800 rounded-xl text-xs transition cursor-pointer"
                               title="Toggle Verified Badge"
                             >
                               {col.verified ? 'Unverify' : 'Verify'}
@@ -2594,7 +2797,7 @@ export default function AdminDashboardPage() {
                             {/* Delete College */}
                             <button
                               onClick={() => handleDeleteCollege(col.id)}
-                              className="text-slate-600 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-900 transition cursor-pointer"
+                              className="text-slate-400 hover:text-red-600 dark:hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-900 transition cursor-pointer"
                               title="Delete permanently"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -2612,9 +2815,9 @@ export default function AdminDashboardPage() {
         {/* Tab: Schools Directory Management */}
         {activeTab === 'schools' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
               <div>
-                <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
+                <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <School className="w-5 h-5 text-indigo-400" />
                   <span>High Schools Directory</span>
                 </h2>
@@ -2652,23 +2855,23 @@ export default function AdminDashboardPage() {
 
             {/* Quick KPI Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
                 <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Schools</p>
-                <p className="text-xl font-extrabold text-white">{schools.length}</p>
+                <p className="text-xl font-extrabold text-slate-900 dark:text-white">{schools.length}</p>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
                 <p className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Govt High Schools</p>
                 <p className="text-xl font-extrabold text-emerald-400">
                   {schools.filter((s) => (s.category || '').toLowerCase().includes('government')).length}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
                 <p className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">ZPHS Schools</p>
                 <p className="text-xl font-extrabold text-blue-400">
                   {schools.filter((s) => (s.category || '').toLowerCase().includes('zilla') || (s.name || '').includes('ZPHS')).length}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-1">
                 <p className="text-[10px] uppercase font-bold text-purple-400 tracking-wider">Model & Private</p>
                 <p className="text-xl font-extrabold text-purple-400">
                   {schools.filter((s) => !(s.category || '').toLowerCase().includes('government') && !(s.category || '').toLowerCase().includes('zilla') && !(s.name || '').includes('ZPHS')).length}
@@ -2680,7 +2883,7 @@ export default function AdminDashboardPage() {
             {showAddSchoolForm && (
               <form onSubmit={handleAddSchool} className="p-5 sm:p-6 rounded-2xl bg-slate-950 border border-indigo-500/30 space-y-4 shadow-xl">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     <PlusCircle className="w-4 h-4 text-indigo-400" />
                     <span>Add New School to Student Dropdown</span>
                   </h3>
@@ -2696,7 +2899,7 @@ export default function AdminDashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* School Name */}
                   <div className="sm:col-span-2 space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                       School Name <span className="text-red-400">*</span>
                     </label>
                     <input
@@ -2711,7 +2914,7 @@ export default function AdminDashboardPage() {
 
                   {/* School Category */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Category / School Type
                     </label>
                     <select
@@ -2731,7 +2934,7 @@ export default function AdminDashboardPage() {
 
                   {/* District */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">District</label>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">District</label>
                     <select
                       value={newSchool.district}
                       onChange={(e) => setNewSchool({ ...newSchool, district: e.target.value })}
@@ -2750,7 +2953,7 @@ export default function AdminDashboardPage() {
 
                   {/* Location / Area */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Area / Landmark
                     </label>
                     <input
@@ -2764,7 +2967,7 @@ export default function AdminDashboardPage() {
 
                   {/* Medium */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                       Medium of Instruction
                     </label>
                     <select
@@ -2782,7 +2985,7 @@ export default function AdminDashboardPage() {
 
                   {/* U-DISE Code */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-300">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
                       U-DISE Code <span className="text-[10px] text-slate-500">(Optional)</span>
                     </label>
                     <input
@@ -2844,7 +3047,7 @@ export default function AdminDashboardPage() {
                   placeholder="Search by school name, area, or code..."
                   value={schoolSearch}
                   onChange={(e) => setSchoolSearch(e.target.value)}
-                  className="w-full pl-8 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="w-full pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -2855,9 +3058,9 @@ export default function AdminDashboardPage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
               </div>
             ) : schools.length === 0 ? (
-              <div className="text-center py-12 bg-slate-950 border border-slate-800 rounded-2xl p-8 space-y-3">
+              <div className="text-center py-12 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 space-y-3">
                 <School className="w-10 h-10 text-slate-600 mx-auto" />
-                <h4 className="text-slate-200 font-bold text-sm">No Schools Found</h4>
+                <h4 className="text-slate-800 dark:text-slate-900 dark:text-slate-200 font-bold text-sm">No Schools Found</h4>
                 <p className="text-slate-400 text-xs max-w-sm mx-auto">
                   Click the button below to automatically load the standard verified high schools for Hyderabad and Telangana.
                 </p>
@@ -2913,13 +3116,13 @@ export default function AdminDashboardPage() {
                     return (
                       <div
                         key={school.id || school.name}
-                        className={`p-3.5 sm:p-4 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                        className={`p-3.5 sm:p-4 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs ${
                           school.isActive === false ? 'opacity-60 bg-slate-950/40' : ''
                         }`}
                       >
                         <div className="space-y-1 flex-grow">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-bold text-slate-100 text-sm">{school.name}</span>
+                            <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">{school.name}</span>
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${categoryBadgeClass}`}>
                               {school.category || 'School'}
                             </span>
@@ -2984,9 +3187,9 @@ export default function AdminDashboardPage() {
         {/* Tab: Competitive Exams Management */}
         {activeTab === 'competitive-exams' && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
               <div>
-                <h2 className="text-xl font-extrabold text-slate-100 flex items-center gap-2">
+                <h2 className="text-xl font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-amber-400" />
                   <span>Competitive & Entrance Exams Control</span>
                 </h2>
@@ -3024,9 +3227,9 @@ export default function AdminDashboardPage() {
 
             {/* ADD EXAM FORM */}
             {showAddExamForm && (
-              <form onSubmit={handleCreateExam} className="bg-slate-950 border border-slate-800 rounded-2xl p-6 space-y-6">
+              <form onSubmit={handleCreateExam} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-200 flex items-center gap-2">
                     <Trophy className="w-4 h-4 text-indigo-400" />
                     <span>Create & Publish New Competitive Exam</span>
                   </h3>
@@ -3268,7 +3471,7 @@ export default function AdminDashboardPage() {
                   placeholder="Filter exams..."
                   value={examSearch}
                   onChange={(e) => setExamSearch(e.target.value)}
-                  className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -3308,7 +3511,7 @@ export default function AdminDashboardPage() {
                 ))}
               </div>
             ) : adminExams.length === 0 ? (
-              <div className="text-center py-12 bg-slate-950 rounded-2xl border border-slate-800 space-y-3">
+              <div className="text-center py-12 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl space-y-3">
                 <Trophy className="w-10 h-10 text-slate-600 mx-auto" />
                 <p className="text-xs text-slate-400">No competitive exams found in the live database.</p>
                 <button
@@ -3340,14 +3543,14 @@ export default function AdminDashboardPage() {
                     return (
                       <div
                         key={exam.slug || exam.id}
-                        className="p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs"
                       >
                         <div className="space-y-1 flex-1">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="font-extrabold text-sm text-indigo-400 font-display">
                               {exam.shortCode}
                             </span>
-                            <span className="text-xs font-bold text-slate-200">
+                            <span className="text-xs font-bold text-slate-900 dark:text-slate-200">
                               {exam.name}
                             </span>
                             <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300">
@@ -3421,19 +3624,19 @@ export default function AdminDashboardPage() {
 
       {/* FULL DOSSIER REVIEW MODAL */}
       {selectedReviewCollege && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative transition-colors">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-purple-400" />
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                  <Building2 className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   <span>Institutional Dossier Review</span>
                 </h3>
-                <p className="text-xs text-slate-400">ID: {selectedReviewCollege.id} • Registered: {selectedReviewCollege.createdAt ? new Date(selectedReviewCollege.createdAt).toLocaleDateString() : 'Initial Seed'}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">ID: {selectedReviewCollege.id} • Registered: {selectedReviewCollege.createdAt ? new Date(selectedReviewCollege.createdAt).toLocaleDateString() : 'Initial Seed'}</p>
               </div>
               <button
                 onClick={() => setSelectedReviewCollege(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-800 dark:hover:text-white p-1 rounded-lg cursor-pointer"
               >
                 ✕
               </button>
@@ -3441,19 +3644,19 @@ export default function AdminDashboardPage() {
 
             {/* Profile Overview */}
             <div className="space-y-4">
-              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h4 className="text-base font-extrabold text-white">{selectedReviewCollege.name}</h4>
-                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <h4 className="text-base font-extrabold text-slate-900 dark:text-white">{selectedReviewCollege.name}</h4>
+                  <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20">
                     {selectedReviewCollege.ownership} • {selectedReviewCollege.category}
                   </span>
                 </div>
-                <p className="text-xs text-slate-300">{selectedReviewCollege.description}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] text-slate-400 border-t border-slate-900">
-                  <p><strong className="text-slate-300">Address:</strong> {selectedReviewCollege.address}</p>
-                  <p><strong className="text-slate-300">District:</strong> {selectedReviewCollege.district}</p>
-                  <p><strong className="text-slate-300">Affiliation:</strong> {selectedReviewCollege.affiliation}</p>
-                  <p><strong className="text-slate-300">Board Code:</strong> {selectedReviewCollege.boardCode || 'N/A'}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-300">{selectedReviewCollege.description}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-900">
+                  <p><strong className="text-slate-700 dark:text-slate-300">Address:</strong> {selectedReviewCollege.address}</p>
+                  <p><strong className="text-slate-700 dark:text-slate-300">District:</strong> {selectedReviewCollege.district}</p>
+                  <p><strong className="text-slate-700 dark:text-slate-300">Affiliation:</strong> {selectedReviewCollege.affiliation}</p>
+                  <p><strong className="text-slate-700 dark:text-slate-300">Board Code:</strong> {selectedReviewCollege.boardCode || 'N/A'}</p>
                 </div>
               </div>
 
@@ -3566,7 +3769,7 @@ export default function AdminDashboardPage() {
                   Reject / Request Revision
                 </button>
 
-                {selectedReviewCollege.isApproved && selectedReviewCollege.isLive !== false ? (
+                {!isCollegePending(selectedReviewCollege) && selectedReviewCollege.isApproved && selectedReviewCollege.isLive !== false ? (
                   <button
                     onClick={() => handleToggleCollegeLive(selectedReviewCollege.id, true)}
                     className="px-4 py-2 bg-slate-800 hover:bg-amber-500/20 text-slate-300 hover:text-amber-400 border border-slate-700 rounded-xl text-xs font-bold transition cursor-pointer flex items-center gap-1.5"

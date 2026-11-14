@@ -388,7 +388,7 @@ export default function CollegePortalPage() {
   // ==========================================
   if (authLoading || (user && user.role === 'COLLEGE_ADMIN' && loadingCollege)) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-300">
+      <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex items-center justify-center text-slate-700 dark:text-slate-300">
         <div className="flex flex-col items-center gap-3">
           <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-sm font-medium text-slate-400">Loading College Management Portal...</p>
@@ -402,7 +402,7 @@ export default function CollegePortalPage() {
 
   if (!user || (user.role !== 'COLLEGE_ADMIN' && !isSuperAdmin)) {
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 bg-grid-pattern bg-radial-gradient pb-20">
+      <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 bg-grid-pattern bg-radial-gradient pb-20">
         {/* Hero Section */}
         <div className="max-w-6xl mx-auto px-4 pt-12 pb-8 text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold">
@@ -419,13 +419,13 @@ export default function CollegePortalPage() {
           </p>
 
           {/* Mode Switcher Tabs */}
-          <div className="inline-flex p-1 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg mt-6">
+          <div className="inline-flex p-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg mt-6">
             <button
               onClick={() => { setAuthMode('REGISTER'); setAuthError(''); }}
               className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${
                 authMode === 'REGISTER'
                   ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-400 hover:text-slate-800 dark:text-slate-200'
               }`}
             >
               Register New Institution
@@ -435,7 +435,7 @@ export default function CollegePortalPage() {
               className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${
                 authMode === 'LOGIN'
                   ? 'bg-indigo-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-400 hover:text-slate-800 dark:text-slate-200'
               }`}
             >
               College Sign In
@@ -445,7 +445,7 @@ export default function CollegePortalPage() {
 
         {/* Auth Container Card */}
         <div className="max-w-3xl mx-auto px-4">
-          <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+          <div className="bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
             {authError && (
               <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -458,8 +458,8 @@ export default function CollegePortalPage() {
               <form onSubmit={handleRegisterSubmit} className="space-y-8">
                 {/* 1. Authorised Representative Section */}
                 <div className="space-y-4">
-                  <div className="border-b border-slate-800 pb-2">
-                    <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <User className="w-4 h-4 text-indigo-400" />
                       <span>Authorised Representative Credentials</span>
                     </h2>
@@ -468,71 +468,71 @@ export default function CollegePortalPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Representative Full Name *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Representative Full Name *</label>
                       <input
                         type="text"
                         required
                         value={regForm.representativeName}
                         onChange={(e) => setRegForm({ ...regForm, representativeName: e.target.value })}
                         placeholder="Dr. K. Ramesh"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Designation / Role *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Designation / Role *</label>
                       <input
                         type="text"
                         required
                         value={regForm.designation}
                         onChange={(e) => setRegForm({ ...regForm, designation: e.target.value })}
                         placeholder="Principal / Admissions Director"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Official Institutional Email *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official Institutional Email *</label>
                       <input
                         type="email"
                         required
                         value={regForm.email}
                         onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
                         placeholder="admissions@college.edu.in"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Mobile / Admissions Phone *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Mobile / Admissions Phone *</label>
                       <input
                         type="tel"
                         required
                         value={regForm.phone}
                         onChange={(e) => setRegForm({ ...regForm, phone: e.target.value })}
                         placeholder="+91 98765 43210"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">WhatsApp Admissions Number *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">WhatsApp Admissions Number *</label>
                       <input
                         type="tel"
                         value={regForm.whatsappNumber}
                         onChange={(e) => setRegForm({ ...regForm, whatsappNumber: e.target.value })}
                         placeholder="+91 98765 43210 (For student direct chat)"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Official Website URL</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official Website URL</label>
                       <input
                         type="url"
                         value={regForm.website}
                         onChange={(e) => setRegForm({ ...regForm, website: e.target.value })}
                         placeholder="https://www.college.edu.in"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Portal Password *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Portal Password *</label>
                       <input
                         type="password"
                         required
@@ -540,18 +540,18 @@ export default function CollegePortalPage() {
                         value={regForm.password}
                         onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
                         placeholder="At least 6 characters"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Confirm Password *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Confirm Password *</label>
                       <input
                         type="password"
                         required
                         value={regForm.confirmPassword}
                         onChange={(e) => setRegForm({ ...regForm, confirmPassword: e.target.value })}
                         placeholder="Repeat your password"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                   </div>
@@ -559,8 +559,8 @@ export default function CollegePortalPage() {
 
                 {/* 2. College Institutional Details */}
                 <div className="space-y-4">
-                  <div className="border-b border-slate-800 pb-2">
-                    <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-indigo-400" />
                       <span>College Registration & Institutional Details</span>
                     </h2>
@@ -569,23 +569,23 @@ export default function CollegePortalPage() {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Full College / Institution Name *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Full College / Institution Name *</label>
                       <input
                         type="text"
                         required
                         value={regForm.name}
                         onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
                         placeholder="e.g., St. Joseph Junior College, Falaknuma"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">College Ownership Type *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">College Ownership Type *</label>
                       <select
                         value={regForm.ownership}
                         onChange={(e) => setRegForm({ ...regForm, ownership: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                       >
                         <option value="PRIVATE">Private (Un-aided)</option>
                         <option value="GOVERNMENT">Government Institution</option>
@@ -595,11 +595,11 @@ export default function CollegePortalPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Primary Category *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Primary Category *</label>
                       <select
                         value={regForm.category}
                         onChange={(e) => setRegForm({ ...regForm, category: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                       >
                         <option value="JUNIOR_COLLEGE">Junior College (Intermediate)</option>
                         <option value="POLYTECHNIC">Polytechnic (3-Yr Diploma)</option>
@@ -609,59 +609,59 @@ export default function CollegePortalPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Campus Address & Location *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Campus Address & Location *</label>
                       <input
                         type="text"
                         required
                         value={regForm.address}
                         onChange={(e) => setRegForm({ ...regForm, address: e.target.value })}
                         placeholder="Plot No., Street, Area (e.g., Falaknuma, Charminar, Hyderabad)"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">District / City *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">District / City *</label>
                       <input
                         type="text"
                         required
                         value={regForm.district}
                         onChange={(e) => setRegForm({ ...regForm, district: e.target.value })}
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Nearby Landmark</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nearby Landmark</label>
                       <input
                         type="text"
                         value={regForm.nearbyLandmark}
                         onChange={(e) => setRegForm({ ...regForm, nearbyLandmark: e.target.value })}
                         placeholder="Opp. Falaknuma Palace Gate"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Affiliation / Board Details *</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Affiliation / Board Details *</label>
                       <input
                         type="text"
                         required
                         value={regForm.affiliation}
                         onChange={(e) => setRegForm({ ...regForm, affiliation: e.target.value })}
                         placeholder="e.g., TSBIE, SBTET, AICTE"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-slate-300 mb-1">Board / College Code</label>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Board / College Code</label>
                       <input
                         type="text"
                         value={regForm.boardCode}
                         onChange={(e) => setRegForm({ ...regForm, boardCode: e.target.value })}
                         placeholder="e.g., TSBIE-HYD-5022"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                   </div>
@@ -698,13 +698,13 @@ export default function CollegePortalPage() {
             {authMode === 'LOGIN' && (
               <form onSubmit={handleLoginSubmit} className="space-y-6 max-w-md mx-auto py-4">
                 <div className="text-center space-y-1 pb-2">
-                  <h2 className="text-xl font-bold text-slate-100">College Representative Sign In</h2>
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">College Representative Sign In</h2>
                   <p className="text-xs text-slate-400">Access your institution dashboard to manage profile and admissions.</p>
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Institutional Email</label>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Institutional Email</label>
                     <div className="relative">
                       <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
@@ -713,13 +713,13 @@ export default function CollegePortalPage() {
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
                         placeholder="admissions@college.edu.in"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
                     <div className="relative">
                       <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
                       <input
@@ -728,29 +728,9 @@ export default function CollegePortalPage() {
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
+                        className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>
-                  </div>
-
-                  {/* 1-Click Demo Fill */}
-                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="font-bold text-indigo-400 uppercase">Demo Representative Account</span>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setLoginEmail('college@career365compass.com');
-                          setLoginPassword('college123');
-                        }}
-                        className="text-xs font-bold text-indigo-400 hover:text-indigo-300 underline cursor-pointer"
-                      >
-                        Auto-Fill Credentials
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-slate-400 font-mono">
-                      college@career365compass.com | college123
-                    </p>
                   </div>
                 </div>
 
@@ -781,8 +761,8 @@ export default function CollegePortalPage() {
                 { label: 'Direct WhatsApp', desc: 'Instant student admission leads' },
                 { label: 'Documents', desc: 'Prospectus & brochures download' }
               ].map((feat, i) => (
-                <div key={i} className="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3.5 space-y-1">
-                  <p className="font-bold text-slate-200">{feat.label}</p>
+                <div key={i} className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl p-3.5 space-y-1">
+                  <p className="font-bold text-slate-800 dark:text-slate-200">{feat.label}</p>
                   <p className="text-[11px] text-slate-400">{feat.desc}</p>
                 </div>
               ))}
@@ -798,15 +778,15 @@ export default function CollegePortalPage() {
   // ==========================================
   if (!collegeData) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex flex-col items-center justify-center p-6 text-center">
         <Building2 className="w-16 h-16 text-slate-600 mb-4" />
-        <h2 className="text-xl font-bold text-slate-200">College Profile Linked to Account Not Found</h2>
+        <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">College Profile Linked to Account Not Found</h2>
         <p className="text-xs text-slate-500 mt-2 max-w-md">
           Please contact Super Admin or register your college profile from the registration tab.
         </p>
         <button
           onClick={logout}
-          className="mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold cursor-pointer"
+          className="mt-6 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold cursor-pointer"
         >
           Sign Out
         </button>
@@ -818,9 +798,9 @@ export default function CollegePortalPage() {
   const isApproved = collegeData.status === 'APPROVED' || collegeData.isApproved;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 flex flex-col pb-20">
       {/* Top Institutional Header */}
-      <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 backdrop-blur-md">
+      <header className="bg-white/95 dark:bg-slate-900/95 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shrink-0">
@@ -828,7 +808,7 @@ export default function CollegePortalPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold text-slate-100 leading-tight">
+                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">
                   {collegeData.name}
                 </h1>
                 {isApproved ? (
@@ -843,8 +823,8 @@ export default function CollegePortalPage() {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400">
-                Representative: <span className="text-slate-300 font-medium">{collegeData.principalName || user.name}</span> ({collegeData.principalDesignation || user.designation || 'Principal'})
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Representative: <span className="text-slate-800 dark:text-slate-200 font-medium">{collegeData.principalName || user.name}</span> ({collegeData.principalDesignation || user.designation || 'Principal'})
               </p>
             </div>
           </div>
@@ -853,9 +833,9 @@ export default function CollegePortalPage() {
           <div className="flex items-center gap-2.5 shrink-0">
             <button
               onClick={() => setPreviewOpen(true)}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer"
             >
-              <Eye className="w-3.5 h-3.5 text-indigo-400" />
+              <Eye className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>Preview as Student</span>
             </button>
 
@@ -872,25 +852,25 @@ export default function CollegePortalPage() {
 
         {/* Verification Status Notification Bar */}
         {!isApproved ? (
-          <div className="bg-amber-500/10 border-t border-amber-500/20 px-4 sm:px-6 py-2.5 text-xs text-amber-300 flex items-center justify-between">
+          <div className="bg-amber-500/10 border-t border-amber-500/20 px-4 sm:px-6 py-2.5 text-xs text-amber-800 dark:text-amber-300 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 shrink-0 text-amber-400" />
+              <Clock className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
               <span>
                 <strong>Institutional Status: Verification Pending.</strong> Your profile has been submitted and is in queue with Super Admin. You can continue updating your streams, fees, documents, and facilities.
               </span>
             </div>
           </div>
         ) : (
-          <div className="bg-emerald-500/10 border-t border-emerald-500/20 px-4 sm:px-6 py-2 text-xs text-emerald-300 flex items-center justify-between">
+          <div className="bg-emerald-500/10 border-t border-emerald-500/20 px-4 sm:px-6 py-2 text-xs text-emerald-800 dark:text-emerald-300 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+              <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               <span>
                 <strong>Your institution is Live!</strong> Students can view your profile, explore streams, download brochures, and contact your WhatsApp helpline.
               </span>
             </div>
             <Link
               href={`/colleges/${collegeData.id}`}
-              className="underline text-emerald-400 hover:text-emerald-300 font-semibold text-[11px] flex items-center gap-1"
+              className="underline text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold text-[11px] flex items-center gap-1"
             >
               <span>View Public Page</span>
               <ExternalLink className="w-3 h-3" />
@@ -900,7 +880,7 @@ export default function CollegePortalPage() {
 
         {/* Save feedback banner */}
         {saveStatus && (
-          <div className="bg-indigo-500/20 border-t border-indigo-500/30 px-4 py-2 text-xs text-indigo-200 text-center font-medium animate-fade-in">
+          <div className="bg-indigo-500/15 border-t border-indigo-500/30 px-4 py-2 text-xs text-indigo-700 dark:text-indigo-200 text-center font-medium animate-fade-in">
             {saveStatus}
           </div>
         )}
@@ -909,7 +889,7 @@ export default function CollegePortalPage() {
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full space-y-6">
         {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto gap-1.5 bg-slate-900 border border-slate-800 p-1.5 rounded-2xl scrollbar-none">
+        <div className="flex overflow-x-auto gap-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-1.5 rounded-2xl scrollbar-none shadow-xs">
           {[
             { id: 'overview', label: 'Dashboard Overview', icon: Layers },
             { id: 'profile', label: 'Basic Profile', icon: Building2 },
@@ -932,7 +912,7 @@ export default function CollegePortalPage() {
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -947,13 +927,13 @@ export default function CollegePortalPage() {
           <div className="space-y-6">
             {/* Quick Metrics */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
-                <p className="text-xs text-slate-400 font-semibold uppercase">Profile Completeness</p>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Profile Completeness</p>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-extrabold text-indigo-400">{completeness}%</span>
                   <span className="text-xs text-slate-500">{completeness === 100 ? 'Ready' : 'Incomplete'}</span>
                 </div>
-                <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div className="w-full bg-slate-50 dark:bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-200 dark:border-slate-800">
                   <div
                     className="bg-indigo-500 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${completeness}%` }}
@@ -961,10 +941,10 @@ export default function CollegePortalPage() {
                 </div>
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
-                <p className="text-xs text-slate-400 font-semibold uppercase">Streams Offered</p>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Streams Offered</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-extrabold text-slate-100">
+                  <span className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
                     {collegeData.streams ? collegeData.streams.length : 0}
                   </span>
                   <GraduationCap className="w-5 h-5 text-indigo-400" />
@@ -974,10 +954,10 @@ export default function CollegePortalPage() {
                 </p>
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
-                <p className="text-xs text-slate-400 font-semibold uppercase">Active Documents</p>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Active Documents</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-extrabold text-slate-100">
+                  <span className="text-2xl font-extrabold text-slate-900 dark:text-slate-100">
                     {collegeData.documents ? collegeData.documents.length : 0}
                   </span>
                   <FileText className="w-5 h-5 text-indigo-400" />
@@ -985,8 +965,8 @@ export default function CollegePortalPage() {
                 <p className="text-[11px] text-slate-500">Prospectus, fee circulars</p>
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-2">
-                <p className="text-xs text-slate-400 font-semibold uppercase">Verification Status</p>
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold uppercase">Verification Status</p>
                 <div className="flex items-center justify-between">
                   <span className={`text-sm font-extrabold ${isApproved ? 'text-emerald-400' : 'text-amber-400'}`}>
                     {isApproved ? 'Approved & Live' : 'Under Review'}
@@ -998,8 +978,8 @@ export default function CollegePortalPage() {
             </div>
 
             {/* Quick Checklist */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <h3 className="text-sm font-bold text-slate-200">Management Setup Checklist</h3>
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Management Setup Checklist</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 {[
                   {
@@ -1036,17 +1016,17 @@ export default function CollegePortalPage() {
                   <div
                     key={idx}
                     onClick={() => setActiveTab(item.tab)}
-                    className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between hover:border-slate-700 cursor-pointer transition"
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer transition shadow-2xs"
                   >
                     <div className="flex items-center gap-2.5">
                       {item.done ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
                       ) : (
-                        <div className="w-4 h-4 rounded-full border border-slate-600 shrink-0"></div>
+                        <div className="w-4 h-4 rounded-full border border-slate-400 dark:border-slate-600 shrink-0"></div>
                       )}
-                      <span className={item.done ? 'text-slate-200 font-medium' : 'text-slate-400'}>{item.title}</span>
+                      <span className={item.done ? 'text-slate-800 dark:text-slate-200 font-medium' : 'text-slate-500 dark:text-slate-400'}>{item.title}</span>
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 dark:text-slate-600" />
                   </div>
                 ))}
               </div>
@@ -1056,9 +1036,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 2: BASIC PROFILE */}
         {activeTab === 'profile' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-indigo-400" />
                 <span>Basic Profile & Institutional Identity</span>
               </h2>
@@ -1067,21 +1047,21 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">College Full Name</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">College Full Name</label>
                 <input
                   type="text"
                   value={collegeData.name || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, name: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Ownership Type</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Ownership Type</label>
                 <select
                   value={collegeData.ownership || 'PRIVATE'}
                   onChange={(e) => setCollegeData({ ...collegeData, ownership: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 >
                   <option value="PRIVATE">Private (Un-aided)</option>
                   <option value="GOVERNMENT">Government Institution</option>
@@ -1091,131 +1071,131 @@ export default function CollegePortalPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Established Year</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Established Year</label>
                 <input
                   type="number"
                   value={collegeData.establishedYear || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, establishedYear: parseInt(e.target.value) || '' })}
                   placeholder="2005"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Campus Description & Highlights</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Campus Description & Highlights</label>
                 <textarea
                   rows={4}
                   value={collegeData.description || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, description: e.target.value })}
                   placeholder="Provide an engaging overview of your institution, academic track record, student mentoring, and college culture."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Principal / Head Name</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Principal / Head Name</label>
                 <input
                   type="text"
                   value={collegeData.principalName || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, principalName: e.target.value })}
                   placeholder="Dr. K. Ramesh"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Principal Designation</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Principal Designation</label>
                 <input
                   type="text"
                   value={collegeData.principalDesignation || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, principalDesignation: e.target.value })}
                   placeholder="Principal & Academic Director"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Principal's Welcome Message to Class 10 Students</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Principal's Welcome Message to Class 10 Students</label>
                 <textarea
                   rows={2}
                   value={collegeData.principalMessage || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, principalMessage: e.target.value })}
                   placeholder="Inspiring quote or message from the Principal to prospective applicants."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Campus Full Address</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Campus Full Address</label>
                 <input
                   type="text"
                   value={collegeData.address || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, address: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">District / City</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">District / City</label>
                 <input
                   type="text"
                   value={collegeData.district || 'Hyderabad'}
                   onChange={(e) => setCollegeData({ ...collegeData, district: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Nearby Landmark</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nearby Landmark</label>
                 <input
                   type="text"
                   value={collegeData.nearbyLandmark || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, nearbyLandmark: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">College Logo Image URL</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">College Logo Image URL</label>
                 <input
                   type="url"
                   value={collegeData.logoUrl || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, logoUrl: e.target.value })}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Cover Banner Image URL</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Cover Banner Image URL</label>
                 <input
                   type="url"
                   value={collegeData.coverImageUrl || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, coverImageUrl: e.target.value })}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Official Website</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official Website</label>
                 <input
                   type="url"
                   value={collegeData.website || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, website: e.target.value })}
                   placeholder="https://www.college.edu.in"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Affiliation & Board Recognition</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Affiliation & Board Recognition</label>
                 <input
                   type="text"
                   value={collegeData.affiliation || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, affiliation: e.target.value })}
                   placeholder="TSBIE / SBTET / AICTE"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -1225,10 +1205,10 @@ export default function CollegePortalPage() {
         {/* TAB 3: STREAMS & COURSES */}
         {activeTab === 'streams' && (
           <div className="space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
                 <div>
-                  <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                     <GraduationCap className="w-4 h-4 text-indigo-400" />
                     <span>Manage Streams & Offered Courses</span>
                   </h2>
@@ -1239,11 +1219,11 @@ export default function CollegePortalPage() {
               {/* Streams Cards Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {collegeData.streams?.map((s, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative">
+                  <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-3 relative">
                     <div className="flex justify-between items-start">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-extrabold text-slate-100 text-base">{s.streamName}</span>
+                          <span className="font-extrabold text-slate-900 dark:text-slate-100 text-base">{s.streamName}</span>
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                             {s.courseType || 'Intermediate'}
                           </span>
@@ -1252,21 +1232,21 @@ export default function CollegePortalPage() {
                       </div>
                       <button
                         onClick={() => handleRemoveStream(idx)}
-                        className="text-slate-500 hover:text-red-400 p-1 rounded-lg hover:bg-slate-900 transition cursor-pointer"
+                        className="text-slate-500 hover:text-red-400 p-1 rounded-lg hover:bg-white dark:bg-slate-900 transition cursor-pointer"
                         title="Delete Stream"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-slate-900/60 text-xs">
+                    <div className="grid grid-cols-3 gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/60 text-xs">
                       <div>
                         <span className="text-[10px] text-slate-500 block uppercase">Annual Fee</span>
                         <span className="font-bold text-emerald-400">₹{Number(s.annualFee || 0).toLocaleString('en-IN')}</span>
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-500 block uppercase">Admission Fee</span>
-                        <span className="font-bold text-slate-200">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</span>
                       </div>
                       <div>
                         <span className="text-[10px] text-slate-500 block uppercase">Other Charges</span>
@@ -1275,8 +1255,8 @@ export default function CollegePortalPage() {
                     </div>
 
                     <div className="text-[11px] text-slate-400 space-y-1">
-                      <p><strong className="text-slate-300">Eligibility:</strong> {s.requiredMarks || 'Pass in SSC'}</p>
-                      <p><strong className="text-slate-300">Admission Mode:</strong> {s.admissionType || 'Direct'}</p>
+                      <p><strong className="text-slate-700 dark:text-slate-300">Eligibility:</strong> {s.requiredMarks || 'Pass in SSC'}</p>
+                      <p><strong className="text-slate-700 dark:text-slate-300">Admission Mode:</strong> {s.admissionType || 'Direct'}</p>
                     </div>
                   </div>
                 ))}
@@ -1291,11 +1271,11 @@ export default function CollegePortalPage() {
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Stream Name</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Stream Name</label>
                     <select
                       value={newStream.streamName}
                       onChange={(e) => setNewStream({ ...newStream, streamName: e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                     >
                       <option value="MPC">MPC (Maths, Physics, Chem)</option>
                       <option value="BiPC">BiPC (Biology, Physics, Chem)</option>
@@ -1309,32 +1289,32 @@ export default function CollegePortalPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Annual Tuition (₹)</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Annual Tuition (₹)</label>
                     <input
                       type="number"
                       value={newStream.annualFee}
                       onChange={(e) => setNewStream({ ...newStream, annualFee: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Admission Fee (₹)</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Admission Fee (₹)</label>
                     <input
                       type="number"
                       value={newStream.admissionFee}
                       onChange={(e) => setNewStream({ ...newStream, admissionFee: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-semibold text-slate-300 mb-1">Intake Seats</label>
+                    <label className="block text-[11px] font-semibold text-slate-700 dark:text-slate-300 mb-1">Intake Seats</label>
                     <input
                       type="number"
                       value={newStream.intakeSeats}
                       onChange={(e) => setNewStream({ ...newStream, intakeSeats: parseInt(e.target.value) || 60 })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                      className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                     />
                   </div>
                 </div>
@@ -1354,9 +1334,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 4: FEES STRUCTURE */}
         {activeTab === 'fees' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-emerald-400" />
                 <span>Fees Structure & Payment Guidelines</span>
               </h2>
@@ -1366,7 +1346,7 @@ export default function CollegePortalPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
+                  <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-400">
                     <th className="py-2.5 font-semibold">Stream</th>
                     <th className="py-2.5 font-semibold">Tuition Fee / Year</th>
                     <th className="py-2.5 font-semibold">Admission (One-Time)</th>
@@ -1378,10 +1358,10 @@ export default function CollegePortalPage() {
                   {collegeData.streams?.map((s, idx) => {
                     const total = (Number(s.annualFee) || 0) + (Number(s.admissionFee) || 0) + (Number(s.otherCharges) || 0);
                     return (
-                      <tr key={idx} className="hover:bg-slate-950/40">
-                        <td className="py-3 font-bold text-slate-200">{s.streamName}</td>
+                      <tr key={idx} className="hover:bg-slate-50 dark:bg-slate-950/40">
+                        <td className="py-3 font-bold text-slate-800 dark:text-slate-200">{s.streamName}</td>
                         <td className="py-3 text-emerald-400 font-semibold">₹{Number(s.annualFee || 0).toLocaleString('en-IN')}</td>
-                        <td className="py-3 text-slate-300">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</td>
+                        <td className="py-3 text-slate-700 dark:text-slate-300">₹{Number(s.admissionFee || 0).toLocaleString('en-IN')}</td>
                         <td className="py-3 text-slate-400">₹{Number(s.otherCharges || 0).toLocaleString('en-IN')}</td>
                         <td className="py-3 font-extrabold text-indigo-400">₹{total.toLocaleString('en-IN')}</td>
                       </tr>
@@ -1391,27 +1371,27 @@ export default function CollegePortalPage() {
               </table>
             </div>
 
-            <div className="border-t border-slate-800 pt-4 space-y-3">
-              <h4 className="text-xs font-bold text-slate-200">Hostel & Additional Fee Details</h4>
+            <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3">
+              <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200">Hostel & Additional Fee Details</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Hostel & Mess Fee (₹/Year if available)</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Hostel & Mess Fee (₹/Year if available)</label>
                   <input
                     type="number"
                     value={collegeData.hostelFee || ''}
                     onChange={(e) => setCollegeData({ ...collegeData, hostelFee: parseInt(e.target.value) || 0 })}
                     placeholder="e.g. 60000"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Payment Installments Allowed</label>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Payment Installments Allowed</label>
                   <input
                     type="text"
                     value={collegeData.feePaymentTerms || ''}
                     onChange={(e) => setCollegeData({ ...collegeData, feePaymentTerms: e.target.value })}
                     placeholder="e.g. 2 or 3 installments accepted; 10% waiver on single lump-sum payment."
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   />
                 </div>
               </div>
@@ -1421,9 +1401,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 5: ELIGIBILITY & CRITERIA */}
         {activeTab === 'eligibility' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Award className="w-4 h-4 text-indigo-400" />
                 <span>Eligibility Marks & Admission Criteria</span>
               </h2>
@@ -1432,22 +1412,22 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">General Minimum 10th Marks / GPA</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">General Minimum 10th Marks / GPA</label>
                 <input
                   type="text"
                   value={collegeData.minMarksRequired || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, minMarksRequired: e.target.value })}
                   placeholder="e.g., 6.0 GPA (SSC) or 60% (CBSE)"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Primary Admission Mode</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Primary Admission Mode</label>
                 <select
                   value={collegeData.primaryAdmissionMode || 'DIRECT'}
                   onChange={(e) => setCollegeData({ ...collegeData, primaryAdmissionMode: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 >
                   <option value="DIRECT">Direct Admission (First-Come Basis)</option>
                   <option value="MERIT_BASED">Merit-Based (SSC Marks Rank)</option>
@@ -1457,13 +1437,13 @@ export default function CollegePortalPage() {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Reservation Policy & Quotas</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Reservation Policy & Quotas</label>
                 <textarea
                   rows={3}
                   value={collegeData.reservationPolicy || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, reservationPolicy: e.target.value })}
                   placeholder="Details on SC/ST/BC/EWS quotas, minority status concessions, or sports quota reservations."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -1472,9 +1452,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 6: FACILITIES */}
         {activeTab === 'facilities' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Wifi className="w-4 h-4 text-indigo-400" />
                 <span>Campus Facilities & Infrastructure</span>
               </h2>
@@ -1500,11 +1480,11 @@ export default function CollegePortalPage() {
                   className={`p-4 rounded-xl border transition ${
                     collegeData[item.field]
                       ? 'bg-indigo-500/10 border-indigo-500/30'
-                      : 'bg-slate-950 border-slate-800'
+                      : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800'
                   }`}
                 >
                   <label className="flex items-center justify-between cursor-pointer">
-                    <span className="font-bold text-xs text-slate-200">{item.label}</span>
+                    <span className="font-bold text-xs text-slate-800 dark:text-slate-200">{item.label}</span>
                     <input
                       type="checkbox"
                       checked={!!collegeData[item.field]}
@@ -1518,7 +1498,7 @@ export default function CollegePortalPage() {
                       value={collegeData[item.detailField] || ''}
                       onChange={(e) => setCollegeData({ ...collegeData, [item.detailField]: e.target.value })}
                       placeholder={item.placeholder}
-                      className="mt-2 w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-200 placeholder-slate-500"
+                      className="mt-2 w-full bg-white dark:bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-[11px] text-slate-800 dark:text-slate-200 placeholder-slate-500"
                     />
                   )}
                 </div>
@@ -1529,9 +1509,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 7: CONTACT & HELPLINE */}
         {activeTab === 'contact' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Phone className="w-4 h-4 text-indigo-400" />
                 <span>Admissions Contact & Direct WhatsApp Desk</span>
               </h2>
@@ -1540,25 +1520,25 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Official Admissions Phone Number</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official Admissions Phone Number</label>
                 <input
                   type="text"
                   value={collegeData.phone || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, phone: e.target.value })}
                   placeholder="+91 98765 43210"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Official WhatsApp Number (Click-to-Chat)</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official WhatsApp Number (Click-to-Chat)</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={collegeData.whatsappNumber || ''}
                     onChange={(e) => setCollegeData({ ...collegeData, whatsappNumber: e.target.value })}
                     placeholder="919876543210"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                    className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                   />
                   {collegeData.whatsappNumber && (
                     <a
@@ -1574,34 +1554,34 @@ export default function CollegePortalPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Official Email Address</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Official Email Address</label>
                 <input
                   type="email"
                   value={collegeData.email || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, email: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Admissions Office Timings</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Admissions Office Timings</label>
                 <input
                   type="text"
                   value={collegeData.officeTimings || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, officeTimings: e.target.value })}
                   placeholder="Mon - Sat: 9:00 AM - 5:00 PM"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Google Maps Directions / Link</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Google Maps Directions / Link</label>
                 <input
                   type="url"
                   value={collegeData.googleMapsUrl || ''}
                   onChange={(e) => setCollegeData({ ...collegeData, googleMapsUrl: e.target.value })}
                   placeholder="https://maps.google.com/..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 focus:outline-hidden focus:border-indigo-500"
                 />
               </div>
             </div>
@@ -1610,9 +1590,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 8: ADMISSIONS & DATES */}
         {activeTab === 'admissions' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-indigo-400" />
                 <span>Admissions Schedule & Application Procedure</span>
               </h2>
@@ -1621,7 +1601,7 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Academic Year</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Academic Year</label>
                 <input
                   type="text"
                   value={collegeData.admissions?.academicYear || '2026-2027'}
@@ -1629,12 +1609,12 @@ export default function CollegePortalPage() {
                     ...collegeData,
                     admissions: { ...(collegeData.admissions || {}), academicYear: e.target.value }
                   })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Application Start Date</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Application Start Date</label>
                 <input
                   type="date"
                   value={collegeData.admissions?.applicationStartDate || ''}
@@ -1642,12 +1622,12 @@ export default function CollegePortalPage() {
                     ...collegeData,
                     admissions: { ...(collegeData.admissions || {}), applicationStartDate: e.target.value }
                   })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Application Last Date</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Application Last Date</label>
                 <input
                   type="date"
                   value={collegeData.admissions?.applicationEndDate || ''}
@@ -1655,12 +1635,12 @@ export default function CollegePortalPage() {
                     ...collegeData,
                     admissions: { ...(collegeData.admissions || {}), applicationEndDate: e.target.value }
                   })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Classes Start Date</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Classes Start Date</label>
                 <input
                   type="date"
                   value={collegeData.admissions?.classesStartDate || ''}
@@ -1668,12 +1648,12 @@ export default function CollegePortalPage() {
                     ...collegeData,
                     admissions: { ...(collegeData.admissions || {}), classesStartDate: e.target.value }
                   })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
                 />
               </div>
 
               <div className="sm:col-span-2 md:col-span-4">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Direct Online Application URL / Form Link</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Direct Online Application URL / Form Link</label>
                 <input
                   type="url"
                   value={collegeData.admissions?.applicationLink || ''}
@@ -1682,7 +1662,7 @@ export default function CollegePortalPage() {
                     admissions: { ...(collegeData.admissions || {}), applicationLink: e.target.value }
                   })}
                   placeholder="https://forms.gle/... or https://college.edu.in/apply"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
+                  className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 text-xs text-slate-100"
                 />
               </div>
             </div>
@@ -1691,9 +1671,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 9: SCHOLARSHIPS */}
         {activeTab === 'scholarships' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-indigo-400" />
                 <span>Available Scholarships & Fee Concessions</span>
               </h2>
@@ -1702,7 +1682,7 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {collegeData.scholarships?.map((sch, idx) => (
-                <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 relative">
+                <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-2 relative">
                   <div className="flex justify-between items-start">
                     <h4 className="font-bold text-slate-100 text-xs">{sch.title}</h4>
                     <button
@@ -1727,21 +1707,21 @@ export default function CollegePortalPage() {
                   placeholder="Title (e.g. Merit Concession 9.5+ GPA)"
                   value={newScholarship.title}
                   onChange={(e) => setNewScholarship({ ...newScholarship, title: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 />
                 <input
                   type="text"
                   placeholder="Concession description"
                   value={newScholarship.description}
                   onChange={(e) => setNewScholarship({ ...newScholarship, description: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 />
                 <input
                   type="text"
                   placeholder="Eligibility criteria"
                   value={newScholarship.eligibility}
                   onChange={(e) => setNewScholarship({ ...newScholarship, eligibility: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 />
               </div>
               <button
@@ -1758,9 +1738,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 10: DOCUMENTS & BROCHURES */}
         {activeTab === 'documents' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-indigo-400" />
                 <span>Documents, Prospectus & Brochures</span>
               </h2>
@@ -1769,13 +1749,13 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {collegeData.documents?.map((docItem, idx) => (
-                <div key={idx} className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+                <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
                       <FileText className="w-4 h-4" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-xs text-slate-200">{docItem.title}</h4>
+                      <h4 className="font-bold text-xs text-slate-800 dark:text-slate-200">{docItem.title}</h4>
                       <span className="text-[10px] text-slate-500 uppercase">{docItem.type}</span>
                     </div>
                   </div>
@@ -1811,12 +1791,12 @@ export default function CollegePortalPage() {
                   placeholder="Document Title (e.g. 2026-27 Prospectus)"
                   value={newDoc.title}
                   onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 />
                 <select
                   value={newDoc.type}
                   onChange={(e) => setNewDoc({ ...newDoc, type: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 >
                   <option value="PROSPECTUS">Prospectus</option>
                   <option value="FEE_STRUCTURE">Fee Structure Circular</option>
@@ -1828,7 +1808,7 @@ export default function CollegePortalPage() {
                   placeholder="PDF Download URL"
                   value={newDoc.url}
                   onChange={(e) => setNewDoc({ ...newDoc, url: e.target.value })}
-                  className="bg-slate-950 border border-slate-800 rounded-lg p-2 text-slate-200"
+                  className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg p-2 text-slate-800 dark:text-slate-200"
                 />
               </div>
               <button
@@ -1845,9 +1825,9 @@ export default function CollegePortalPage() {
 
         {/* TAB 11: CAMPUS GALLERY */}
         {activeTab === 'gallery' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-6">
-            <div className="border-b border-slate-800 pb-3">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-6">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Upload className="w-4 h-4 text-indigo-400" />
                 <span>Campus Photo Gallery</span>
               </h2>
@@ -1856,7 +1836,7 @@ export default function CollegePortalPage() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {collegeData.gallery?.map((imgUrl, idx) => (
-                <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-800 bg-slate-950 aspect-video">
+                <div key={idx} className="relative group rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 aspect-video">
                   <img src={imgUrl} alt={`Campus view ${idx + 1}`} className="w-full h-full object-cover" />
                   <button
                     onClick={() => handleRemoveGalleryImage(idx)}
@@ -1875,7 +1855,7 @@ export default function CollegePortalPage() {
                 value={galleryInput}
                 onChange={(e) => setGalleryInput(e.target.value)}
                 placeholder="Paste Campus Image URL (https://...)"
-                className="flex-grow bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-100"
+                className="flex-grow bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-100"
               />
               <button
                 type="button"
@@ -1892,8 +1872,8 @@ export default function CollegePortalPage() {
       {/* STUDENT VIEW PREVIEW MODAL */}
       {previewOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-2">
                 <Eye className="w-5 h-5 text-indigo-400" />
                 <h3 className="font-bold text-slate-100 text-base">Public Student View Preview</h3>
@@ -1907,13 +1887,13 @@ export default function CollegePortalPage() {
             </div>
 
             {/* Simulated Banner */}
-            <div className="relative h-44 rounded-2xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900 overflow-hidden flex items-end p-6 border border-slate-800">
+            <div className="relative h-44 rounded-2xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900 overflow-hidden flex items-end p-6 border border-slate-200 dark:border-slate-800">
               <div className="space-y-1 relative z-10">
                 <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                   {collegeData.ownership} • {collegeData.category}
                 </span>
                 <h2 className="text-2xl font-extrabold text-white">{collegeData.name}</h2>
-                <p className="text-xs text-slate-300 flex items-center gap-1">
+                <p className="text-xs text-slate-700 dark:text-slate-300 flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5 text-indigo-400" />
                   <span>{collegeData.address}</span>
                 </p>
@@ -1922,10 +1902,10 @@ export default function CollegePortalPage() {
 
             {/* Streams Summary */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-300 uppercase">Offered Streams & Annual Fees</h4>
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Offered Streams & Annual Fees</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {collegeData.streams?.map((s, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs">
+                  <div key={idx} className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex justify-between items-center text-xs">
                     <div>
                       <p className="font-bold text-slate-100">{s.streamName}</p>
                       <p className="text-[10px] text-slate-400">Medium: {s.medium || 'English'}</p>
@@ -1938,17 +1918,17 @@ export default function CollegePortalPage() {
 
             {/* Facilities Badges */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-300 uppercase">Campus Facilities</h4>
+              <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase">Campus Facilities</h4>
               <div className="flex flex-wrap gap-2 text-xs">
-                {collegeData.hasHostel && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Hostel Available</span>}
-                {collegeData.hasTransport && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ College Buses</span>}
-                {collegeData.hasLibrary && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Central Library</span>}
-                {collegeData.hasLabs && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Science Labs</span>}
-                {collegeData.hasWifi && <span className="px-3 py-1 bg-slate-950 border border-slate-800 text-indigo-300 rounded-full font-medium">✓ Wi-Fi</span>}
+                {collegeData.hasHostel && <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-indigo-300 rounded-full font-medium">✓ Hostel Available</span>}
+                {collegeData.hasTransport && <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-indigo-300 rounded-full font-medium">✓ College Buses</span>}
+                {collegeData.hasLibrary && <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-indigo-300 rounded-full font-medium">✓ Central Library</span>}
+                {collegeData.hasLabs && <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-indigo-300 rounded-full font-medium">✓ Science Labs</span>}
+                {collegeData.hasWifi && <span className="px-3 py-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-indigo-300 rounded-full font-medium">✓ Wi-Fi</span>}
               </div>
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-800">
+            <div className="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setPreviewOpen(false)}
                 className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold cursor-pointer"

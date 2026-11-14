@@ -228,11 +228,11 @@ export default function CollegeDetailClient({ id }) {
           </div>
         )}
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
           
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center flex-grow">
             {/* Logo */}
-            <div className="w-24 h-24 rounded-2xl bg-slate-950 border border-slate-800 shrink-0 flex items-center justify-center p-2 shadow-inner overflow-hidden">
+            <div className="w-24 h-24 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 shrink-0 flex items-center justify-center p-2 shadow-inner overflow-hidden">
               {college.logoUrl ? (
                 <img src={college.logoUrl} alt="Logo" className="w-full h-full object-contain" />
               ) : (
@@ -267,7 +267,7 @@ export default function CollegeDetailClient({ id }) {
                 )}
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 font-display leading-tight">{college.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display leading-tight">{college.name}</h1>
               
               <div className="flex flex-wrap gap-4 text-xs text-slate-400">
                 <p className="flex items-center gap-1.5">
@@ -331,20 +331,20 @@ export default function CollegeDetailClient({ id }) {
         </div>
 
         {/* Tab contents panel */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-md min-h-[300px]">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md min-h-[300px]">
           
           {/* Tab 1: Overview */}
           {activeTab === 'overview' && (
             <div className="space-y-8 text-left">
               {/* About description */}
               <div className="space-y-3">
-                <h3 className="text-lg font-bold text-slate-100">About the College</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">About the College</h3>
                 <p className="text-slate-300 text-sm leading-relaxed">{college.description}</p>
               </div>
 
               {/* Principal Message card if available */}
               {(college.principalName || college.principalMessage) && (
-                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-2">
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-2">
                   <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
                     <Award className="w-4 h-4" />
                     <span>Leadership & Authorised Representative</span>
@@ -414,7 +414,7 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 2: Streams & Fees */}
           {activeTab === 'streams' && (
             <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-indigo-400" />
                 <span>Offered Streams & Transparent Fee Structure</span>
               </h3>
@@ -423,7 +423,7 @@ export default function CollegeDetailClient({ id }) {
                 {college.streams?.map((s, idx) => {
                   const total = (Number(s.annualFee) || 0) + (Number(s.admissionFee) || 0) + (Number(s.otherCharges) || 0);
                   return (
-                    <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-4">
+                    <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-4">
                       <div className="flex justify-between items-start gap-4">
                         <div>
                           <div className="flex items-center gap-2">
@@ -476,8 +476,8 @@ export default function CollegeDetailClient({ id }) {
               </div>
 
               {college.feePaymentTerms && (
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 space-y-1">
-                  <span className="font-bold text-slate-100 uppercase text-[10px] tracking-wide block">Payment Terms & Installments</span>
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-xs text-slate-300 space-y-1">
+                  <span className="font-bold text-slate-900 dark:text-slate-100 uppercase text-[10px] tracking-wide block">Payment Terms & Installments</span>
                   <p>{college.feePaymentTerms}</p>
                 </div>
               )}
@@ -488,7 +488,7 @@ export default function CollegeDetailClient({ id }) {
           {activeTab === 'admissions' && (
             <div className="space-y-8 text-left max-w-4xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                   <ClipboardCheck className="w-5 h-5 text-indigo-400" />
                   <span>Admissions & Important Dates</span>
                 </h3>
@@ -507,19 +507,19 @@ export default function CollegeDetailClient({ id }) {
 
               {/* Key Dates Banner */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 space-y-1">
                   <span className="text-[10px] text-slate-500 uppercase font-bold block">Academic Year</span>
                   <span className="text-xs font-extrabold text-slate-200">{college.admissions?.academicYear || '2026-2027'}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 space-y-1">
                   <span className="text-[10px] text-slate-500 uppercase font-bold block">Application Start</span>
                   <span className="text-xs font-extrabold text-indigo-400">{college.admissions?.applicationStartDate || 'May 2026'}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 space-y-1">
                   <span className="text-[10px] text-slate-500 uppercase font-bold block">Application Deadline</span>
                   <span className="text-xs font-extrabold text-rose-400">{college.admissions?.applicationEndDate || 'July 2026'}</span>
                 </div>
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 space-y-1">
                   <span className="text-[10px] text-slate-500 uppercase font-bold block">Classes Commencement</span>
                   <span className="text-xs font-extrabold text-emerald-400">{college.admissions?.classesStartDate || 'July 2026'}</span>
                 </div>
@@ -550,7 +550,7 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 4: Scholarships & Concessions */}
           {activeTab === 'scholarships' && (
             <div className="space-y-6 text-left max-w-4xl">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-indigo-400" />
                 <span>Available Scholarships & Fee Concessions</span>
               </h3>
@@ -568,9 +568,9 @@ export default function CollegeDetailClient({ id }) {
                     eligibility: 'SSC Grade 9.5+ or CBSE 90%+'
                   }
                 ]).map((sch, idx) => (
-                  <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-2">
+                  <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-2">
                     <h4 className="text-slate-100 font-bold text-sm">{sch.title}</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">{sch.description}</p>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{sch.description}</p>
                     <p className="text-xs text-indigo-400 font-semibold pt-1">Eligibility: {sch.eligibility}</p>
                   </div>
                 ))}
@@ -581,7 +581,7 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 5: Facilities */}
           {activeTab === 'facilities' && (
             <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Dumbbell className="w-5 h-5 text-indigo-400" />
                 <span>Campus Infrastructure & Facilities</span>
               </h3>
@@ -624,7 +624,7 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 6: Documents & Brochures */}
           {activeTab === 'documents' && (
             <div className="space-y-6 text-left max-w-4xl">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <FileText className="w-5 h-5 text-indigo-400" />
                 <span>Official Documents, Prospectus & Brochures</span>
               </h3>
@@ -632,7 +632,7 @@ export default function CollegeDetailClient({ id }) {
               {college.documents && college.documents.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {college.documents.map((d, idx) => (
-                    <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center">
                           <FileText className="w-5 h-5" />
@@ -659,7 +659,7 @@ export default function CollegeDetailClient({ id }) {
                   ))}
                 </div>
               ) : (
-                <div className="p-8 rounded-2xl bg-slate-950 border border-slate-800 text-center text-xs text-slate-400 space-y-3">
+                <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-center text-xs text-slate-400 space-y-3">
                   <FileText className="w-8 h-8 text-slate-600 mx-auto" />
                   <p>Official printed prospectus and admission forms are available directly at the admissions administrative block.</p>
                   {(college.whatsappNumber || college.phone) && (
@@ -692,13 +692,13 @@ export default function CollegeDetailClient({ id }) {
           {/* Tab 6: Gallery */}
           {activeTab === 'gallery' && (
             <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-indigo-400" />
                 <span>College Photo Gallery</span>
               </h3>
 
               {college.gallery?.length === 0 ? (
-                <div className="bg-slate-950 border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-xs">
+                <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-12 text-center text-slate-500 text-xs">
                   No images uploaded.
                 </div>
               ) : (
@@ -723,16 +723,16 @@ export default function CollegeDetailClient({ id }) {
               
               {/* Left Side: Reviews list */}
               <div className="lg:col-span-2 space-y-6">
-                <h3 className="text-lg font-bold text-slate-100">Student Reviews</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Student Reviews</h3>
                 
                 {college.reviews?.length === 0 ? (
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-8 text-center text-slate-500 text-xs">
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-8 text-center text-slate-500 text-xs">
                     No reviews published yet for this college. Be the first to write a review!
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {college.reviews?.map((r, idx) => (
-                      <div key={idx} className="bg-slate-950 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-inner">
+                      <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-3 shadow-inner">
                         <div className="flex justify-between items-center">
                           <div className="flex items-center gap-1.5 text-xs text-slate-300 font-bold">
                             <span className="bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md font-medium text-[10px]">Student</span>
@@ -759,8 +759,8 @@ export default function CollegeDetailClient({ id }) {
               </div>
 
               {/* Right Side: Write Review Form */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-5 shadow-md hover:border-indigo-500/10 transition w-full">
-                <h3 className="text-sm font-extrabold text-slate-100 flex items-center gap-1.5 border-b border-slate-850 pb-3">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 space-y-5 shadow-md hover:border-indigo-500/10 transition w-full">
+                <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100 flex items-center gap-1.5 border-b border-slate-850 pb-3">
                   <Sparkles className="w-4 h-4 text-yellow-400 animate-pulse" />
                   <span>Write a Campus Review</span>
                 </h3>

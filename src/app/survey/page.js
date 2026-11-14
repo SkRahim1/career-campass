@@ -375,8 +375,8 @@ export default function SurveyPage() {
         iconName="survey"
         redirectPath="/survey"
       >
-        <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center space-y-8 bg-grid-pattern bg-radial-gradient flex-grow">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-6">
+        <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full text-center space-y-8 bg-grid-pattern bg-radial-gradient flex-grow">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-8 sm:p-12 shadow-2xl space-y-6">
           <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/10">
             <CheckCircle2 className="w-10 h-10" />
           </div>
@@ -385,16 +385,16 @@ export default function SurveyPage() {
             <span className="text-[10px] uppercase font-extrabold tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full">
               Survey Completed Successfully
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 font-display">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
               Thank You, {formData.q1_fullName}!
             </h1>
-            <p className="text-slate-400 text-sm max-w-lg mx-auto">
+            <p className="text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto">
               Your responses have been recorded securely. Our guidance system uses this information to help design your educational journey after Class 10.
             </p>
           </div>
 
           {/* Personalized Insights Summary */}
-          <div className="bg-slate-950 border border-slate-800/80 rounded-2xl p-5 text-left space-y-3 text-xs">
+          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100/80 rounded-2xl p-5 text-left space-y-3 text-xs">
             <p className="font-bold text-slate-300 flex items-center gap-1.5 uppercase text-[10px] tracking-wider text-indigo-400">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Your Survey Snapshot</span>
@@ -457,7 +457,7 @@ export default function SurveyPage() {
         ============================================================ */}
         {showPopup && (
           <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl text-left relative overflow-hidden max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl text-left relative overflow-hidden max-h-[90vh] overflow-y-auto">
               {/* Top decorative gradient bar */}
               <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
 
@@ -475,10 +475,10 @@ export default function SurveyPage() {
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Instant College Suggestions</span>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-100 font-display">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
                   Great job, {formData.q1_fullName || 'Student'}!
                 </h2>
-                <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
                   Based on your goal to become a <strong className="text-purple-300">{formData.q6_careerGoal || 'Professional'}</strong> and your preferred stream <strong className="text-indigo-300">{formData.q12_intermediateStream || 'your choice'}</strong>, here are top college recommendations in Hyderabad matching your profile:
                 </p>
               </div>
@@ -491,7 +491,7 @@ export default function SurveyPage() {
                 </h3>
 
                 {suggestedColleges.length === 0 ? (
-                  <div className="bg-slate-950 border border-slate-800 rounded-2xl p-6 text-center text-slate-500 text-xs">
+                  <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-6 text-center text-slate-500 text-xs">
                     Loading recommended colleges...
                   </div>
                 ) : (
@@ -504,7 +504,7 @@ export default function SurveyPage() {
                       return (
                         <div 
                           key={col.id}
-                          className="bg-slate-950 border border-slate-800 hover:border-indigo-500/40 rounded-2xl p-4 transition flex flex-col sm:flex-row justify-between sm:items-center gap-3"
+                          className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 hover:border-indigo-500/40 rounded-2xl p-4 transition flex flex-col sm:flex-row justify-between sm:items-center gap-3"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
@@ -581,7 +581,7 @@ export default function SurveyPage() {
       iconName="survey"
       redirectPath="/survey"
     >
-      <div className="bg-slate-950 py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 bg-grid-pattern bg-radial-gradient flex-grow text-left">
+      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full space-y-8 bg-grid-pattern bg-radial-gradient flex-grow text-left">
       
       {/* First-time Student Welcome Banner */}
       {user && !user.hasCompletedSurvey && (
@@ -604,16 +604,16 @@ export default function SurveyPage() {
           <ClipboardList className="w-4 h-4" />
           <span>Class 10 Student Survey • 28 Questions · 5–7 Minutes</span>
         </div>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 font-display">
+        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
           Discover Your Path. Design Your Future.
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
+        <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl leading-relaxed">
           This survey aims to understand your interests, future goals and educational preferences after Class 10. Your responses will help us provide better career guidance and college information.
         </p>
       </div>
 
       {/* Progress Bar & Section Stepper */}
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-md space-y-4">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-5 sm:p-6 shadow-md space-y-4">
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-xs">
           <div>
             <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">
@@ -622,7 +622,7 @@ export default function SurveyPage() {
             <h2 className="text-slate-100 font-extrabold text-base flex items-center gap-2 mt-0.5">
               <span>{sections[currentSection - 1].title}</span>
             </h2>
-            <p className="text-slate-400 text-xs mt-0.5">{sections[currentSection - 1].description}</p>
+            <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5">{sections[currentSection - 1].description}</p>
           </div>
           <div className="text-right shrink-0">
             <span className="text-indigo-400 font-bold text-sm">
@@ -665,7 +665,7 @@ export default function SurveyPage() {
       )}
 
       {/* Form Content Card */}
-      <form onSubmit={handleSubmit} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-xl space-y-8">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-10 shadow-xl space-y-8">
         
         {/* ============================================================
             SECTION 1: Student Information (Q1 - Q5)
@@ -674,7 +674,7 @@ export default function SurveyPage() {
           <div className="space-y-6">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 1</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">Student Information</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Student Information</h3>
               <p className="text-xs text-slate-400 mt-0.5">Please provide your school and basic contact details.</p>
             </div>
 
@@ -690,7 +690,7 @@ export default function SurveyPage() {
                   placeholder="e.g. Rahul Kumar"
                   value={formData.q1_fullName}
                   onChange={(e) => handleInputChange('q1_fullName', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -723,7 +723,7 @@ export default function SurveyPage() {
                   placeholder="e.g. 10th - A / 10th - B"
                   value={formData.q3_classSection}
                   onChange={(e) => handleInputChange('q3_classSection', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <GraduationCap className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -743,7 +743,7 @@ export default function SurveyPage() {
                   placeholder="e.g. 9876543210 (For updates & notifications)"
                   value={formData.q4_mobileNumber}
                   onChange={(e) => handleInputChange('q4_mobileNumber', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -761,7 +761,7 @@ export default function SurveyPage() {
                   placeholder="e.g. Charminar, Kukatpally, Secunderabad, Dilsukhnagar"
                   value={formData.q5_location}
                   onChange={(e) => handleInputChange('q5_location', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <MapPin className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -776,7 +776,7 @@ export default function SurveyPage() {
           <div className="space-y-8">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 2</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">Career Aspirations</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Career Aspirations</h3>
               <p className="text-xs text-slate-400 mt-0.5">Tell us about what inspires you and where you see yourself.</p>
             </div>
 
@@ -922,7 +922,7 @@ export default function SurveyPage() {
           <div className="space-y-8">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 3</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">Education After Class 10</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Education After Class 10</h3>
               <p className="text-xs text-slate-400 mt-0.5">Streams, polytechnic, and immediate educational path.</p>
             </div>
 
@@ -1033,7 +1033,7 @@ export default function SurveyPage() {
           <div className="space-y-8">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 4</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">Entrance Examinations</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Entrance Examinations</h3>
               <p className="text-xs text-slate-400 mt-0.5">POLYCET, residential schools, and competitive tests.</p>
             </div>
 
@@ -1211,7 +1211,7 @@ export default function SurveyPage() {
           <div className="space-y-8">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 5</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">College Preferences</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">College Preferences</h3>
               <p className="text-xs text-slate-400 mt-0.5">Budget, locations, and type of institution.</p>
             </div>
 
@@ -1321,7 +1321,7 @@ export default function SurveyPage() {
           <div className="space-y-8">
             <div className="border-b border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 6</span>
-              <h3 className="text-lg font-bold text-slate-100 mt-1">Career Guidance & Next Steps</h3>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Career Guidance & Next Steps</h3>
               <p className="text-xs text-slate-400 mt-0.5">Let us know how we can best support your aspirations.</p>
             </div>
 
@@ -1392,7 +1392,7 @@ export default function SurveyPage() {
                 value={formData.q28_biggestConfusion}
                 onChange={(e) => handleInputChange('q28_biggestConfusion', e.target.value)}
                 placeholder="Share your doubts freely, e.g. 'I am confused whether to choose MPC or Polytechnic', or 'I am worried about private college fee expenses'..."
-                className="w-full p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm leading-relaxed transition"
+                className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm leading-relaxed transition"
               />
               <p className="text-[10px] text-slate-500">
                 Your responses will be kept confidential and used solely for educational guidance and college discovery.
@@ -1408,7 +1408,7 @@ export default function SurveyPage() {
               <button
                 type="button"
                 onClick={handlePrev}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-850 text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 hover:bg-slate-850 text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer active:scale-95"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Previous Section</span>

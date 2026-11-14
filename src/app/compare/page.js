@@ -93,16 +93,16 @@ function ComparePageContent() {
   ];
 
   return (
-    <div className="bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient bg-grid-pattern flex-grow">
+    <div className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient bg-grid-pattern flex-grow">
       
       {/* Title */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <ArrowRightLeft className="w-6 h-6 text-indigo-400" />
-            <h1 className="text-3xl font-extrabold text-slate-100">Compare Colleges</h1>
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Compare Colleges</h1>
           </div>
-          <p className="text-slate-400 text-sm">
+          <p className="text-slate-600 dark:text-slate-400 text-sm">
             Inspect pricing, credentials, facilities, and ratings side-by-side.
           </p>
         </div>

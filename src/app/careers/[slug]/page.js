@@ -101,7 +101,7 @@ export default async function CareerDetailPage({ params }) {
         </Link>
 
         {/* Header Block */}
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-md">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-md">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <div className="p-2.5 bg-indigo-500/10 rounded-xl border border-indigo-500/20 text-indigo-400 shrink-0">
@@ -111,12 +111,12 @@ export default async function CareerDetailPage({ params }) {
                 Roadmap Guide
               </span>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 font-display leading-tight">{career.title}</h1>
-            <p className="text-slate-400 text-xs leading-relaxed max-w-xl">{career.overview}</p>
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-display leading-tight">{career.title}</h1>
+            <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed max-w-xl">{career.overview}</p>
           </div>
 
           {/* Salary Card */}
-          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-5 w-full sm:w-64 space-y-2 shrink-0">
+          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 w-full sm:w-64 space-y-2 shrink-0">
             <span className="text-[10px] text-slate-500 uppercase tracking-wide font-extrabold">Starting Salary scale</span>
             <div className="space-y-1">
               <p className="text-slate-200 font-extrabold text-base">
@@ -138,13 +138,13 @@ export default async function CareerDetailPage({ params }) {
           <div className="md:col-span-1 space-y-6">
             
             {/* Qualification */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-3">
               <h3 className="text-slate-100 font-bold text-xs uppercase tracking-wide">Min Qualification</h3>
               <p className="text-slate-300 text-xs leading-relaxed font-semibold">{career.qualificationRequired}</p>
             </div>
 
             {/* Skills */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-3">
               <h3 className="text-slate-100 font-bold text-xs uppercase tracking-wide">Key Skills</h3>
               <div className="flex flex-wrap gap-1.5">
                 {skills.map((skill, idx) => (
@@ -156,7 +156,7 @@ export default async function CareerDetailPage({ params }) {
             </div>
 
             {/* Future Scope */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 space-y-3">
               <h3 className="text-slate-100 font-bold text-xs uppercase tracking-wide flex items-center gap-1">
                 <TrendingUp className="w-4 h-4 text-emerald-400" />
                 <span>Future Scope</span>
@@ -169,7 +169,7 @@ export default async function CareerDetailPage({ params }) {
           <div className="md:col-span-2 space-y-6">
             
             {/* Responsibilities */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 space-y-4">
               <h3 className="text-slate-100 font-bold text-sm flex items-center gap-2">
                 <CheckSquare className="w-5 h-5 text-indigo-400" />
                 <span>Key Responsibilities</span>
@@ -185,7 +185,7 @@ export default async function CareerDetailPage({ params }) {
             </div>
 
             {/* Timeline Roads */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 space-y-6">
               <h3 className="text-slate-100 font-bold text-sm flex items-center gap-2">
                 <Compass className="w-5 h-5 text-indigo-400" />
                 <span>Educational Milestones Roadmap</span>
@@ -196,7 +196,7 @@ export default async function CareerDetailPage({ params }) {
                 <div className="relative space-y-1 text-left">
                   <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-slate-950 border border-indigo-500/40 text-indigo-400 text-xs font-bold flex items-center justify-center">10</span>
                   <h4 className="font-bold text-slate-200 text-sm">Milestones Immediately After Class 10</h4>
-                  <div className="text-xs text-slate-400 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-800/80 mt-2 font-normal">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-800/80 mt-2 font-normal">
                     {career.roadmapAfter10th}
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export default async function CareerDetailPage({ params }) {
                 <div className="relative space-y-1 text-left">
                   <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-slate-950 border border-indigo-500/40 text-indigo-400 text-xs font-bold flex items-center justify-center">12</span>
                   <h4 className="font-bold text-slate-200 text-sm">Milestones After Intermediate (11th & 12th) / Diploma</h4>
-                  <div className="text-xs text-slate-400 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-800/80 mt-2 font-normal">
+                  <div className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line bg-slate-950 p-4 rounded-xl border border-slate-800/80 mt-2 font-normal">
                     {career.roadmapAfterIntermediate}
                   </div>
                 </div>

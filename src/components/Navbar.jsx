@@ -38,42 +38,105 @@ export default function Navbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-900/85 border-b border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 shadow-sm dark:shadow-lg transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-6 xl:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2 font-extrabold text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-650 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 hover:opacity-90 transition">
-                <Compass className="w-6 h-6 text-indigo-500 dark:text-indigo-400 animate-spin-slow" />
-                <span>Career365Compass</span>
+            <div className="flex items-center shrink-0 mr-2 xl:mr-4">
+              <Link href="/" className="flex items-center gap-1.5 xl:gap-2 font-extrabold text-base xl:text-lg 2xl:text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 hover:opacity-90 transition shrink-0 whitespace-nowrap">
+                <Compass className="w-5 h-5 xl:w-6 xl:h-6 text-indigo-500 dark:text-indigo-400 animate-spin-slow shrink-0" />
+                <span className="font-display">Career365Compass</span>
               </Link>
             </div>
 
-            {/* Desktop Navigation Links */}
-            <div className="hidden md:flex items-center gap-5">
-              <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Explore Colleges</Link>
-              <Link href="/government-colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Govt Colleges</Link>
-              <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm flex items-center gap-1.5 text-indigo-600 dark:text-indigo-300 font-semibold">
-                <Trophy className="w-4 h-4 text-amber-500" />
-                <span>Competitive Exams</span>
+            {/* Desktop Navigation Links (Properly responsive across 1024px to 4K) */}
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2 2xl:gap-3.5 shrink min-w-0">
+              <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-xs xl:text-sm whitespace-nowrap shrink-0 px-1.5 py-1">
+                <span className="hidden 2xl:inline">Explore </span>Colleges
               </Link>
-              <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Career Library</Link>
-              <Link href="/scholarships" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm">Scholarships</Link>
-              <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-sm flex items-center gap-1.5">
-                <Bell className="w-4 h-4 text-pink-500 dark:text-pink-400" />
+              <Link href="/government-colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-xs xl:text-sm whitespace-nowrap shrink-0 px-1.5 py-1">
+                Govt<span className="hidden xl:inline"> Colleges</span>
+              </Link>
+              <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-semibold text-xs xl:text-sm flex items-center gap-1 text-indigo-600 dark:text-indigo-300 whitespace-nowrap shrink-0 px-1.5 py-1">
+                <Trophy className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                <span><span className="hidden xl:inline">Competitive </span>Exams</span>
+              </Link>
+              <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-xs xl:text-sm whitespace-nowrap shrink-0 px-1.5 py-1">
+                Career<span className="hidden xl:inline"> Library</span>
+              </Link>
+              <Link href="/scholarships" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-xs xl:text-sm whitespace-nowrap shrink-0 px-1.5 py-1">
+                Scholarships
+              </Link>
+              <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition font-medium text-xs xl:text-sm flex items-center gap-1 whitespace-nowrap shrink-0 px-1.5 py-1">
+                <Bell className="w-3.5 h-3.5 text-pink-500 dark:text-pink-400 shrink-0" />
                 <span>Updates</span>
               </Link>
-              <Link href="/college-portal" className="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 px-3 py-1.5 rounded-full transition flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5 text-indigo-500" />
-                <span>College Portal</span>
+              <Link href="/college-portal" className="text-xs font-bold text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 px-2 py-1 xl:px-2.5 xl:py-1 rounded-full transition flex items-center gap-1 whitespace-nowrap shrink-0">
+                <Building2 className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                <span><span className="hidden 2xl:inline">College </span>Portal</span>
               </Link>
-              <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1.5 text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 px-3 py-1.5 rounded-full shadow-xs">
-                <ClipboardList className="w-3.5 h-3.5 text-purple-500 animate-pulse" />
+              <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1 text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 px-2 py-1 xl:px-2.5 xl:py-1 rounded-full shadow-xs whitespace-nowrap shrink-0">
+                <ClipboardList className="w-3.5 h-3.5 text-purple-500 animate-pulse shrink-0" />
                 <span>Survey</span>
               </Link>
             </div>
 
             {/* Desktop Auth Section */}
-            <div className="hidden md:flex items-center gap-4">
+            <div className="hidden lg:flex items-center gap-1.5 xl:gap-3 shrink-0 ml-1 xl:ml-2">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="p-1.5 xl:p-2 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:border-transparent dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100 transition cursor-pointer shrink-0"
+                aria-label="Toggle Theme"
+              >
+                {darkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-slate-500" />}
+              </button>
+              
+              {user ? (
+                <div className="flex items-center gap-2 xl:gap-3 shrink-0">
+                  {user.role === 'SUPER_ADMIN' ? (
+                    <Link href="/admin" className="flex items-center gap-1 bg-purple-650/10 dark:bg-purple-600/20 hover:bg-purple-650/20 dark:hover:bg-purple-600/30 text-purple-600 dark:text-purple-305 border border-purple-550/20 dark:border-purple-500/30 px-2.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm whitespace-nowrap shrink-0">
+                      <LayoutDashboard className="w-3.5 h-3.5 shrink-0" />
+                      <span>Admin<span className="hidden xl:inline"> Panel</span></span>
+                    </Link>
+                  ) : user.role === 'COLLEGE_ADMIN' ? (
+                    <Link href="/college-portal" className="flex items-center gap-1.5 bg-indigo-650/10 dark:bg-indigo-600/20 hover:bg-indigo-650/20 dark:hover:bg-indigo-600/30 text-indigo-600 dark:text-indigo-305 border border-indigo-555/20 dark:border-indigo-500/30 px-2.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm whitespace-nowrap shrink-0">
+                      <Building2 className="w-3.5 h-3.5 shrink-0" />
+                      <span className="max-w-[120px] truncate">{user.collegeName || 'Portal'}</span>
+                    </Link>
+                  ) : (
+                    <>
+                      <Link href="/saved-colleges" className="flex items-center gap-1 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100 transition text-xs xl:text-sm whitespace-nowrap shrink-0">
+                        <Bookmark className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
+                        <span className="hidden xl:inline">Bookmarks</span>
+                      </Link>
+                      <Link href="/profile" className="flex items-center gap-1.5 bg-indigo-650/10 dark:bg-indigo-600/20 hover:bg-indigo-650/20 dark:hover:bg-indigo-600/30 text-indigo-600 dark:text-indigo-305 border border-indigo-555/20 dark:border-indigo-500/30 px-2.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm whitespace-nowrap shrink-0">
+                        <User className="w-3.5 h-3.5 shrink-0" />
+                        <span className="max-w-[100px] truncate">{user.name}</span>
+                      </Link>
+                    </>
+                  )}
+                  <button
+                    onClick={logout}
+                    className="flex items-center gap-1 text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 transition text-xs xl:text-sm font-semibold cursor-pointer whitespace-nowrap shrink-0"
+                  >
+                    <LogOut className="w-3.5 h-3.5 shrink-0" />
+                    <span className="hidden xl:inline">Logout</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 xl:gap-2.5 shrink-0">
+                  <Link href="/login" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition font-semibold text-xs xl:text-sm whitespace-nowrap shrink-0 px-2 py-1">
+                    Sign In
+                  </Link>
+                  <Link href="/register" className="bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1.5 xl:px-3.5 xl:py-2 rounded-xl text-xs xl:text-sm font-semibold tracking-wide shadow-md hover:shadow-indigo-500/20 transition cursor-pointer whitespace-nowrap shrink-0">
+                    Get Started
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile / Tablet Menu Button (shown on screens < 1024px) */}
+            <div className="lg:hidden flex items-center gap-2 sm:gap-3">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
@@ -82,64 +145,10 @@ export default function Navbar() {
               >
                 {darkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-slate-500" />}
               </button>
-              
-              {user ? (
-                <div className="flex items-center gap-4">
-                  {user.role === 'SUPER_ADMIN' ? (
-                    <Link href="/admin" className="flex items-center gap-1 bg-purple-650/10 dark:bg-purple-600/20 hover:bg-purple-650/20 dark:hover:bg-purple-600/30 text-purple-600 dark:text-purple-305 border border-purple-550/20 dark:border-purple-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm">
-                      <LayoutDashboard className="w-3.5 h-3.5" />
-                      <span>Admin Panel</span>
-                    </Link>
-                  ) : user.role === 'COLLEGE_ADMIN' ? (
-                    <Link href="/college-portal" className="flex items-center gap-1.5 bg-indigo-650/10 dark:bg-indigo-600/20 hover:bg-indigo-650/20 dark:hover:bg-indigo-600/30 text-indigo-600 dark:text-indigo-305 border border-indigo-555/20 dark:border-indigo-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm">
-                      <Building2 className="w-3.5 h-3.5" />
-                      <span>{user.collegeName ? `${user.collegeName.slice(0, 16)}...` : 'College Portal'}</span>
-                    </Link>
-                  ) : (
-                    <>
-                      <Link href="/saved-colleges" className="flex items-center gap-1 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100 transition text-sm">
-                        <Bookmark className="w-4 h-4 text-yellow-500" />
-                        <span>Bookmarks</span>
-                      </Link>
-                      <Link href="/profile" className="flex items-center gap-1.5 bg-indigo-650/10 dark:bg-indigo-600/20 hover:bg-indigo-650/20 dark:hover:bg-indigo-600/30 text-indigo-600 dark:text-indigo-305 border border-indigo-555/20 dark:border-indigo-500/30 px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition shadow-sm">
-                        <User className="w-3.5 h-3.5" />
-                        <span>{user.name}</span>
-                      </Link>
-                    </>
-                  )}
-                  <button
-                    onClick={logout}
-                    className="flex items-center gap-1.5 text-slate-505 hover:text-red-655 dark:text-slate-400 dark:hover:text-red-400 transition text-sm font-semibold cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-4">
-                  <Link href="/login" className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition font-medium text-sm">
-                    Sign In
-                  </Link>
-                  <Link href="/register" className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold tracking-wide shadow-md hover:shadow-indigo-500/20 transition cursor-pointer">
-                    Get Started
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center gap-3">
-              {/* Theme Toggle */}
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-xl bg-slate-100 border border-slate-200 hover:bg-slate-200 dark:bg-slate-800 dark:border-transparent dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-305 dark:hover:text-slate-100 transition cursor-pointer"
-                aria-label="Toggle Theme"
-              >
-                {darkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-slate-500" />}
-              </button>
               <button
                 onClick={toggleMenu}
-                className="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white focus:outline-none cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white focus:outline-none cursor-pointer"
+                aria-label="Toggle Navigation Menu"
               >
                 {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -152,13 +161,13 @@ export default function Navbar() {
       {isOpen && (
         <div 
           onClick={toggleMenu}
-          className="md:hidden fixed inset-0 z-[98] bg-slate-950/40 backdrop-blur-xs transition-opacity duration-300"
+          className="lg:hidden fixed inset-0 z-[98] bg-slate-950/40 backdrop-blur-xs transition-opacity duration-300"
         />
       )}
 
       {/* Mobile Menu Drawer Panel - Decoupled & Opaque */}
       {isOpen && (
-        <div className="md:hidden fixed inset-y-0 right-0 z-[99] w-[85%] max-w-[380px] h-full bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-850 shadow-2xl flex flex-col p-6 space-y-6 animate-slide-in overflow-y-auto">
+        <div className="lg:hidden fixed inset-y-0 right-0 z-[99] w-[85%] max-w-[380px] h-full bg-white dark:bg-slate-950 border-l border-slate-200 dark:border-slate-850 shadow-2xl flex flex-col p-6 space-y-6 animate-slide-in overflow-y-auto">
           
           {/* Header */}
           <div className="flex justify-between items-center pb-2 border-b border-slate-150 dark:border-slate-900">
