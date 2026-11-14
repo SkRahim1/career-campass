@@ -9,24 +9,28 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
 const HYDERABAD_AREAS = [
-  'Abids', 'Ameerpet', 'Alwal', 'Attapur', 'Amberpet', 'Asif Nagar',
-  'Banjara Hills', 'Begumpet', 'Bahadurpura', 'Balanagar', 'Bowenpally', 'Bachupally',
-  'Charminar', 'Chandrayangutta', 'Chanda Nagar',
+  'Abdullapurmet', 'Abids', 'Alwal', 'Amberpet', 'Ameerpet', 'Asif Nagar', 'Attapur',
+  'Bachupally', 'Badangpet', 'Bahadurpura', 'Balanagar', 'Banjara Hills', 'Begumpet', 'Bolarum', 'Bowenpally',
+  'Chanda Nagar', 'Chandrayangutta', 'Charminar', 'Chikkadpally',
   'Dilsukhnagar',
   'ECIL',
   'Falaknuma',
-  'Gachibowli',
-  'Habsiguda', 'Himayatnagar', 'Hitec City',
-  'Jubilee Hills', 'Jeedimetla',
-  'Koti', 'Kachiguda', 'Kukatpally', 'Kondapur', 'Kothapet', 'Khairatabad', 'Karwan',
+  'Gachibowli', 'Ghatkesar',
+  'Habsiguda', 'Hayathnagar', 'Himayatnagar', 'Hitec City',
+  'Ibrahimpatnam',
+  'Jeedimetla', 'Jubilee Hills',
+  'Kachiguda', 'Karwan', 'Khairatabad', 'Kompally', 'Kondapur', 'Kothapet', 'Koti', 'KPHB Colony', 'Kukatpally',
   'L.B. Nagar', 'Langar Houz',
-  'Madhapur', 'Mehdipatnam', 'Malakpet', 'Mallapur', 'Manikonda', 'Masab Tank', 'Marredpally',
-  'Nampally', 'Nacharam', 'Nanakramguda', 'Nizampet', 'Narsingi',
-  'Somajiguda', 'Saroornagar', 'Santoshnagar', 'Sainikpuri', 'Sanathnagar', 'Shaikpet', 'Safilguda',
+  'Madhapur', 'Malakpet', 'Malkajgiri', 'Mallapur', 'Mallepally', 'Manikonda', 'Marredpally', 'Masab Tank', 'Medchal', 'Mehdipatnam',
+  'Nacharam', 'Nampally', 'Nanakramguda', 'Narayanaguda', 'Narsingi', 'Nayapul', 'Nizampet',
+  'Patancheru',
+  'Quthbullapur',
+  'Safilguda', 'Sainikpuri', 'Sanathnagar', 'Santoshnagar', 'Saroornagar', 'Secunderabad', 'Shaikpet', 'Shamshabad', 'Somajiguda',
   'Tarnaka', 'Tolichowki',
   'Uppal',
-  'Vidyanagar', 'Yousufguda'
-].sort();
+  'Vidyanagar',
+  'Yousufguda'
+];
 
 export default function CollegesSearchPage() {
   const [allColleges, setAllColleges] = useState([]);
@@ -90,19 +94,28 @@ export default function CollegesSearchPage() {
     
     let filtered = [...allColleges];
 
-    // Search term
+    // Search term (name, address, pincode, area, landmark, district)
     if (search.trim() !== '') {
       const term = search.toLowerCase();
       filtered = filtered.filter(c => 
-        c.name.toLowerCase().includes(term) ||
-        c.address.toLowerCase().includes(term) ||
+        (c.name && c.name.toLowerCase().includes(term)) ||
+        (c.address && c.address.toLowerCase().includes(term)) ||
+        (c.pincode && c.pincode.toString().includes(term)) ||
+        (c.area && c.area.toLowerCase().includes(term)) ||
+        (c.district && c.district.toLowerCase().includes(term)) ||
         (c.nearbyLandmark && c.nearbyLandmark.toLowerCase().includes(term))
       );
     }
 
     // Area
     if (area !== 'ALL') {
-      filtered = filtered.filter(c => c.address.toLowerCase().includes(area.toLowerCase()));
+      const areaLower = area.toLowerCase();
+      filtered = filtered.filter(c => 
+        (c.address && c.address.toLowerCase().includes(areaLower)) ||
+        (c.name && c.name.toLowerCase().includes(areaLower)) ||
+        (c.area && c.area.toLowerCase().includes(areaLower)) ||
+        (c.nearbyLandmark && c.nearbyLandmark.toLowerCase().includes(areaLower))
+      );
     }
 
     // Ownership
@@ -208,7 +221,7 @@ export default function CollegesSearchPage() {
           onChange={(e) => setArea(e.target.value)}
           className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition"
         >
-          <option value="ALL">All Areas (50+ Locations)</option>
+          <option value="ALL">All Areas (70+ Locations)</option>
           {HYDERABAD_AREAS.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
@@ -353,7 +366,7 @@ export default function CollegesSearchPage() {
         <div className="relative w-full sm:max-w-md">
           <input
             type="text"
-            placeholder="Search by college name, landmark, or location..."
+            placeholder="Search by college name, area, PIN code, or landmark..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl py-3 pl-10 pr-4 text-xs text-slate-705 dark:text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition shadow-inner"

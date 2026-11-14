@@ -1,7 +1,7 @@
 import React from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 
-export default function MapComponent({ address, name, landmark }) {
+export default function MapComponent({ address, name, landmark, pincode }) {
   const query = encodeURIComponent(`${name.split(',')[0]}, ${address}`);
   const mapUrl = `https://maps.google.com/maps?q=${query}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
 
@@ -9,10 +9,17 @@ export default function MapComponent({ address, name, landmark }) {
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-md space-y-4">
       <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
         <div className="space-y-1">
-          <h3 className="text-slate-850 dark:text-slate-100 font-bold text-lg flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-            <span>Campus Location</span>
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-slate-850 dark:text-slate-100 font-bold text-lg flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              <span>Campus Location</span>
+            </h3>
+            {pincode && (
+              <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                PIN {pincode}
+              </span>
+            )}
+          </div>
           <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{address}</p>
           {landmark && (
             <p className="text-xs text-indigo-700 dark:text-indigo-300">

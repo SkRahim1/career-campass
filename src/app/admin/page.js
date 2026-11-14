@@ -164,6 +164,7 @@ export default function AdminDashboardPage() {
     establishedYear: '',
     description: '',
     address: '',
+    pincode: '',
     nearbyLandmark: '',
     phone: '',
     whatsappNumber: '',
@@ -1033,6 +1034,8 @@ export default function AdminDashboardPage() {
         establishedYear: collegeForm.establishedYear ? parseInt(collegeForm.establishedYear) : null,
         description: collegeForm.description.trim(),
         address: collegeForm.address.trim(),
+        pincode: collegeForm.pincode ? collegeForm.pincode.trim() : (collegeForm.address.match(/\b(50\d{4})\b/) ? collegeForm.address.match(/\b(50\d{4})\b/)[1] : ''),
+        googleMapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${collegeForm.name.trim().split(',')[0]}, ${collegeForm.address.trim()}`)}`,
         nearbyLandmark: collegeForm.nearbyLandmark ? collegeForm.nearbyLandmark.trim() : '',
         phone: collegeForm.phone.trim(),
         whatsappNumber: collegeForm.whatsappNumber ? collegeForm.whatsappNumber.trim() : collegeForm.phone.trim(),
@@ -1128,7 +1131,7 @@ export default function AdminDashboardPage() {
       setCollegeForm({
         name: '', ownership: 'PRIVATE', category: 'JUNIOR_COLLEGE', district: 'Hyderabad',
         affiliation: 'Board of Intermediate Education, Telangana (TSBIE)', boardCode: '',
-        establishedYear: '', description: '', address: '', nearbyLandmark: '', phone: '',
+        establishedYear: '', description: '', address: '', pincode: '', nearbyLandmark: '', phone: '',
         whatsappNumber: '', email: '', website: '', genderType: 'CO_ED', principalName: '',
         principalDesignation: 'Principal', principalMessage: '', admissionStartDate: '',
         admissionEndDate: '', admissionProcedure: 'Direct walk-in or online counseling with SSC memo.',
@@ -2089,6 +2092,19 @@ export default function AdminDashboardPage() {
                   </div>
 
                   <div className="space-y-1.5">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">Postal PIN Code (6 digits)</label>
+                    <input
+                      type="text"
+                      name="pincode"
+                      value={collegeForm.pincode}
+                      onChange={handleCollegeChange}
+                      placeholder="e.g. 500001"
+                      maxLength={6}
+                      className="block w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-xs sm:text-sm font-mono transition"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
                     <label className="font-semibold text-slate-700 dark:text-slate-300">Nearby Landmark / Area</label>
                     <input
                       type="text"
@@ -2626,6 +2642,8 @@ export default function AdminDashboardPage() {
                     const q = collegeSearch.toLowerCase();
                     return (
                       (c.name && c.name.toLowerCase().includes(q)) ||
+                      (c.pincode && c.pincode.toString().includes(q)) ||
+                      (c.address && c.address.toLowerCase().includes(q)) ||
                       (c.email && c.email.toLowerCase().includes(q)) ||
                       (c.principalName && c.principalName.toLowerCase().includes(q)) ||
                       (c.district && c.district.toLowerCase().includes(q))
@@ -2662,8 +2680,13 @@ export default function AdminDashboardPage() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
                               <span>📍 {col.address || col.district || 'Hyderabad'}</span>
+                              {col.pincode && (
+                                <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                  PIN {col.pincode}
+                                </span>
+                              )}
                               {col.boardCode && <span>• Board Code: {col.boardCode}</span>}
                             </p>
                           </div>

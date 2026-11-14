@@ -1893,9 +1893,14 @@ export default function CollegePortalPage() {
                   {collegeData.ownership} • {collegeData.category}
                 </span>
                 <h2 className="text-2xl font-extrabold text-white">{collegeData.name}</h2>
-                <p className="text-xs text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5 text-indigo-400" />
+                <p className="text-xs text-slate-700 dark:text-slate-300 flex flex-wrap items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
                   <span>{collegeData.address}</span>
+                  {collegeData.pincode && (
+                    <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-200 border border-indigo-500/30">
+                      PIN {collegeData.pincode}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
