@@ -314,13 +314,13 @@ export default function SurveyPage() {
       onClick={() => handleInputChange(field, value)}
       className={`w-full min-h-[48px] p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all duration-150 flex items-center justify-between gap-2.5 cursor-pointer select-none active:scale-[0.98] ${
         isSelected
-          ? 'bg-indigo-600/20 border-indigo-500 text-indigo-200 shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500/40'
-          : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+          ? 'bg-indigo-50 dark:bg-indigo-600/20 border-indigo-600 dark:border-indigo-500 text-indigo-900 dark:text-indigo-200 shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500/40 font-semibold'
+          : 'bg-slate-50 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900'
       }`}
     >
       <span className="text-xs sm:text-sm font-medium leading-snug">{label}</span>
       <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition ${
-        isSelected ? 'border-indigo-500 bg-indigo-600 text-white shadow-xs' : 'border-slate-700 bg-slate-950'
+        isSelected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 text-white shadow-xs' : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950'
       }`}>
         {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
       </div>
@@ -334,13 +334,13 @@ export default function SurveyPage() {
       onClick={() => handleInputChange(field, value)}
       className={`w-full min-h-[46px] p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-center transition-all duration-150 flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 cursor-pointer select-none active:scale-[0.98] ${
         isSelected
-          ? 'bg-indigo-600/20 border-indigo-500 text-indigo-200 shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500/40'
-          : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+          ? 'bg-indigo-50 dark:bg-indigo-600/20 border-indigo-600 dark:border-indigo-500 text-indigo-900 dark:text-indigo-200 shadow-md shadow-indigo-500/10 ring-1 ring-indigo-500/40 font-bold'
+          : 'bg-slate-50 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900'
       }`}
     >
       <span className="text-xs sm:text-sm font-bold">{label}</span>
       <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-        isSelected ? 'border-indigo-500 bg-indigo-600 text-white' : 'border-slate-700 bg-slate-950'
+        isSelected ? 'border-indigo-600 dark:border-indigo-500 bg-indigo-600 text-white' : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950'
       }`}>
         {isSelected && <Check className="w-2.5 h-2.5 stroke-[3]" />}
       </div>
@@ -354,13 +354,13 @@ export default function SurveyPage() {
       onClick={() => handleMultiSelectToggle(field, value)}
       className={`w-full min-h-[48px] p-3 sm:p-4 rounded-xl sm:rounded-2xl border text-left transition-all duration-150 flex items-center justify-between gap-2.5 cursor-pointer select-none active:scale-[0.98] ${
         isSelected
-          ? 'bg-purple-600/20 border-purple-500 text-purple-200 shadow-md shadow-purple-500/10 ring-1 ring-purple-500/40'
-          : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-900'
+          ? 'bg-purple-50 dark:bg-purple-600/20 border-purple-600 dark:border-purple-500 text-purple-900 dark:text-purple-200 shadow-md shadow-purple-500/10 ring-1 ring-purple-500/40 font-semibold'
+          : 'bg-slate-50 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-900'
       }`}
     >
       <span className="text-xs sm:text-sm font-medium leading-snug">{label}</span>
       <div className={`w-5 h-5 rounded-lg border flex items-center justify-center shrink-0 transition ${
-        isSelected ? 'border-purple-500 bg-purple-600 text-white shadow-xs' : 'border-slate-700 bg-slate-950'
+        isSelected ? 'border-purple-600 dark:border-purple-500 bg-purple-600 text-white shadow-xs' : 'border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950'
       }`}>
         {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
       </div>
@@ -586,12 +586,12 @@ export default function SurveyPage() {
       {/* First-time Student Welcome Banner */}
       {user && !user.hasCompletedSurvey && (
         <div className="bg-gradient-to-r from-indigo-500/15 via-purple-500/15 to-pink-500/15 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 flex items-start gap-3 shadow-sm">
-          <Sparkles className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+          <Sparkles className="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5" />
           <div className="space-y-1 text-left text-xs">
-            <p className="text-slate-100 font-bold">
+            <p className="text-slate-900 dark:text-slate-100 font-bold">
               Welcome to Career365Compass, {user.name}!
             </p>
-            <p className="text-slate-300 leading-relaxed">
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
               As a newly registered student, please fill out this quick 5-minute survey. Your responses unlock tailored college suggestions and admission alerts right after completion.
             </p>
           </div>
@@ -619,7 +619,7 @@ export default function SurveyPage() {
             <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">
               Section {currentSection} of {sections.length}:
             </span>
-            <h2 className="text-slate-100 font-extrabold text-base flex items-center gap-2 mt-0.5">
+            <h2 className="text-slate-900 dark:text-slate-100 font-extrabold text-base flex items-center gap-2 mt-0.5">
               <span>{sections[currentSection - 1].title}</span>
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs mt-0.5">{sections[currentSection - 1].description}</p>
@@ -632,7 +632,7 @@ export default function SurveyPage() {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
+        <div className="w-full bg-slate-100 dark:bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
           <div 
             className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 h-full transition-all duration-300"
             style={{ width: `${(currentSection / sections.length) * 100}%` }}
@@ -649,7 +649,7 @@ export default function SurveyPage() {
                   ? 'bg-emerald-500' 
                   : s.id === currentSection 
                     ? 'bg-indigo-500' 
-                    : 'bg-slate-800'
+                    : 'bg-slate-200 dark:bg-slate-800'
               }`} 
             />
           ))}
@@ -672,15 +672,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 1 && (
           <div className="space-y-6">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 1</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Student Information</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Please provide your school and basic contact details.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Please provide your school and basic contact details.</p>
             </div>
 
             {/* Q1: Full Name */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 1. Full Name <span className="text-red-400">*</span>
               </label>
               <div className="relative">
@@ -690,7 +690,7 @@ export default function SurveyPage() {
                   placeholder="e.g. Rahul Kumar"
                   value={formData.q1_fullName}
                   onChange={(e) => handleInputChange('q1_fullName', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -698,7 +698,7 @@ export default function SurveyPage() {
 
             {/* Q2: School Name Dropdown */}
             <div className="space-y-1.5">
-              <label htmlFor="q2_schoolName" className="block text-xs font-bold text-slate-200">
+              <label htmlFor="q2_schoolName" className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 2. School Name <span className="text-red-400">*</span>
               </label>
               <SchoolSelect
@@ -713,7 +713,7 @@ export default function SurveyPage() {
 
             {/* Q3: Class and Section */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 3. Class and Section <span className="text-red-400">*</span>
               </label>
               <div className="relative">
@@ -723,7 +723,7 @@ export default function SurveyPage() {
                   placeholder="e.g. 10th - A / 10th - B"
                   value={formData.q3_classSection}
                   onChange={(e) => handleInputChange('q3_classSection', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <GraduationCap className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -732,7 +732,7 @@ export default function SurveyPage() {
             {/* Q4: Mobile Number (Optional) */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="block text-xs font-bold text-slate-200">
+                <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                   4. Mobile Number
                 </label>
                 <span className="text-[10px] text-slate-500 italic">Optional Contact Detail</span>
@@ -743,7 +743,7 @@ export default function SurveyPage() {
                   placeholder="e.g. 9876543210 (For updates & notifications)"
                   value={formData.q4_mobileNumber}
                   onChange={(e) => handleInputChange('q4_mobileNumber', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <Phone className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -751,7 +751,7 @@ export default function SurveyPage() {
 
             {/* Q5: Location / Area */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 5. Location / Area <span className="text-red-400">*</span>
               </label>
               <div className="relative">
@@ -761,7 +761,7 @@ export default function SurveyPage() {
                   placeholder="e.g. Charminar, Kukatpally, Secunderabad, Dilsukhnagar"
                   value={formData.q5_location}
                   onChange={(e) => handleInputChange('q5_location', e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 rounded-xl placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm transition"
                 />
                 <MapPin className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
               </div>
@@ -774,15 +774,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 2 && (
           <div className="space-y-8">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 2</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Career Aspirations</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Tell us about what inspires you and where you see yourself.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Tell us about what inspires you and where you see yourself.</p>
             </div>
 
             {/* Q6 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 6. What do you want to become in the future? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -816,7 +816,7 @@ export default function SurveyPage() {
 
             {/* Q7 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 7. Why are you interested in this career? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -842,7 +842,7 @@ export default function SurveyPage() {
 
             {/* Q8 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 8. Who influences your career decisions the most? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -867,7 +867,7 @@ export default function SurveyPage() {
 
             {/* Q9 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 9. Which subjects do you enjoy the most? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -893,7 +893,7 @@ export default function SurveyPage() {
 
             {/* Q10 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 10. Do you already have a clear career goal? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -920,15 +920,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 3 && (
           <div className="space-y-8">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 3</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Education After Class 10</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Streams, polytechnic, and immediate educational path.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Streams, polytechnic, and immediate educational path.</p>
             </div>
 
             {/* Q11 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 11. What would you like to pursue after Class 10? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -953,7 +953,7 @@ export default function SurveyPage() {
 
             {/* Q12 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 12. Which Intermediate stream would you prefer? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -979,7 +979,7 @@ export default function SurveyPage() {
 
             {/* Q13 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 13. Why do you want to choose this stream? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1004,7 +1004,7 @@ export default function SurveyPage() {
 
             {/* Q14 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 14. Do you know what career opportunities are available in your preferred stream? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -1031,15 +1031,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 4 && (
           <div className="space-y-8">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 4</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Entrance Examinations</h3>
-              <p className="text-xs text-slate-400 mt-0.5">POLYCET, residential schools, and competitive tests.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">POLYCET, residential schools, and competitive tests.</p>
             </div>
 
             {/* Q15 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 15. Have you heard about entrance examinations for admission after Class 10? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -1061,7 +1061,7 @@ export default function SurveyPage() {
 
             {/* Q16 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 16. Which entrance examinations have you heard about? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1085,7 +1085,7 @@ export default function SurveyPage() {
 
             {/* Q17 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 17. Are you planning to write any entrance examination? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
@@ -1107,7 +1107,7 @@ export default function SurveyPage() {
 
             {/* Q18 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 18. Are you interested in appearing for any of the following competitive entrance examinations after Class 10? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1133,7 +1133,7 @@ export default function SurveyPage() {
             {/* Q19 */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="block text-xs font-bold text-slate-200">
+                <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                   19. If you are interested in JEE or NEET, how are you planning to prepare for the examination? {['JEE (Engineering)', 'NEET (Medical)', 'Both JEE and NEET'].includes(formData.q18_competitiveExamsInterest) ? <span className="text-red-400">*</span> : <span className="text-[10px] text-slate-500 font-normal">(Optional if not interested)</span>}
                 </label>
               </div>
@@ -1159,7 +1159,7 @@ export default function SurveyPage() {
 
             {/* Q20 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 20. How familiar are you with the preparation process, eligibility and career opportunities associated with JEE and NEET? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -1182,7 +1182,7 @@ export default function SurveyPage() {
 
             {/* Q21 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 21. Would you like guidance about entrance examinations, eligibility and preparation? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
@@ -1209,15 +1209,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 5 && (
           <div className="space-y-8">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 5</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">College Preferences</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Budget, locations, and type of institution.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Budget, locations, and type of institution.</p>
             </div>
 
             {/* Q22 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 22. Do you know any colleges where you can study after Class 10? <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -1239,7 +1239,7 @@ export default function SurveyPage() {
 
             {/* Q23 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 23. What type of college would you prefer? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1264,7 +1264,7 @@ export default function SurveyPage() {
 
             {/* Q24 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 24. Where would you prefer to study? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1288,7 +1288,7 @@ export default function SurveyPage() {
 
             {/* Q25 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 25. What is your preferred annual education budget? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1319,15 +1319,15 @@ export default function SurveyPage() {
         ============================================================ */}
         {currentSection === 6 && (
           <div className="space-y-8">
-            <div className="border-b border-slate-800 pb-4">
+            <div className="border-b border-slate-200 dark:border-slate-800 pb-4">
               <span className="text-[10px] uppercase font-extrabold tracking-wider text-indigo-400">Section 6</span>
               <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mt-1">Career Guidance & Next Steps</h3>
-              <p className="text-xs text-slate-400 mt-0.5">Let us know how we can best support your aspirations.</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">Let us know how we can best support your aspirations.</p>
             </div>
 
             {/* Q26 */}
             <div className="space-y-3">
-              <label className="block text-xs font-bold text-slate-200">
+              <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                 26. Would you like information about government colleges, scholarships and fee reimbursement schemes? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
@@ -1350,7 +1350,7 @@ export default function SurveyPage() {
             {/* Q27 - MULTI SELECT */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <label className="block text-xs font-bold text-slate-200">
+                <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                   27. Which areas do you need guidance in? <span className="text-red-400">*</span>
                 </label>
                 <span className="text-[10px] text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded font-bold">
@@ -1382,7 +1382,7 @@ export default function SurveyPage() {
             {/* Q28 - LONG ANSWER */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="block text-xs font-bold text-slate-200">
+                <label className="block text-xs font-bold text-slate-900 dark:text-slate-200">
                   28. What is your biggest confusion or concern about your future after Class 10?
                 </label>
                 <span className="text-[10px] text-slate-500">Long Answer</span>
@@ -1392,7 +1392,7 @@ export default function SurveyPage() {
                 value={formData.q28_biggestConfusion}
                 onChange={(e) => handleInputChange('q28_biggestConfusion', e.target.value)}
                 placeholder="Share your doubts freely, e.g. 'I am confused whether to choose MPC or Polytechnic', or 'I am worried about private college fee expenses'..."
-                className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm leading-relaxed transition"
+                className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-xs sm:text-sm leading-relaxed transition"
               />
               <p className="text-[10px] text-slate-500">
                 Your responses will be kept confidential and used solely for educational guidance and college discovery.
@@ -1402,7 +1402,7 @@ export default function SurveyPage() {
         )}
 
         {/* Bottom Navigation Buttons - Mobile-First Floating Dock */}
-        <div className="sticky bottom-0 z-20 bg-slate-950/95 backdrop-blur-md -mx-4 -mb-6 p-4 border-t border-slate-800/80 sm:static sm:bg-transparent sm:backdrop-blur-none sm:mx-0 sm:mb-0 sm:p-0 sm:border-t sm:border-slate-800 sm:pt-6 flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-4 shadow-lg sm:shadow-none">
+        <div className="sticky bottom-0 z-20 bg-white/95 dark:bg-slate-950/95 backdrop-blur-md -mx-4 -mb-6 p-4 border-t border-slate-200 dark:border-slate-800/80 sm:static sm:bg-transparent sm:backdrop-blur-none sm:mx-0 sm:mb-0 sm:p-0 sm:border-t sm:border-slate-200 dark:sm:border-slate-800 sm:pt-6 flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-2.5 sm:gap-4 shadow-lg sm:shadow-none">
           <div>
             {currentSection > 1 && (
               <button
