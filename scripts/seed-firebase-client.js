@@ -163,6 +163,18 @@ async function main() {
     savedColleges: []
   };
   await setDoc(doc(db, 'users', studentProfile.uid), studentProfile);
+
+  const collegeProfile = {
+    uid: 'college-default-uid',
+    name: 'Dr. K. V. Rao',
+    email: 'college@career365compass.com',
+    role: 'COLLEGE_ADMIN',
+    designation: 'Principal & Admissions In-charge',
+    mobileNumber: '9848012345',
+    collegeId: '6526',
+    collegeName: 'Government Junior College, Falaknuma'
+  };
+  await setDoc(doc(db, 'users', collegeProfile.uid), collegeProfile);
   console.log('Default user profiles seeded.');
 
   console.log('\nFirestore Client seeding complete successfully!');

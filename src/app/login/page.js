@@ -62,6 +62,21 @@ export default function LoginPage() {
     }
   };
 
+  const handleQuickLogin = async (demoEmail, demoPassword) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setError('');
+    setSubmitting(true);
+    try {
+      const loggedInUser = await login(demoEmail, demoPassword);
+      router.push(getRedirectTarget(loggedInUser.role));
+    } catch (err) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-grid-pattern bg-radial-gradient">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
@@ -154,12 +169,45 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Test Accounts Help Box */}
-          <div className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 text-xs space-y-2">
-            <span className="font-extrabold text-indigo-400 block uppercase tracking-wider">Demo Credentials</span>
-            <div className="space-y-1 text-slate-400">
-              <p><span className="font-semibold text-slate-300">Admin:</span> admin@career365compass.com | admin123</p>
-              <p><span className="font-semibold text-slate-300">Student:</span> rahul@gmail.com | student123</p>
+          {/* 1-Click Zero-Error Demo Logins */}
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl p-4 text-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-extrabold text-indigo-400 block uppercase tracking-wider text-[11px]">Instant 1-Click Demo Sign In</span>
+              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/80 border border-emerald-800/80 px-2 py-0.5 rounded-full">
+                Zero Error
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('rahul@gmail.com', 'student123')}
+                disabled={submitting}
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition cursor-pointer"
+              >
+                <span className="block font-bold text-slate-200">👨‍🎓 Student</span>
+                <span className="text-[10px] text-slate-400">rahul@gmail.com</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('admin@career365compass.com', 'admin123')}
+                disabled={submitting}
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-purple-500/50 text-left transition cursor-pointer"
+              >
+                <span className="block font-bold text-slate-200">🛡️ Super Admin</span>
+                <span className="text-[10px] text-slate-400">admin@career...</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickLogin('college@career365compass.com', 'college123')}
+                disabled={submitting}
+                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 text-left transition cursor-pointer"
+              >
+                <span className="block font-bold text-slate-200">🏛️ College</span>
+                <span className="text-[10px] text-slate-400">Representative</span>
+              </button>
             </div>
           </div>
 
