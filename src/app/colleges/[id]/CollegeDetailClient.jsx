@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import MapComponent from '@/components/MapComponent';
@@ -93,6 +93,7 @@ export default function CollegeDetailClient({ id }) {
   const [college, setCollege] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const tabRefs = useRef({});
 
   // Review Form state
   const [rating, setRating] = useState(5);
@@ -105,6 +106,59 @@ export default function CollegeDetailClient({ id }) {
   useEffect(() => {
     fetchCollegeDetails();
   }, [id]);
+
+  // Scrollspy: update activeTab as user scrolls through sections
+  useEffect(() => {
+    const sectionIds = [
+      'overview',
+      'streams',
+      'admissions',
+      'scholarships',
+      'facilities',
+      'documents',
+      'location',
+      'gallery',
+      'reviews'
+    ];
+
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const offset = 220; // Top threshold to account for sticky navbar and tab bar
+
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sectionIds[i]);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY;
+          if (scrollY + offset >= top) {
+            setActiveTab(sectionIds[i]);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Smoothly center the active tab button on mobile/overflow navigation
+  useEffect(() => {
+    if (tabRefs.current[activeTab]) {
+      tabRefs.current[activeTab].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+      });
+    }
+  }, [activeTab]);
+
+  const scrollToSection = (sectionId) => {
+    setActiveTab(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const fetchCollegeDetails = async () => {
     setLoading(true);
@@ -378,34 +432,38 @@ export default function CollegeDetailClient({ id }) {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex overflow-x-auto gap-2 border-b border-slate-900 pb-2 scrollbar-none">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-2.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/10'
-                  : 'bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Sticky Navigation Tabs */}
+        <div className="sticky top-16 z-30 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 py-3 bg-slate-950/85 dark:bg-slate-950/90 backdrop-blur-md border-y border-slate-800/80 transition-all">
+          <div className="max-w-7xl mx-auto flex overflow-x-auto gap-2 scrollbar-none py-0.5">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                ref={(el) => (tabRefs.current[tab.id] = el)}
+                onClick={() => scrollToSection(tab.id)}
+                className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl text-xs font-bold transition shrink-0 cursor-pointer whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 ring-2 ring-indigo-400/40'
+                    : 'bg-slate-900/90 text-slate-400 border border-slate-800 hover:text-slate-200 hover:bg-slate-850'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Tab contents panel */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md min-h-[300px]">
-          
-          {/* Tab 1: Overview */}
-          {activeTab === 'overview' && (
-            <div className="space-y-8 text-left">
-              {/* About description */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">About the College</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">{college.description}</p>
-              </div>
+        {/* Section 1: Overview */}
+        <div id="overview" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-8 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <Building2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">About & Institution Overview</h3>
+          </div>
+
+          {/* About description */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">About the College</h4>
+            <p className="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">{college.description}</p>
+          </div>
 
               {/* Principal Message card if available */}
               {(college.principalName || college.principalMessage) && (
@@ -515,16 +573,14 @@ export default function CollegeDetailClient({ id }) {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+        </div>
 
-          {/* Tab 2: Streams & Fees */}
-          {activeTab === 'streams' && (
-            <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-indigo-400" />
-                <span>Offered Streams & Transparent Fee Structure</span>
-              </h3>
+        {/* Section 2: Streams & Fees */}
+        <div id="streams" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <GraduationCap className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Offered Streams & Transparent Fee Structure</h3>
+          </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {college.streams?.map((s, idx) => {
@@ -582,26 +638,30 @@ export default function CollegeDetailClient({ id }) {
                 })}
               </div>
 
-              {college.feePaymentTerms && (
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-xs text-slate-300 space-y-1">
-                  <span className="font-bold text-slate-900 dark:text-slate-100 uppercase text-[10px] tracking-wide block">Payment Terms & Installments</span>
-                  <p>{college.feePaymentTerms}</p>
-                </div>
-              )}
+          {(!college.streams || college.streams.length === 0) && (
+            <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-500 rounded-2xl p-8 text-center text-xs">
+              No streams listed yet for this college. Please enquire directly with admissions for streams and intake.
             </div>
           )}
 
-          {/* Tab 3: Admissions & Dates */}
-          {activeTab === 'admissions' && (
-            <div className="space-y-8 text-left max-w-4xl">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                    <ClipboardCheck className="w-5 h-5 text-indigo-400" />
-                    <span>Admissions & Important Dates</span>
-                  </h3>
-                  <p className="text-xs text-slate-400 mt-0.5">Academic year {college.admissions?.academicYear || '2026-2027'} schedule and guidelines</p>
-                </div>
+          {college.feePaymentTerms && (
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-xs text-slate-300 space-y-1">
+              <span className="font-bold text-slate-900 dark:text-slate-100 uppercase text-[10px] tracking-wide block">Payment Terms & Installments</span>
+              <p>{college.feePaymentTerms}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Section 3: Admissions & Dates */}
+        <div id="admissions" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-8 text-left">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+            <div>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <ClipboardCheck className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+                <span>Admissions & Important Dates</span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Academic year {college.admissions?.academicYear || '2026-2027'} schedule and guidelines</p>
+            </div>
                 <div className="flex flex-wrap items-center gap-2">
                   {whatsappInfo && (
                     <a
@@ -667,16 +727,14 @@ export default function CollegeDetailClient({ id }) {
                   ))}
                 </div>
               </div>
-            </div>
-          )}
+        </div>
 
-          {/* Tab 4: Scholarships & Concessions */}
-          {activeTab === 'scholarships' && (
-            <div className="space-y-6 text-left max-w-4xl">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
-                <span>Available Scholarships & Fee Concessions</span>
-              </h3>
+        {/* Section 4: Scholarships & Concessions */}
+        <div id="scholarships" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <Sparkles className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Available Scholarships & Fee Concessions</h3>
+          </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(college.scholarships && college.scholarships.length > 0 ? college.scholarships : [
@@ -698,16 +756,14 @@ export default function CollegeDetailClient({ id }) {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+        </div>
 
-          {/* Tab 5: Facilities */}
-          {activeTab === 'facilities' && (
-            <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <Dumbbell className="w-5 h-5 text-indigo-400" />
-                <span>Campus Infrastructure & Facilities</span>
-              </h3>
+        {/* Section 5: Campus Facilities */}
+        <div id="facilities" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <Dumbbell className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Campus Infrastructure & Facilities</h3>
+          </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
                 {[
@@ -741,16 +797,14 @@ export default function CollegeDetailClient({ id }) {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+        </div>
 
-          {/* Tab 6: Documents & Brochures */}
-          {activeTab === 'documents' && (
-            <div className="space-y-6 text-left max-w-4xl">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-400" />
-                <span>Official Documents, Prospectus & Brochures</span>
-              </h3>
+        {/* Section 6: Official Documents & Brochures */}
+        <div id="documents" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <FileText className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Official Documents, Prospectus & Brochures</h3>
+          </div>
 
               {college.documents && college.documents.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -798,28 +852,28 @@ export default function CollegeDetailClient({ id }) {
                   )}
                 </div>
               )}
-            </div>
-          )}
+        </div>
 
-          {/* Tab 5: Location */}
-          {activeTab === 'location' && (
-            <div className="space-y-6">
-              <MapComponent
-                address={college.address}
-                name={college.name}
-                landmark={college.nearbyLandmark}
-                pincode={college.pincode}
-              />
-            </div>
-          )}
+        {/* Section 7: Campus Location */}
+        <div id="location" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <MapPin className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Campus Location & Directions</h3>
+          </div>
+          <MapComponent
+            address={college.address}
+            name={college.name}
+            landmark={college.nearbyLandmark}
+            pincode={college.pincode}
+          />
+        </div>
 
-          {/* Tab 6: Gallery */}
-          {activeTab === 'gallery' && (
-            <div className="space-y-6 text-left">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-indigo-400" />
-                <span>College Photo Gallery</span>
-              </h3>
+        {/* Section 8: Campus Photo Gallery */}
+        <div id="gallery" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <Sparkles className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Campus Photo Gallery</h3>
+          </div>
 
               {college.gallery?.length === 0 ? (
                 <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-12 text-center text-slate-500 text-xs">
@@ -838,16 +892,20 @@ export default function CollegeDetailClient({ id }) {
                   ))}
                 </div>
               )}
-            </div>
-          )}
+        </div>
 
-          {/* Tab 7: Reviews */}
-          {activeTab === 'reviews' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left items-start">
-              
-              {/* Left Side: Reviews list */}
-              <div className="lg:col-span-2 space-y-6">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Student Reviews</h3>
+        {/* Section 9: Reviews */}
+        <div id="reviews" className="scroll-mt-36 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-md space-y-6 text-left">
+          <div className="flex items-center gap-2.5 pb-2 border-b border-slate-200 dark:border-slate-800">
+            <Star className="w-5 h-5 text-yellow-400 fill-current" />
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Student Reviews & Community Feedback ({college.totalReviews || 0})</h3>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-left items-start">
+            
+            {/* Left Side: Reviews list */}
+            <div className="lg:col-span-2 space-y-6">
+              <h4 className="text-sm font-bold text-slate-900 dark:text-slate-200 uppercase tracking-wider">All Verified Reviews</h4>
                 
                 {college.reviews?.length === 0 ? (
                   <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-8 text-center text-slate-500 text-xs">
@@ -968,8 +1026,6 @@ export default function CollegeDetailClient({ id }) {
               </div>
 
             </div>
-          )}
-
         </div>
       </div>
 
