@@ -2,53 +2,120 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public directories: Anyone can view colleges, careers, scholarships, admission updates, and schools
+    // ── Helper Functions ──────────────────────────────────────────────
+    // Check if the requesting user is a Super Admin (role stored in their Firestore document)
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN';
+    }
+
+    // Check if the requesting user is a College Admin
+    function isCollegeAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COLLEGE_ADMIN' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'PENDING_COLLEGE_ADMIN');
+    }
+
+    // Check if the requesting user owns a specific resource
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // ── Colleges Collection ───────────────────────────────────────────
+    // Public directory for students; College Admins can create pending / edit non-status details
     match /colleges/{collegeId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow create: if isAdmin() ||
+        (isCollegeAdmin() &&
+         request.resource.data.registeredByUid == request.auth.uid &&
+         request.resource.data.isApproved == false &&
+         request.resource.data.status == 'PENDING');
+      allow update: if isAdmin() ||
+        (isCollegeAdmin() &&
+         resource.data.registeredByUid == request.auth.uid &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['status', 'isApproved', 'verified', 'registeredByUid']));
+      allow delete: if isAdmin();
     }
 
+    // ── Schools Collection ────────────────────────────────────────────
     match /schools/{schoolId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
+    // ── Careers Collection ────────────────────────────────────────────
     match /careers/{careerId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
+    // ── Scholarships Collection ───────────────────────────────────────
     match /scholarships/{scholarshipId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
+    // ── Admission Updates Collection ──────────────────────────────────
     match /admission-updates/{updateId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
+    // ── Competitive Exams Collection ──────────────────────────────────
     match /competitive-exams/{examId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
 
-    // Reviews: Anyone can read; logged-in users can submit and moderate
+    // ── Reviews Collection ────────────────────────────────────────────
+    // Anyone can read; authenticated users can submit pending reviews; only author or admin can modify
     match /reviews/{reviewId} {
       allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null;
+      allow create: if request.auth != null &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.isApproved == false &&
+        request.resource.data.rating >= 1 &&
+        request.resource.data.rating <= 5;
+      allow update: if isAdmin() ||
+        (request.auth != null &&
+         resource.data.userId == request.auth.uid &&
+         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isApproved', 'userId', 'collegeId']));
+      allow delete: if request.auth != null &&
+        (resource.data.userId == request.auth.uid || isAdmin());
     }
 
-    // User profiles & bookmarks: Logged-in students can create and manage their profile
+    // ── Users Collection ──────────────────────────────────────────────
+    // Users can only read/manage their own document; admins have full visibility
+    // Strict separation of create/update to prevent self-role-escalation bypass
     match /users/{userId} {
-      allow read, write: if request.auth != null;
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) &&
+        (!request.resource.data.keys().hasAny(['role']) ||
+         request.resource.data.role in ['STUDENT', 'PENDING_COLLEGE_ADMIN']);
+      allow update: if (isOwner(userId) &&
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'uid', 'email'])))
+        || isAdmin();
+      allow delete: if isAdmin();
     }
 
-    // Surveys: Anyone can submit a survey response; authenticated users / admin can read
+    // ── Surveys Collection ────────────────────────────────────────────
+    // Open for student submissions with payload limits; only admins can read/manage
     match /surveys/{surveyId} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow create: if request.resource.data.q1_fullName is string &&
+        request.resource.data.q1_fullName.size() > 0 &&
+        request.resource.data.q1_fullName.size() < 100 &&
+        request.resource.data.keys().size() < 60;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Audit Logs Collection ─────────────────────────────────────────
+    // Append-only immutable audit trail; only admins can write and read; no deletion/updates
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAdmin();
+      allow update, delete: if false;
     }
   }
 }

@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   CheckCircle2,
   MessageSquare,
+  MessageCircle,
   FileText,
   Download,
   ExternalLink,
@@ -33,6 +34,57 @@ import {
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+
+/**
+ * Formats a clean, valid WhatsApp URL with country code and pre-filled message.
+ * Supports direct college mobile numbers, and seamlessly routes colleges with only
+ * landlines (040...) to the verified Career365Compass Central Admissions Desk.
+ */
+function getCollegeWhatsApp(college) {
+  if (!college) return null;
+
+  const raw = (college.whatsappNumber || college.phone || '').trim();
+  const digits = raw.replace(/[^0-9]/g, '');
+
+  let isDirectCollege = false;
+  let formattedNumber = '';
+
+  // Landlines in Hyderabad start with '040' / '40' or are <= 8 digits
+  const isLandline = digits.startsWith('040') || digits.startsWith('40') || (digits.length > 0 && digits.length <= 8);
+
+  if (digits && !isLandline) {
+    if (digits.length === 10 && /^[6-9]/.test(digits)) {
+      formattedNumber = `91${digits}`;
+      isDirectCollege = true;
+    } else if (digits.length === 11 && digits.startsWith('0') && /^[6-9]/.test(digits.slice(1))) {
+      formattedNumber = `91${digits.slice(1)}`;
+      isDirectCollege = true;
+    } else if (digits.length === 12 && digits.startsWith('91')) {
+      formattedNumber = digits;
+      isDirectCollege = true;
+    }
+  }
+
+  // Fallback to verified Career365Compass Central Student Helpline (+91 92843 06159 - Rahim Shaikh / Mentor Desk)
+  if (!formattedNumber) {
+    formattedNumber = '919284306159';
+    isDirectCollege = false;
+  }
+
+  const collegeName = college.name || 'this college';
+  const message = isDirectCollege
+    ? `Hello! I found ${collegeName} on Career365Compass. I am a student interested in admission details, streams offered, cutoffs, and fee structure for the 2026-2027 academic year.`
+    : `Hello Career365Compass Admissions Desk! I am interested in admission details, eligibility, and fee structure for ${collegeName} (${college.address || 'Hyderabad'}). Please guide me.`;
+
+  return {
+    url: `https://wa.me/${formattedNumber}?text=${encodeURIComponent(message)}`,
+    formattedNumber,
+    isDirectCollege,
+    displayNumber: isDirectCollege ? (college.whatsappNumber || college.phone) : '+91 92843 06159',
+    badgeText: isDirectCollege ? 'Official College WhatsApp Desk' : 'Verified Admissions Desk',
+    shortBadge: isDirectCollege ? 'Direct College Desk' : 'Central Admissions Desk'
+  };
+}
 
 export default function CollegeDetailClient({ id }) {
   const { user } = useAuth();
@@ -151,6 +203,7 @@ export default function CollegeDetailClient({ id }) {
   }
 
   const isVerified = college.status === 'APPROVED' || college.isApproved || college.verified;
+  const whatsappInfo = getCollegeWhatsApp(college);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -292,15 +345,19 @@ export default function CollegeDetailClient({ id }) {
 
           {/* Action CTAs: Direct WhatsApp & Apply Online */}
           <div className="flex flex-col sm:flex-row gap-2.5 shrink-0 self-stretch md:self-center">
-            {(college.whatsappNumber || college.phone) && (
+            {whatsappInfo && (
               <a
-                href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello, I found ${college.name} on Career365Compass. I am interested in admission details and streams offered.`)}`}
+                href={whatsappInfo.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition cursor-pointer"
+                className="px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/25 hover:shadow-emerald-600/40 hover:-translate-y-0.5 transition-all cursor-pointer"
+                title={`Chat on WhatsApp with ${college.name}`}
               >
-                <MessageSquare className="w-4 h-4" />
-                <span>WhatsApp Admissions Desk</span>
+                <MessageCircle className="w-5 h-5 fill-current shrink-0" />
+                <div className="text-left">
+                  <span className="block leading-tight font-extrabold">Contact on WhatsApp</span>
+                  <span className="block text-[10px] text-emerald-100 font-medium">{whatsappInfo.shortBadge}</span>
+                </div>
               </a>
             )}
 
@@ -309,10 +366,13 @@ export default function CollegeDetailClient({ id }) {
                 href={college.admissions.applicationLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 transition cursor-pointer"
+                className="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 hover:shadow-indigo-600/30 hover:-translate-y-0.5 transition-all cursor-pointer"
               >
-                <ExternalLink className="w-4 h-4" />
-                <span>Apply for Admission</span>
+                <ExternalLink className="w-4 h-4 shrink-0" />
+                <div className="text-left">
+                  <span className="block leading-tight font-extrabold">Apply for Admission</span>
+                  <span className="block text-[10px] text-indigo-200 font-medium">Official Portal</span>
+                </div>
               </a>
             )}
           </div>
@@ -365,6 +425,37 @@ export default function CollegeDetailClient({ id }) {
                 </div>
               )}
 
+              {/* Direct WhatsApp Admissions Banner */}
+              {whatsappInfo && (
+                <div className="bg-gradient-to-r from-emerald-950/70 via-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+                      <MessageCircle className="w-6 h-6 fill-current" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="text-slate-100 font-bold text-sm sm:text-base">Admissions WhatsApp Helpline</h4>
+                        <span className="text-[10px] bg-emerald-500/20 text-emerald-300 font-bold px-2 py-0.5 rounded-full border border-emerald-500/30">
+                          {whatsappInfo.badgeText}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Students and parents can chat directly on WhatsApp to inquire about streams, cutoffs, admission dates, and hostel availability.
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={whatsappInfo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-md shadow-emerald-600/25 hover:shadow-emerald-600/40 transition shrink-0 cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4 fill-current" />
+                    <span>Open WhatsApp Chat</span>
+                  </a>
+                </div>
+              )}
+
               <div className="border-t border-slate-800 pt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Contact Columns */}
                 <div className="space-y-4">
@@ -373,8 +464,19 @@ export default function CollegeDetailClient({ id }) {
                     {college.phone && (
                       <p className="flex items-center gap-2"><Phone className="w-4 h-4 text-indigo-400" /> {college.phone}</p>
                     )}
-                    {college.whatsappNumber && (
-                      <p className="flex items-center gap-2"><MessageSquare className="w-4 h-4 text-emerald-400" /> WhatsApp: {college.whatsappNumber}</p>
+                    {whatsappInfo && (
+                      <p className="flex items-center gap-2">
+                        <MessageCircle className="w-4 h-4 text-emerald-400" />
+                        <span className="text-slate-400">WhatsApp:</span>
+                        <a
+                          href={whatsappInfo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-400 hover:text-emerald-300 hover:underline font-bold"
+                        >
+                          {whatsappInfo.displayNumber} ({whatsappInfo.shortBadge}) →
+                        </a>
+                      </p>
                     )}
                     {college.email && (
                       <p className="flex items-center gap-2"><Mail className="w-4 h-4 text-indigo-400" /> {college.email}</p>
@@ -493,21 +595,37 @@ export default function CollegeDetailClient({ id }) {
           {activeTab === 'admissions' && (
             <div className="space-y-8 text-left max-w-4xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <ClipboardCheck className="w-5 h-5 text-indigo-400" />
-                  <span>Admissions & Important Dates</span>
-                </h3>
-                {college.admissions?.applicationLink && (
-                  <a
-                    href={college.admissions.applicationLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                    <span>Open Online Application</span>
-                  </a>
-                )}
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                    <ClipboardCheck className="w-5 h-5 text-indigo-400" />
+                    <span>Admissions & Important Dates</span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Academic year {college.admissions?.academicYear || '2026-2027'} schedule and guidelines</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {whatsappInfo && (
+                    <a
+                      href={whatsappInfo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm shadow-emerald-600/20 transition cursor-pointer"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 fill-current" />
+                      <span>Enquire on WhatsApp</span>
+                    </a>
+                  )}
+                  {college.admissions?.applicationLink && (
+                    <a
+                      href={college.admissions.applicationLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Open Online Application</span>
+                    </a>
+                  )}
+                </div>
               </div>
 
               {/* Key Dates Banner */}
@@ -667,14 +785,14 @@ export default function CollegeDetailClient({ id }) {
                 <div className="p-8 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 text-center text-xs text-slate-400 space-y-3">
                   <FileText className="w-8 h-8 text-slate-600 mx-auto" />
                   <p>Official printed prospectus and admission forms are available directly at the admissions administrative block.</p>
-                  {(college.whatsappNumber || college.phone) && (
+                  {whatsappInfo && (
                     <a
-                      href={`https://wa.me/${(college.whatsappNumber || college.phone).replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, please share the admission prospectus and brochure for ${college.name}`)}`}
+                      href={`https://wa.me/${whatsappInfo.formattedNumber}?text=${encodeURIComponent(`Hi, please share the official admission prospectus, fee circular, and brochure for ${college.name}.`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs"
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-600/20 transition cursor-pointer"
                     >
-                      <MessageSquare className="w-3.5 h-3.5" />
+                      <MessageCircle className="w-4 h-4 fill-current" />
                       <span>Request Prospectus on WhatsApp</span>
                     </a>
                   )}
@@ -854,6 +972,32 @@ export default function CollegeDetailClient({ id }) {
 
         </div>
       </div>
+
+      {/* Sticky Mobile Bottom WhatsApp Action Bar */}
+      {whatsappInfo && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 p-3 px-4 flex items-center gap-2.5 shadow-2xl">
+          <a
+            href={whatsappInfo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition active:scale-95 cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 fill-current shrink-0" />
+            <span>Contact College on WhatsApp</span>
+          </a>
+          {college.admissions?.applicationLink && (
+            <a
+              href={college.admissions.applicationLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
+            >
+              <ExternalLink className="w-4 h-4 shrink-0" />
+              <span>Apply</span>
+            </a>
+          )}
+        </div>
+      )}
 
       </div>
     </AuthRequiredGate>

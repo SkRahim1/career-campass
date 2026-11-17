@@ -13,9 +13,19 @@ export async function generateMetadata({ params }) {
   if (!career) return { title: 'Career Not Found' };
   
   return {
-    title: `${career.title} Career Roadmap After 10th - Career365Compass`,
-    description: `Complete guide on how to become a ${career.title} in India. Discover salary ranges, required qualifications, and roadmap details after Class 10 and Intermediate.`,
-    keywords: `${career.title} roadmap, career after 10th, how to become ${career.title}`,
+    title: `${career.title} - Career Options After 10th & Roadmap | Career365Compass`,
+    description: `Complete guide on how to become a ${career.title} in India. Explore required courses after 12th, intermediate streams, entry requirements, salary ranges, and career options after 10th.`,
+    keywords: [
+      `${career.title} roadmap`,
+      'Career options after 10th',
+      'Courses after 12th',
+      'How to choose a career after 10th',
+      `how to become ${career.title}`,
+      'Career guidance Telangana'
+    ],
+    alternates: {
+      canonical: `/careers/${slug}`,
+    },
   };
 }
 

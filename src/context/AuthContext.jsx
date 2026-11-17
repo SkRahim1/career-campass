@@ -1,5 +1,17 @@
 'use client';
 
+/**
+ * SECURITY NOTE — Auth Flow:
+ * - `onAuthStateChanged` is the SOLE source of truth for user identity and role.
+ * - localStorage is used ONLY as a performance cache for name/email pre-fill.
+ *   It NEVER determines role, permissions, or authentication state.
+ * - Roles are always read from Firestore documents; they are never inferred from
+ *   email patterns or derived from localStorage on mount.
+ * - New user registrations default to role 'STUDENT'.
+ *   College representatives are assigned role 'PENDING_COLLEGE_ADMIN' until
+ *   an admin approves them.
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth, db } from '@/lib/firebase';
@@ -11,11 +23,12 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
-// Pre-configured default demo accounts for instant zero-error login
+// Pre-configured default demo accounts for reference/display purposes.
+// NOTE: Passwords have been removed from this export — they must NOT appear in
+// the client bundle. All login (including demo accounts) goes through Firebase Auth.
 export const DEFAULT_ACCOUNTS = {
   'rahul@gmail.com': {
     email: 'rahul@gmail.com',
-    password: 'student123',
     role: 'STUDENT',
     uid: 'student-default-uid',
     name: 'Rahul Kumar',
@@ -31,7 +44,6 @@ export const DEFAULT_ACCOUNTS = {
   },
   'admin@career365compass.com': {
     email: 'admin@career365compass.com',
-    password: 'admin123',
     role: 'SUPER_ADMIN',
     uid: 'admin-default-uid',
     name: 'Super Admin',
@@ -39,7 +51,6 @@ export const DEFAULT_ACCOUNTS = {
   },
   'college@career365compass.com': {
     email: 'college@career365compass.com',
-    password: 'college123',
     role: 'COLLEGE_ADMIN',
     uid: 'college-default-uid',
     name: 'Dr. K. V. Rao',
@@ -50,7 +61,6 @@ export const DEFAULT_ACCOUNTS = {
   },
   'admissions@college.edu.in': {
     email: 'admissions@college.edu.in',
-    password: 'college123',
     role: 'COLLEGE_ADMIN',
     uid: 'college-default-uid',
     name: 'Dr. K. V. Rao',
@@ -61,6 +71,12 @@ export const DEFAULT_ACCOUNTS = {
   }
 };
 
+// --- FIX H4: Module-level rate-limiter state (not persisted to localStorage) ---
+let _loginFailedAttempts = 0;
+let _loginWindowStart = 0;
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_WINDOW_MS = 60 * 1000; // 60 seconds
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -68,22 +84,9 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // 1. Check login status on mount & hydrate immediately from localStorage
+  // 1. Firebase onAuthStateChanged is the SOLE source of truth for user state.
+  //    localStorage is NOT used to set user role or authenticate on mount.
   useEffect(() => {
-    let activeCachedUser = null;
-    if (typeof window !== 'undefined') {
-      try {
-        const cached = localStorage.getItem('career365_user');
-        if (cached) {
-          activeCachedUser = JSON.parse(cached);
-          setUser(activeCachedUser);
-          setLoading(false);
-        }
-      } catch (e) {
-        console.warn('Error reading cached user from localStorage:', e);
-      }
-    }
-
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
@@ -98,14 +101,15 @@ export function AuthProvider({ children }) {
             console.warn('Firestore session lookup warning (falling back gracefully):', fsErr.message);
           }
 
+          // FIX H1: If no Firestore document exists, default role is 'STUDENT'.
+          // Role is NEVER inferred from email patterns.
           if (!profile) {
             const cleanEmail = (firebaseUser.email || '').toLowerCase();
-            const defaultAcc = DEFAULT_ACCOUNTS[cleanEmail];
-            profile = defaultAcc ? { ...defaultAcc, uid: firebaseUser.uid } : {
+            profile = {
               uid: firebaseUser.uid,
               name: firebaseUser.displayName || cleanEmail.split('@')[0] || 'Student User',
               email: firebaseUser.email,
-              role: cleanEmail.includes('admin') ? 'SUPER_ADMIN' : cleanEmail.includes('college') ? 'COLLEGE_ADMIN' : 'STUDENT',
+              role: 'STUDENT',
               mobileNumber: firebaseUser.phoneNumber || '',
               savedColleges: [],
               hasCompletedSurvey: false
@@ -113,27 +117,18 @@ export function AuthProvider({ children }) {
           }
 
           setUser(profile);
+          // Cache only non-sensitive display data for pre-fill purposes
           if (typeof window !== 'undefined') {
-            localStorage.setItem('career365_user', JSON.stringify(profile));
+            localStorage.setItem('career365_user', JSON.stringify({
+              name: profile.name,
+              email: profile.email
+            }));
           }
         } else {
-          // If no firebaseUser, check if a valid demo session is saved in localStorage
+          // Firebase says no authenticated user — always clear user state.
+          setUser(null);
           if (typeof window !== 'undefined') {
-            const cached = localStorage.getItem('career365_user');
-            if (cached) {
-              try {
-                const parsed = JSON.parse(cached);
-                if (DEFAULT_ACCOUNTS[parsed.email?.toLowerCase()]) {
-                  setUser(parsed);
-                  setLoading(false);
-                  return;
-                }
-              } catch (e) {}
-            }
-          }
-          // Only clear user if no local session exists
-          if (!activeCachedUser) {
-            setUser(null);
+            localStorage.removeItem('career365_user');
           }
         }
       } catch (err) {
@@ -146,56 +141,32 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // 2. Seamless, zero-error login
+  // 2. Login — all accounts (including demo) authenticated via Firebase Auth.
+  //    FIX H4: Client-side rate limiting on failed attempts.
+  //    FIX M4: Generic error messages to prevent user enumeration.
   const login = async (email, password) => {
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanPassword = (password || '').trim();
 
-    // Check if this is a known Demo / Default account
-    const defaultAcc = DEFAULT_ACCOUNTS[cleanEmail];
-    if (defaultAcc) {
-      if (defaultAcc.password !== cleanPassword) {
-        throw new Error('Incorrect password for this demo account. Please verify credentials.');
-      }
-
-      // Try background Firebase Auth sync without letting any errors block the user
-      (async () => {
-        try {
-          let fbUser = null;
-          try {
-            const userCred = await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-            fbUser = userCred.user;
-          } catch (signInErr) {
-            if (signInErr.code === 'auth/user-not-found' || signInErr.code === 'auth/invalid-credential') {
-              try {
-                const newCred = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPassword);
-                fbUser = newCred.user;
-              } catch (createErr) {}
-            }
-          }
-
-          if (fbUser) {
-            try {
-              const userDocRef = doc(db, 'users', fbUser.uid);
-              await setDoc(userDocRef, { ...defaultAcc, uid: fbUser.uid }, { merge: true });
-            } catch (fsErr) {}
-          }
-        } catch (bgErr) {}
-      })();
-
-      const fullUser = { ...defaultAcc };
-      setUser(fullUser);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('career365_user', JSON.stringify(fullUser));
-      }
-      router.refresh();
-      return fullUser;
+    // FIX H4: Rate limit check
+    const now = Date.now();
+    if (now - _loginWindowStart > LOGIN_WINDOW_MS) {
+      // Window has expired — reset counters
+      _loginFailedAttempts = 0;
+      _loginWindowStart = now;
+    }
+    if (_loginFailedAttempts >= LOGIN_MAX_ATTEMPTS) {
+      throw new Error('Too many failed login attempts. Please wait before trying again.');
     }
 
-    // Custom Account Login (via Firebase Auth)
+    // All accounts (including demo) go through Firebase Auth
     try {
       const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPassword);
       const firebaseUser = userCredential.user;
+
+      // Reset rate-limit counter on success
+      _loginFailedAttempts = 0;
+      _loginWindowStart = 0;
 
       let profile = null;
       try {
@@ -204,50 +175,71 @@ export function AuthProvider({ children }) {
         if (userDoc.exists()) {
           profile = userDoc.data();
         } else {
+          // FIX H1: No email-based role inference; default to 'STUDENT'
           profile = {
             uid: firebaseUser.uid,
             name: firebaseUser.displayName || cleanEmail.split('@')[0],
             email: firebaseUser.email,
-            role: cleanEmail.includes('admin') ? 'SUPER_ADMIN' : cleanEmail.includes('college') ? 'COLLEGE_ADMIN' : 'STUDENT',
+            role: 'STUDENT',
             savedColleges: []
           };
           try {
-            await setDoc(userDocRef, profile);
+            await setDoc(doc(db, 'users', firebaseUser.uid), profile);
           } catch (writeErr) {
             console.warn('Could not write user profile to Firestore:', writeErr.message);
           }
         }
       } catch (firestoreErr) {
-        console.warn('Firestore user fetch failed, using memory/fallback profile:', firestoreErr.message);
+        console.warn('Firestore user fetch failed, using minimal fallback profile:', firestoreErr.message);
+        // FIX H1: Fallback also defaults to 'STUDENT', never email-inferred role
         profile = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || cleanEmail.split('@')[0],
           email: firebaseUser.email,
-          role: cleanEmail.includes('admin') ? 'SUPER_ADMIN' : cleanEmail.includes('college') ? 'COLLEGE_ADMIN' : 'STUDENT',
+          role: 'STUDENT',
           savedColleges: []
         };
       }
 
       const fullUser = { ...profile, uid: firebaseUser.uid };
       setUser(fullUser);
+      // Cache only display data, not role
       if (typeof window !== 'undefined') {
-        localStorage.setItem('career365_user', JSON.stringify(fullUser));
+        localStorage.setItem('career365_user', JSON.stringify({
+          name: fullUser.name,
+          email: fullUser.email
+        }));
       }
       router.refresh();
       return fullUser;
     } catch (err) {
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
-        throw new Error('Invalid email or password. Please verify credentials or create a new account.');
+      // FIX M4: Generic error for auth/user-not-found and auth/wrong-password
+      // so we don't reveal whether an email address exists in the system.
+      if (
+        err.code === 'auth/invalid-credential' ||
+        err.code === 'auth/user-not-found' ||
+        err.code === 'auth/wrong-password'
+      ) {
+        _loginFailedAttempts++;
+        if (_loginWindowStart === 0) _loginWindowStart = Date.now();
+        throw new Error('Invalid email or password.');
       } else if (err.code === 'auth/too-many-requests') {
         throw new Error('Too many failed attempts. Please wait a moment before trying again.');
       } else if (err.code === 'auth/network-request-failed') {
         throw new Error('Network error. Please check your internet connection.');
       }
+      // Re-throw rate-limit errors from above without incrementing counter
+      if (err.message === 'Too many failed login attempts. Please wait before trying again.') {
+        throw err;
+      }
+      _loginFailedAttempts++;
+      if (_loginWindowStart === 0) _loginWindowStart = Date.now();
       throw new Error(err.message || 'Login failed. Please check your credentials.');
     }
   };
 
   // 3. Student Registration
+  //    FIX H6: Do NOT silently sign in on email-already-in-use; re-throw a clear error.
   const register = async (userData) => {
     const { email, password, name, mobileNumber, schoolName, percentage10th, preferredStream, preferredLocation, budget, hostelRequired } = userData;
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -259,9 +251,8 @@ export function AuthProvider({ children }) {
         firebaseUser = userCredential.user;
       } catch (authErr) {
         if (authErr.code === 'auth/email-already-in-use') {
-          // If already registered, attempt login
-          const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
-          firebaseUser = userCredential.user;
+          // FIX H6: Do NOT attempt silent login — surface the error to the user
+          throw new Error('An account with this email already exists. Please sign in instead.');
         } else {
           throw authErr;
         }
@@ -272,7 +263,7 @@ export function AuthProvider({ children }) {
         name: name || cleanEmail.split('@')[0],
         email: cleanEmail,
         mobileNumber: mobileNumber || '',
-        role: 'STUDENT',
+        role: 'STUDENT', // FIX H1: Always 'STUDENT' for new registrations
         schoolName: schoolName || null,
         percentage10th: percentage10th ? parseFloat(percentage10th) : null,
         preferredStream: preferredStream || null,
@@ -292,8 +283,12 @@ export function AuthProvider({ children }) {
       }
 
       setUser(newProfile);
+      // Cache only display data, not role
       if (typeof window !== 'undefined') {
-        localStorage.setItem('career365_user', JSON.stringify(newProfile));
+        localStorage.setItem('career365_user', JSON.stringify({
+          name: newProfile.name,
+          email: newProfile.email
+        }));
       }
       router.refresh();
       return newProfile;
@@ -308,6 +303,8 @@ export function AuthProvider({ children }) {
   };
 
   // 4. College Representative Registration
+  //    FIX H2: Assigns 'PENDING_COLLEGE_ADMIN' — requires admin approval before elevated access.
+  //    FIX H6: Do NOT silently sign in on email-already-in-use; re-throw a clear error.
   const registerCollege = async (representativeData, collegeData) => {
     const { email, password, representativeName, designation, phone, mobileNumber } = representativeData;
     const cleanEmail = (email || '').trim().toLowerCase();
@@ -319,8 +316,8 @@ export function AuthProvider({ children }) {
         firebaseUser = userCredential.user;
       } catch (authErr) {
         if (authErr.code === 'auth/email-already-in-use') {
-          const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, password);
-          firebaseUser = userCredential.user;
+          // FIX H6: Do NOT attempt silent login — surface the error to the user
+          throw new Error('An account with this institutional email already exists. Please sign in instead.');
         } else {
           throw authErr;
         }
@@ -403,13 +400,15 @@ export function AuthProvider({ children }) {
         updatedAt: new Date().toISOString()
       };
 
+      // FIX H2: College representatives start as 'PENDING_COLLEGE_ADMIN', not 'COLLEGE_ADMIN'.
+      // An admin must approve them before they receive elevated access.
       const userProfile = {
         uid: firebaseUser?.uid || 'user-' + timestamp,
         name: representativeName,
         email: cleanEmail,
         mobileNumber: phone || mobileNumber || '',
         designation: designation || 'Principal / Authorised Representative',
-        role: 'COLLEGE_ADMIN',
+        role: 'PENDING_COLLEGE_ADMIN',
         collegeId: collegeId,
         collegeName: collegeData.name,
         createdAt: new Date().toISOString()
@@ -430,8 +429,12 @@ export function AuthProvider({ children }) {
       }
 
       setUser(userProfile);
+      // Cache only display data, not role
       if (typeof window !== 'undefined') {
-        localStorage.setItem('career365_user', JSON.stringify(userProfile));
+        localStorage.setItem('career365_user', JSON.stringify({
+          name: userProfile.name,
+          email: userProfile.email
+        }));
         localStorage.setItem(`career365_college_${collegeId}`, JSON.stringify(newCollege));
       }
       router.refresh();
@@ -484,16 +487,27 @@ export function AuthProvider({ children }) {
 
   // 7. Update Student User Profile Data
   const updateProfile = async (profileData) => {
-    const updatedUser = { ...user, ...profileData };
+    // Security: Strip sensitive system fields to prevent client-side privilege escalation
+    const sanitizedData = { ...profileData };
+    delete sanitizedData.role;
+    delete sanitizedData.uid;
+    delete sanitizedData.email;
+    delete sanitizedData.createdAt;
+
+    const updatedUser = { ...user, ...sanitizedData };
     setUser(updatedUser);
+    // Cache only display data, not role
     if (typeof window !== 'undefined') {
-      localStorage.setItem('career365_user', JSON.stringify(updatedUser));
+      localStorage.setItem('career365_user', JSON.stringify({
+        name: updatedUser.name,
+        email: updatedUser.email
+      }));
     }
 
     if (auth.currentUser) {
       try {
         const userDocRef = doc(db, 'users', auth.currentUser.uid);
-        await updateDoc(userDocRef, profileData);
+        await updateDoc(userDocRef, sanitizedData);
       } catch (err) {
         console.warn('Firestore updateProfile warning (saved locally):', err.message);
       }

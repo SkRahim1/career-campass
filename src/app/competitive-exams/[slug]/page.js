@@ -12,8 +12,20 @@ export async function generateMetadata({ params }) {
     
     return {
       title: `${exam.shortCode} - ${exam.name} | Eligibility, How & Where to Apply`,
-      description: `Complete guide for ${exam.name}. Check eligibility criteria, step-by-step application process, official website link, exam pattern, and syllabus for Telangana students.`,
-      keywords: `${exam.shortCode}, ${exam.name}, eligibility criteria, how to apply, where to apply, syllabus, Telangana`,
+      description: `Complete guide for ${exam.name} (${exam.shortCode}). Check college admission eligibility criteria, step-by-step application process, syllabus, and official updates for Telangana entrance exams and competitive exams after 12th.`,
+      keywords: [
+        exam.shortCode,
+        exam.name,
+        'Competitive exams after 12th',
+        'Telangana entrance exams',
+        'College admission eligibility',
+        'How to apply',
+        'Syllabus',
+        'Telangana entrance tests'
+      ],
+      alternates: {
+        canonical: `/competitive-exams/${slug}`,
+      },
     };
   } catch (err) {
     return { title: 'Competitive Exam Details - Career365Compass' };

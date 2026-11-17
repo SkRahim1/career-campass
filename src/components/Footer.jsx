@@ -123,6 +123,54 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Target Keyword Search Directory for SEO */}
+        <div className="border-t border-slate-200 dark:border-slate-850 pt-8 pb-4">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 mb-3">
+            Popular Searches & Student Academic Guides
+          </h4>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
+            <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Career options after 10th
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Courses after 12th
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Best colleges in Hyderabad
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/colleges" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Degree colleges in Telangana
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Competitive exams after 12th
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/competitive-exams" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Telangana entrance exams
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Best courses after MPC
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/careers" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              Courses after BiPC
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/admission-updates" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              College admission eligibility
+            </Link>
+            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <Link href="/survey" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
+              How to choose a career after 10th
+            </Link>
+          </div>
+        </div>
+
         <div className="border-t border-slate-200 dark:border-slate-900 pt-8 mt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
           <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left text-slate-400 dark:text-slate-500">
             <span>© {new Date().getFullYear()} Career365Compass. All rights reserved.</span>

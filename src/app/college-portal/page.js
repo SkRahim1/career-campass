@@ -40,6 +40,16 @@ import {
   Info
 } from 'lucide-react';
 
+// Security: Sanitize URLs to prevent javascript: protocol injection
+function sanitizeUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+    return '';
+  }
+  return trimmed;
+}
+
 export default function CollegePortalPage() {
   const { user, login, registerCollege, updateCollegeProfile, logout, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -232,6 +242,15 @@ export default function CollegePortalPage() {
   // Handle College Self-Registration
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
+    // Password strength (before the existing password match check)
+    if (regForm.password.length < 8) {
+      setAuthError('Password must be at least 8 characters long.');
+      return;
+    }
+    if (!/[A-Z]/.test(regForm.password) || !/[0-9]/.test(regForm.password)) {
+      setAuthError('Password must contain at least one uppercase letter and one number.');
+      return;
+    }
     if (regForm.password !== regForm.confirmPassword) {
       setAuthError('Passwords do not match');
       return;
@@ -263,7 +282,7 @@ export default function CollegePortalPage() {
           state: regForm.state,
           pincode: regForm.pincode,
           nearbyLandmark: regForm.nearbyLandmark,
-          website: regForm.website,
+          website: sanitizeUrl(regForm.website),
           affiliation: regForm.affiliation,
           boardCode: regForm.boardCode,
           recognitionDetails: regForm.recognitionDetails,
@@ -322,7 +341,12 @@ export default function CollegePortalPage() {
   // Documents helpers
   const handleAddDoc = () => {
     if (!newDoc.title || !newDoc.url) return;
-    const updatedDocs = [...(collegeData.documents || []), { ...newDoc }];
+    const sanitizedUrl = sanitizeUrl(newDoc.url);
+    if (!sanitizedUrl) {
+      alert('Please enter a valid URL starting with https:// or http://');
+      return;
+    }
+    const updatedDocs = [...(collegeData.documents || []), { ...newDoc, url: sanitizedUrl }];
     setCollegeData({ ...collegeData, documents: updatedDocs });
     setNewDoc({ title: '', type: 'PROSPECTUS', url: '' });
   };
@@ -348,7 +372,12 @@ export default function CollegePortalPage() {
   // Gallery helpers
   const handleAddGalleryImage = () => {
     if (!galleryInput) return;
-    const updated = [...(collegeData.gallery || []), galleryInput.trim()];
+    const sanitizedUrl = sanitizeUrl(galleryInput.trim());
+    if (!sanitizedUrl) {
+      alert('Please enter a valid image URL starting with https:// or http://');
+      return;
+    }
+    const updated = [...(collegeData.gallery || []), sanitizedUrl];
     setCollegeData({ ...collegeData, gallery: updated });
     setGalleryInput('');
   };
@@ -536,10 +565,10 @@ export default function CollegePortalPage() {
                       <input
                         type="password"
                         required
-                        minLength={6}
+                        minLength={8}
                         value={regForm.password}
                         onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
-                        placeholder="At least 6 characters"
+                        placeholder="Min 8 chars, 1 uppercase, 1 number"
                         className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-hidden focus:border-indigo-500"
                       />
                     </div>

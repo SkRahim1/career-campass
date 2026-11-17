@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import {
   LayoutDashboard,
@@ -56,6 +57,7 @@ import {
 
 export default function AdminDashboardPage() {
   const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('analytics');
 
   // Metrics state
@@ -213,6 +215,25 @@ export default function AdminDashboardPage() {
     }
   }, [user]);
 
+  // ── Audit Logging (L4) ───────────────────────────────────────────────────────
+  const logAdminAction = async (action, details = {}) => {
+    try {
+      const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('@/lib/firebase');
+      await addDoc(collection(db, 'audit_logs'), {
+        action,
+        details,
+        adminEmail: user?.email || 'unknown',
+        adminUid: user?.uid || 'unknown',
+        timestamp: serverTimestamp(),
+        createdAt: new Date().toISOString()
+      });
+    } catch (err) {
+      console.warn('Audit log warning:', err.message);
+    }
+  };
+  // ── End Audit Logging ─────────────────────────────────────────────────────────
+
   const fetchCompetitiveExams = async () => {
     setAdminExamsLoading(true);
     try {
@@ -333,6 +354,7 @@ export default function AdminDashboardPage() {
     if (!confirm(`Are you sure you want to delete ${exam.shortCode} from the live portal?`)) return;
     const res = await deleteCompetitiveExamFromFirestore(exam.slug || exam.id);
     if (res.success) {
+      await logAdminAction('DELETE_EXAM', { examId: exam.slug || exam.id, name: exam.shortCode });
       setExamMsg(`Deleted ${exam.shortCode} from live portal.`);
       fetchCompetitiveExams();
     } else {
@@ -397,6 +419,7 @@ export default function AdminDashboardPage() {
     if (!confirm(`Are you sure you want to delete "${schoolName}"?`)) return;
     try {
       await deleteSchoolFromFirestore(schoolId);
+      await logAdminAction('DELETE_SCHOOL', { schoolId, schoolName });
       setSchoolMsg(`"${schoolName}" deleted.`);
       setTimeout(() => setSchoolMsg(''), 3000);
       await fetchSchools();
@@ -464,28 +487,6 @@ export default function AdminDashboardPage() {
         list.push({ id: doc.id, ...doc.data() });
       });
 
-      // Synchronize & merge any locally registered / pending colleges from browser storage
-      if (typeof window !== 'undefined') {
-        try {
-          for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k && k.startsWith('career365_college_')) {
-              const localCol = JSON.parse(localStorage.getItem(k));
-              if (localCol && localCol.id) {
-                const existingIdx = list.findIndex(c => String(c.id) === String(localCol.id));
-                if (existingIdx >= 0) {
-                  list[existingIdx] = { ...list[existingIdx], ...localCol };
-                } else {
-                  list.push(localCol);
-                }
-              }
-            }
-          }
-        } catch (storageErr) {
-          console.warn('LocalStorage college sync warning:', storageErr);
-        }
-      }
-
       // Sort: PENDING first, then by createdAt / id desc
       list.sort((a, b) => {
         const aPending = isCollegePending(a);
@@ -533,6 +534,7 @@ export default function AdminDashboardPage() {
 
       setApprovalMsg('College approved and published live to Student Directory!');
       setTimeout(() => setApprovalMsg(''), 4000);
+      await logAdminAction('APPROVE_COLLEGE', { collegeId });
       fetchCollegesList();
       fetchMetrics();
       if (selectedReviewCollege && selectedReviewCollege.id === collegeId) {
@@ -619,6 +621,7 @@ export default function AdminDashboardPage() {
 
       setApprovalMsg('College marked as rejected / revisions requested.');
       setTimeout(() => setApprovalMsg(''), 4000);
+      await logAdminAction('REJECT_COLLEGE', { collegeId, remarks });
       setShowRejectInput(false);
       setRejectionNote('');
       fetchCollegesList();
@@ -657,6 +660,7 @@ export default function AdminDashboardPage() {
         localStorage.removeItem(`career365_college_${collegeId}`);
       }
 
+      await logAdminAction('DELETE_COLLEGE', { collegeId });
       fetchCollegesList();
       fetchMetrics();
       setSelectedReviewCollege(null);
@@ -1162,11 +1166,13 @@ export default function AdminDashboardPage() {
   }
 
   if (!user || user.role !== 'SUPER_ADMIN') {
+    // Redirect to login after a short delay so the access-denied message is briefly visible
+    setTimeout(() => { router.push('/login'); }, 1500);
     return (
       <div className="flex-grow bg-slate-950 flex flex-col items-center justify-center p-8 text-center min-h-[60vh] bg-radial-gradient">
         <UserX className="w-16 h-16 text-slate-700 mb-4" />
         <h2 className="text-2xl font-bold text-slate-200">Access Denied</h2>
-        <p className="text-slate-500 max-w-sm mt-2 mb-6">You do not have the credentials to view the administrator controls panel.</p>
+        <p className="text-slate-500 max-w-sm mt-2 mb-6">You do not have the credentials to view the administrator controls panel. Redirecting to login…</p>
         <Link href="/login" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-xl transition">
           Log In as Admin
         </Link>

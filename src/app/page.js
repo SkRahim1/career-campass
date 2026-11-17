@@ -8,6 +8,26 @@ import ExamCard from '@/components/ExamCard';
 import HomeAuthModal from '@/components/HomeAuthModal';
 import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList, Trophy } from 'lucide-react';
 
+export const metadata = {
+  title: 'Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
+  description: 'Explore verified career options after 10th, courses after 12th, best courses after MPC, courses after BiPC, Telangana entrance exams, and discover the best colleges in Hyderabad & degree colleges in Telangana with complete college admission eligibility criteria.',
+  keywords: [
+    'Career options after 10th',
+    'Courses after 12th',
+    'Best colleges in Hyderabad',
+    'Degree colleges in Telangana',
+    'Competitive exams after 12th',
+    'Telangana entrance exams',
+    'Best courses after MPC',
+    'Courses after BiPC',
+    'College admission eligibility',
+    'How to choose a career after 10th'
+  ],
+  alternates: {
+    canonical: '/',
+  },
+};
+
 export default async function LandingPage() {
   const updates = await prisma.admissionUpdate.findMany({
     take: 3,
@@ -55,33 +75,78 @@ export default async function LandingPage() {
 
   const faqs = [
     {
-      q: "What options do I have after completing the 10th class?",
-      a: "After the 10th class, you can choose several paths: 2-year Intermediate (MPC, BiPC, MEC, CEC, HEC streams), 3-year Polytechnic Diploma (Engineering streams), 2-year ITI (vocational trades), or specialized vocational diplomas."
+      q: "How to choose a career after 10th?",
+      a: "To choose a career after 10th, first evaluate your interests and subject aptitudes: if you enjoy mathematics, computing, and analytical problem solving, choose MPC for engineering or technology; for healthcare, life sciences, and medicine, choose BiPC; for chartered accountancy, finance, and corporate management, pick MEC or CEC; and for practical technical careers, explore 3-year Polytechnic Diplomas via TS POLYCET. You can also take our free student guidance survey to receive tailored recommendations."
     },
     {
-      q: "How can I apply for admission in Telangana government colleges?",
-      a: "Admissions into Government Junior Colleges are typically based on merit (10th GPA) and seat availability. For Polytechnic (Diploma) courses, you must qualify in the TS POLYCET exam. ITI admissions are conducted via a centralized online portal based on 10th marks."
+      q: "What are the best courses after MPC?",
+      a: "The best courses after MPC (Maths, Physics, Chemistry) include B.Tech / B.E in Computer Science, Artificial Intelligence & Machine Learning, Electronics, Mechanical, Civil Engineering, Bachelor of Architecture (B.Arch), Commercial Pilot Training, Merchant Navy Nautical Science, Data Science, and UPSC National Defence Academy (NDA)."
     },
     {
-      q: "What is the difference between MPC, BiPC, and MEC streams?",
-      a: "MPC (Mathematics, Physics, Chemistry) leads to engineering, computer science, and technical fields. BiPC (Biology, Physics, Chemistry) leads to medicine, pharmacy, and agriculture. MEC (Maths, Economics, Commerce) is perfect for chartered accountancy, finance, and business administration."
+      q: "What are the top courses after BiPC?",
+      a: "The top courses after BiPC (Biology, Physics, Chemistry) include MBBS (Medicine & Surgery), BDS (Dental Surgery), Bachelor of Pharmacy (B.Pharm), Doctor of Pharmacy (Pharm.D), B.Sc Nursing, Physiotherapy (BPT), B.Sc in Agriculture & Horticulture through PJTSAU, Veterinary Science (BVSc), and Biotechnology."
     },
     {
-      q: "Are scholarships available for Polytechnic and ITI courses?",
-      a: "Yes! The Government of Telangana offers Post-Matric scholarships (ePASS) covering college tuition (RTF) and maintenance fees (MTF) for eligible SC, ST, BC, and minority students."
+      q: "What are the best colleges in Hyderabad and degree colleges in Telangana?",
+      a: "Hyderabad and Telangana feature outstanding public and private institutions including historic Government Junior Colleges (Nampally, City College, Aliya), premier polytechnics (Government Polytechnic Masab Tank), and top degree colleges affiliated with Osmania University and Kakatiya University offering arts, science, and commerce degrees."
+    },
+    {
+      q: "Which are the top Telangana entrance exams and competitive exams after 12th?",
+      a: "Key Telangana entrance exams after 10th include TS POLYCET and TG APRJC CET. After 12th, the top competitive exams include TG EAPCET (Engineering & Agriculture), NEET UG (Medical), JEE Main & Advanced (Engineering), UPSC NDA (Armed Forces), and CLAT UG (Law)."
+    },
+    {
+      q: "What is the college admission eligibility criteria for Telangana institutions?",
+      a: "College admission eligibility depends on the course: Intermediate junior college admissions require SSC/10th class pass merit (GPA); Polytechnic diplomas require a qualifying score in TS POLYCET; degree college admissions in Telangana are conducted online through the DOST portal based on 12th/Intermediate marks and state reservation quotas."
+    },
+    {
+      q: "What career options after 10th and courses after 12th provide rapid job opportunities?",
+      a: "For fast employment after 10th, 3-year Polytechnic Diplomas and 2-year ITI trades (Electrician, Fitter, COPA) lead directly into apprenticeships and industry jobs. After 12th, professional degrees such as B.Tech (IT/CS), B.Sc Nursing, B.Pharm, and armed forces recruitment (Agniveer & NDA) offer excellent starting packages."
+    },
+    {
+      q: "Are scholarships available for Polytechnic and ITI courses in Telangana?",
+      a: "Yes! The Government of Telangana provides Post-Matric scholarships (ePASS) covering college tuition fee reimbursement (RTF) and maintenance fees (MTF) for eligible SC, ST, BC, EBC, and minority students."
     }
   ];
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Career365Compass",
-    "url": "https://career365compass.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://career365compass.com/colleges?search={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://career365compass.com/#website",
+        "name": "Career365Compass",
+        "url": "https://career365compass.com",
+        "description": "Career guidance, college discovery, and entrance exam portal for students in Hyderabad and Telangana.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://career365compass.com/colleges?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://career365compass.com/#organization",
+        "name": "Career365Compass",
+        "url": "https://career365compass.com",
+        "parentOrganization": {
+          "@type": "Organization",
+          "name": "Excellence Voices",
+          "url": "https://excellencevoices.in"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://career365compass.com/#faq",
+        "mainEntity": faqs.map(faq => ({
+          "@type": "Question",
+          "name": faq.q,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": faq.a
+          }
+        }))
+      }
+    ]
   };
 
   return (
@@ -134,7 +199,7 @@ export default async function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
           <Link href="/survey" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-indigo-500/20 transition text-center cursor-pointer text-xs flex items-center justify-center gap-2">
             <ClipboardList className="w-4 h-4" />
-            <span>Take Student Survey (5–7 Min)</span>
+            <span>Take Student Survey (5â€“7 Min)</span>
           </Link>
           <Link href="/colleges" className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-800 dark:hover:border-slate-700 font-bold px-8 py-3.5 rounded-2xl transition text-center cursor-pointer text-xs">
             Find Colleges
@@ -158,7 +223,7 @@ export default async function LandingPage() {
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-normal">
               Most search platforms are driven by paid sponsorships and advertisements, which promote expensive private institutions. 
-              <strong> Career365Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options—regardless of budget.
+              <strong> Career365Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all optionsâ€”regardless of budget.
             </p>
           </div>
 
@@ -248,6 +313,143 @@ export default async function LandingPage() {
             <div className="border-t border-slate-200 dark:border-slate-850 pt-3 text-[10px] text-slate-500 space-y-1">
               <p><strong className="text-slate-500 dark:text-slate-400">Major Streams:</strong> Electrician, Fitter, Welder, COPA</p>
               <p><strong className="text-slate-500 dark:text-slate-400">Next Step:</strong> Apprentice jobs / Railways / Industrial units</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Strategic Academic & Target Keyword Hub */}
+      <section className="py-8 sm:py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <span className="text-[9px] font-extrabold uppercase bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 px-2.5 py-1 rounded-full">
+            Target Keyword Directory
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
+            Career & College Planning by Category
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl mx-auto">
+            Explore curated avenues for career options after 10th, courses after 12th, top MPC/BiPC streams, Telangana entrance tests, and premier colleges in Hyderabad.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Card 1: Careers */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+              <Compass className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Careers</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              Career Options After 10th & Courses After 12th
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Unpack over 50 professional roadmaps. Discover whether your ambitions require standard Intermediate streams, technical polytechnics, or specialized vocational paths.
+            </p>
+            <div className="pt-2">
+              <Link href="/careers" className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                <span>Explore Career Options After 10th</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Courses */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-sky-600 dark:text-sky-400">
+              <BookOpen className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Courses & Streams</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              Best Courses After MPC & Courses After BiPC
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Navigate engineering, AI, and aviation with the best courses after MPC, or pursue medicine, pharmacy, and agriculture with top courses after BiPC.
+            </p>
+            <div className="pt-2">
+              <Link href="/careers" className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1">
+                <span>View Stream Guides (MPC & BiPC)</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: Colleges */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+              <Building2 className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Colleges & Campuses</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              Best Colleges in Hyderabad & Degree Colleges in Telangana
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Find verified profiles of junior colleges, polytechnics, and top degree colleges across Hyderabad and Telangana districts with fee comparisons.
+            </p>
+            <div className="pt-2">
+              <Link href="/colleges" className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1">
+                <span>Find Best Colleges in Hyderabad</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 4: Exams */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+              <Trophy className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Entrance Gateways</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              Telangana Entrance Exams & Competitive Exams After 12th
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Comprehensive exam alerts and application guides for TS POLYCET, TG APRJC, TG EAPCET, NEET, JEE Main, and UPSC NDA entrance tests.
+            </p>
+            <div className="pt-2">
+              <Link href="/competitive-exams" className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1">
+                <span>Check Telangana Entrance Exams</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 5: Admissions */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Admissions</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              College Admission Eligibility & Counseling
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Understand cutoff scores, government quota reservation percentages, required documents, and real-time admission updates across Telangana.
+            </p>
+            <div className="pt-2">
+              <Link href="/admission-updates" className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1">
+                <span>View College Admission Eligibility</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 6: Guidance */}
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-3 hover:border-indigo-500/30 transition shadow-sm text-left">
+            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
+              <ClipboardList className="w-5 h-5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Student Guidance</span>
+            </div>
+            <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              How to Choose a Career After 10th
+            </h3>
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Step-by-step diagnostic questionnaire tailored for 10th class students. Discover your strengths and receive custom stream and college recommendations.
+            </p>
+            <div className="pt-2">
+              <Link href="/survey" className="text-xs font-bold text-purple-600 dark:text-purple-400 hover:underline flex items-center gap-1">
+                <span>Take 5-Min Guidance Survey</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
@@ -406,7 +608,7 @@ export default async function LandingPage() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase">
               <ClipboardList className="w-3.5 h-3.5" />
-              <span>5–7 Minute Interactive Survey</span>
+              <span>5â€“7 Minute Interactive Survey</span>
             </div>
             <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
               Tell Us About Your Goals & Educational Preferences
@@ -438,7 +640,7 @@ export default async function LandingPage() {
             <details key={idx} className="group bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition shadow-sm">
               <summary className="flex justify-between items-center gap-4 text-slate-800 dark:text-slate-200 font-bold text-sm select-none">
                 <span>{faq.q}</span>
-                <span className="text-slate-400 group-open:rotate-180 transition shrink-0">▼</span>
+                <span className="text-slate-400 group-open:rotate-180 transition shrink-0">â–¼</span>
               </summary>
               <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed mt-3 border-t border-slate-200 dark:border-slate-800/60 pt-3 font-normal">
                 {faq.a}

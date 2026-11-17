@@ -50,6 +50,26 @@ export default function RegisterPage() {
       return;
     }
 
+    // Name validation
+    if (name.trim().length < 2) {
+      setError('Please enter your full name (at least 2 characters).');
+      return;
+    }
+    // Mobile number validation
+    if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
+      setError('Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
+    // Password strength validation (L1 fix)
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+    if (!/[A-Z]/.test(password) || !/[0-9]/.test(password)) {
+      setError('Password must contain at least one uppercase letter and one number.');
+      return;
+    }
+
     setError('');
     setSubmitting(true);
 
@@ -182,7 +202,8 @@ export default function RegisterPage() {
                   id="password"
                   type="password"
                   required
-                  placeholder="Min 6 characters"
+                  minLength={8}
+                  placeholder="Min 8 chars, 1 uppercase, 1 number"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"

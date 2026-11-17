@@ -17,9 +17,59 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: 'Career365Compass | College Discovery & Career Guidance after 10th',
-  description: 'Career365Compass helps 10th class students explore Intermediate streams, Polytechnic diplomas, ITIs, and scholarships. Compare colleges and discover your career roadmap.',
-  keywords: 'best intermediate colleges hyderabad, government junior colleges hyderabad, polytechnic colleges hyderabad, career guidance after 10th',
+  metadataBase: new URL('https://career365compass.com'),
+  title: {
+    default: 'Career365Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
+    template: '%s | Career365Compass',
+  },
+  description: 'Career365Compass is Telangana\'s premier student guidance portal. Explore verified career options after 10th, courses after 12th, best courses after MPC, courses after BiPC, Telangana entrance exams, competitive exams after 12th, and discover the best colleges in Hyderabad & degree colleges in Telangana with complete college admission eligibility criteria.',
+  keywords: [
+    'Career options after 10th',
+    'Courses after 12th',
+    'Best colleges in Hyderabad',
+    'Degree colleges in Telangana',
+    'Competitive exams after 12th',
+    'Telangana entrance exams',
+    'Best courses after MPC',
+    'Courses after BiPC',
+    'College admission eligibility',
+    'How to choose a career after 10th',
+    'Intermediate colleges in Hyderabad',
+    'Government junior colleges Telangana',
+    'TS POLYCET 2026',
+    'TG EAPCET',
+    'Polytechnic diploma Hyderabad'
+  ],
+  authors: [{ name: 'Career365Compass - Excellence Voices' }],
+  creator: 'Excellence Voices',
+  publisher: 'Career365Compass',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    url: 'https://career365compass.com',
+    siteName: 'Career365Compass',
+    title: 'Career365Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
+    description: 'Explore career options after 10th, courses after 12th, best courses after MPC & BiPC, Telangana entrance exams, and degree colleges in Telangana.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Career365Compass | Career Options After 10th & Best Colleges in Hyderabad',
+    description: 'Explore career options after 10th, courses after 12th, MPC & BiPC pathways, and college admission eligibility in Telangana.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export const viewport = {
