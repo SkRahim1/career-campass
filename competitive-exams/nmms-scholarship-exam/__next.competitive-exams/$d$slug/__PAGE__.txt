@@ -2,5 +2,5 @@
 2:I[689,["5583","static/chunks/711f8d0a-39030b95edaa0033.js","2301","static/chunks/0e142730-861107fd0c6c45ae.js","5310","static/chunks/b2b8fa22-5742cdd8fd7113c5.js","7289","static/chunks/7289-73d3feaabae1a6fa.js","1674","static/chunks/1674-af7653b88319540a.js","1429","static/chunks/1429-a22b58cb3cac76ed.js","7377","static/chunks/7377-bd85c403833c642e.js","5657","static/chunks/app/competitive-exams/%5Bslug%5D/page-54a12f13645d5327.js"],"default"]
 3:I[484,[],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"slug":"nmms-scholarship-exam"}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"tfYnmDNeVFi4k0eObDznM"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{"slug":"nmms-scholarship-exam"}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"HuQ0vAJXAEpbdPG9uFbls"}
 5:null
