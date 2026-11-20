@@ -9,6 +9,6 @@ export default function robots() {
         disallow: ['/admin', '/profile', '/college-portal'],
       },
     ],
-    sitemap: 'https://career365compass.com/sitemap.xml',
+    sitemap: 'https://career365compass.in/sitemap.xml',
   };
 }

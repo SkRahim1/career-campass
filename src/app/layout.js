@@ -17,7 +17,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  metadataBase: new URL('https://career365compass.com'),
+  metadataBase: new URL('https://career365compass.in'),
   title: {
     default: 'Career365Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
     template: '%s | Career365Compass',
@@ -49,7 +49,7 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://career365compass.com',
+    url: 'https://career365compass.in',
     siteName: 'Career365Compass',
     title: 'Career365Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
     description: 'Explore career options after 10th, courses after 12th, best courses after MPC & BiPC, Telangana entrance exams, and degree colleges in Telangana.',

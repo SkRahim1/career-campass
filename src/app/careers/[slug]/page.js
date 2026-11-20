@@ -86,7 +86,7 @@ export default async function CareerDetailPage({ params }) {
     "provider": {
       "@type": "Organization",
       "name": "Career365Compass",
-      "sameAs": "https://career365compass.com"
+      "sameAs": "https://career365compass.in"
     }
   };
 

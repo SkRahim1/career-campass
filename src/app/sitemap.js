@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 export const dynamic = 'force-static';
 
 export default async function sitemap() {
-  const baseUrl = 'https://career365compass.com';
+  const baseUrl = 'https://career365compass.in';
 
   const staticRoutes = [
     '',

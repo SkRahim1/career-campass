@@ -5,8 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/career-campass',
-  assetPrefix: '/career-campass/',
 
   // Security headers — applied in development (next dev) and when deployed
   // to a dynamic Next.js host. For static (GitHub Pages) deployments, these

@@ -113,21 +113,21 @@ export default async function LandingPage() {
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://career365compass.com/#website",
+        "@id": "https://career365compass.in/#website",
         "name": "Career365Compass",
-        "url": "https://career365compass.com",
+        "url": "https://career365compass.in",
         "description": "Career guidance, college discovery, and entrance exam portal for students in Hyderabad and Telangana.",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://career365compass.com/colleges?search={search_term_string}",
+          "target": "https://career365compass.in/colleges?search={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "EducationalOrganization",
-        "@id": "https://career365compass.com/#organization",
+        "@id": "https://career365compass.in/#organization",
         "name": "Career365Compass",
-        "url": "https://career365compass.com",
+        "url": "https://career365compass.in",
         "parentOrganization": {
           "@type": "Organization",
           "name": "Excellence Voices",
@@ -136,7 +136,7 @@ export default async function LandingPage() {
       },
       {
         "@type": "FAQPage",
-        "@id": "https://career365compass.com/#faq",
+        "@id": "https://career365compass.in/#faq",
         "mainEntity": faqs.map(faq => ({
           "@type": "Question",
           "name": faq.q,
