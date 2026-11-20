@@ -11,11 +11,27 @@ export const metadata = {
     'Entrance exams for intermediate admissions'
   ],
   alternates: {
-    canonical: '/competitive-exams',
+    canonical: '/competitive-exams/',
   },
   openGraph: {
     title: 'Telangana Entrance Exams & Competitive Exams After 12th | Career365Compass',
     description: 'Explore all upcoming competitive exams after 12th and state entrance exams in Telangana with eligibility and step-by-step application walkthroughs.',
+    url: 'https://career365compass.in/competitive-exams/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Telangana Entrance Examinations & Competitive Tests Directory',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Telangana Entrance Exams | Career365Compass',
+    description: 'Explore POLYCET, APRJC, EAPCET, JEE, NEET and entrance exams after 10th & 12th.',
+    images: ['/images/portal-features.jpg'],
   },
 };
 

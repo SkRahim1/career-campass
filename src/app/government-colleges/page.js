@@ -1,8 +1,8 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
 import CollegeCard from '@/components/CollegeCard';
-import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { Star, ShieldAlert, FileText, Landmark, ClipboardList, Coins } from 'lucide-react';
+import Link from 'next/link';
 
 export default async function GovernmentCollegesPage() {
   // Fetch government colleges from SQLite
@@ -36,14 +36,63 @@ export default async function GovernmentCollegesPage() {
     'Physical Disability / Sports / NCC Certificate (if seeking quota benefits)'
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://career365compass.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Government Junior Colleges in Telangana",
+            "item": "https://career365compass.in/government-colleges/"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What are the reservation quotas for Government Junior Colleges in Telangana?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Admissions to Telangana state government junior colleges strictly follow state reservation quotas: Scheduled Castes (SC) 15%, Scheduled Tribes (ST) 10%, Backward Classes (BC) 29% (BC-A, B, C, D, E), and 33.3% horizontal reservation for female students."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Intermediate education free in Telangana Government Junior Colleges?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, Telangana Government Junior Colleges offer free education with zero tuition fees, free state textbooks, and free examination fee waivers for eligible students, along with state hostel facilities."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
-    <AuthRequiredGate
-      featureName="Government Colleges Directory"
-      featureDescription="Sign in or register to explore state-funded junior colleges, reservation guidelines, and free hostel facilities."
-      iconName="landmark"
-      redirectPath="/government-colleges"
-    >
-      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-radial-gradient text-left">
+    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12 bg-radial-gradient text-left">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
+      {/* Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+        <Link href="/" className="hover:text-indigo-400 transition">Home</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-slate-200">Government Colleges in Telangana</span>
+      </nav>
       
       {/* Title */}
       <div className="space-y-3">
@@ -132,8 +181,6 @@ export default async function GovernmentCollegesPage() {
           </div>
         )}
       </div>
-
-      </div>
-    </AuthRequiredGate>
+    </div>
   );
 }

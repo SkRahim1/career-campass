@@ -7,14 +7,32 @@ export const metadata = {
     'College admission eligibility',
     'Government junior colleges in Hyderabad',
     'Free intermediate education Telangana',
-    'TS government colleges list'
+    'TS government colleges list',
+    'Masab Tank polytechnic',
+    'City College Hyderabad intermediate'
   ],
   alternates: {
-    canonical: '/government-colleges',
+    canonical: '/government-colleges/',
   },
   openGraph: {
     title: 'Government Colleges in Hyderabad & Telangana | Career365Compass',
     description: 'Find top state-funded government junior colleges and polytechnics across Hyderabad with zero tuition fees and hostel facilities.',
+    url: 'https://career365compass.in/government-colleges/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Telangana Government Junior Colleges and Polytechnics Guide',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Government Colleges in Telangana | Career365Compass',
+    description: 'Explore verified Government Junior Colleges with zero fees, hostels, and reservation guidelines in Hyderabad.',
+    images: ['/images/portal-features.jpg'],
   },
 };
 

@@ -6,7 +6,14 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/profile', '/college-portal'],
+        disallow: [
+          '/admin/',
+          '/college-portal/',
+          '/profile/',
+          '/saved-colleges/',
+          '/login/',
+          '/register/',
+        ],
       },
     ],
     sitemap: 'https://career365compass.in/sitemap.xml',

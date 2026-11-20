@@ -19,19 +19,45 @@ export async function generateMetadata({ params }) {
       ? college.streams.map(s => s.streamName).join(', ') 
       : 'MPC, BiPC, MEC, CEC';
 
+    const title = `${college.name} - Admission Eligibility, Streams & Reviews`;
+    const description = `Complete profile of ${college.name} (${college.ownership}) located in ${college.nearbyLandmark || college.address}, Hyderabad, Telangana. Explore streams (${streamsText}), college admission eligibility, hostel facilities, and verified ratings among the best colleges in Hyderabad.`;
+    const canonicalUrl = `/colleges/${id}/`;
+
     return {
-      title: `${college.name} - Admission Eligibility, Streams & Reviews`,
-      description: `Complete profile of ${college.name} (${college.ownership}) located in ${college.nearbyLandmark || college.address}, Hyderabad, Telangana. Explore streams (${streamsText}), college admission eligibility, hostel facilities, and verified ratings among the best colleges in Hyderabad.`,
+      title,
+      description,
       keywords: [
         college.name,
         'Best colleges in Hyderabad',
         'Degree colleges in Telangana',
         'College admission eligibility',
         `${college.address} colleges`,
-        'Telangana junior college admissions'
+        'Telangana junior college admissions',
+        'Intermediate colleges in Hyderabad',
+        'Polytechnic diploma Hyderabad'
       ],
       alternates: {
-        canonical: `/colleges/${id}`,
+        canonical: canonicalUrl,
+      },
+      openGraph: {
+        title: `${college.name} - Admission, Streams & Fee Structure | Career365Compass`,
+        description,
+        url: `https://career365compass.in${canonicalUrl}`,
+        type: 'website',
+        images: [
+          {
+            url: college.coverImageUrl || '/images/portal-features.jpg',
+            width: 1200,
+            height: 630,
+            alt: `${college.name} Campus in Hyderabad`,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${college.name} | Career365Compass`,
+        description,
+        images: [college.coverImageUrl || '/images/portal-features.jpg'],
       },
     };
   } catch (err) {
@@ -56,5 +82,18 @@ export async function generateStaticParams() {
 
 export default async function CollegePage({ params }) {
   const { id } = await params;
-  return <CollegeDetailClient id={id} />;
+  const collegeId = parseInt(id, 10);
+  let college = null;
+  if (!isNaN(collegeId)) {
+    try {
+      college = await prisma.college.findUnique({
+        where: { id: collegeId },
+        include: { streams: true }
+      });
+    } catch (err) {
+      console.error('Error fetching college for SSG:', err);
+    }
+  }
+  return <CollegeDetailClient id={id} initialCollege={college} />;
 }
+

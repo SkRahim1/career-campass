@@ -18,11 +18,27 @@ export const metadata = {
     'Engineering vs Medical after 10th'
   ],
   alternates: {
-    canonical: '/careers',
+    canonical: '/careers/',
   },
   openGraph: {
     title: 'Career Options After 10th & Courses After 12th | Career365Compass',
     description: 'Comprehensive roadmaps for 50+ professions: eligibility, top courses after 12th, MPC & BiPC avenues, and salary expectations.',
+    url: 'https://career365compass.in/careers/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: '50+ Career Options After 10th and Courses After 12th',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Career Options After 10th & Courses After 12th | Career365Compass',
+    description: 'Explore step-by-step career roadmaps, salary ranges, and eligibility for 50+ professions.',
+    images: ['/images/portal-features.jpg'],
   },
 };
 

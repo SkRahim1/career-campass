@@ -1,6 +1,5 @@
 import React from 'react';
 import prisma from '@/lib/prisma';
-import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { ArrowLeft, Briefcase, Award, TrendingUp, CheckSquare, Compass, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 
@@ -10,21 +9,47 @@ export async function generateMetadata({ params }) {
   const career = await prisma.career.findUnique({
     where: { slug }
   });
-  if (!career) return { title: 'Career Not Found' };
+  if (!career) return { title: 'Career Not Found | Career365Compass' };
   
+  const title = `${career.title} - Career Options After 10th & Roadmap | Career365Compass`;
+  const description = `Complete guide on how to become a ${career.title} in India. Explore required courses after 12th, intermediate streams, entry requirements, salary ranges, and career options after 10th.`;
+  const canonicalUrl = `/careers/${slug}/`;
+
   return {
-    title: `${career.title} - Career Options After 10th & Roadmap | Career365Compass`,
-    description: `Complete guide on how to become a ${career.title} in India. Explore required courses after 12th, intermediate streams, entry requirements, salary ranges, and career options after 10th.`,
+    title,
+    description,
     keywords: [
       `${career.title} roadmap`,
       'Career options after 10th',
       'Courses after 12th',
       'How to choose a career after 10th',
       `how to become ${career.title}`,
-      'Career guidance Telangana'
+      'Career guidance Telangana',
+      'Best courses after MPC',
+      'Courses after BiPC'
     ],
     alternates: {
-      canonical: `/careers/${slug}`,
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://career365compass.in${canonicalUrl}`,
+      type: 'article',
+      images: [
+        {
+          url: '/images/portal-features.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${career.title} Career Roadmap & Guidance`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/images/portal-features.jpg'],
     },
   };
 }
@@ -80,35 +105,68 @@ export default async function CareerDetailPage({ params }) {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Course",
-    "name": `${career.title} Roadmap`,
-    "description": career.overview,
-    "provider": {
-      "@type": "Organization",
-      "name": "Career365Compass",
-      "sameAs": "https://career365compass.in"
-    }
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://career365compass.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Career Options After 10th",
+            "item": "https://career365compass.in/careers/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": career.title,
+            "item": `https://career365compass.in/careers/${slug}/`
+          }
+        ]
+      },
+      {
+        "@type": "Occupation",
+        "@id": `https://career365compass.in/careers/${slug}/#occupation`,
+        "name": career.title,
+        "description": career.overview,
+        "occupationalCategory": career.category || "Professional Services",
+        "educationRequirements": career.minQualification || "10th / Intermediate / Degree",
+        "skills": skills.join(', '),
+        "estimatedSalary": [
+          {
+            "@type": "MonetaryAmountDistribution",
+            "name": "Starting Annual Salary",
+            "currency": "INR",
+            "minValue": career.salaryRangeMin,
+            "maxValue": career.salaryRangeMax,
+            "unitText": "YEAR"
+          }
+        ]
+      }
+    ]
   };
 
   return (
-    <AuthRequiredGate
-      featureName={`${career.title} Career Roadmap`}
-      featureDescription={`Sign in or create a free student account to explore the comprehensive roadmap, required qualifications, and salary insights for ${career.title}.`}
-      iconName="career"
-      redirectPath={`/careers/${slug}`}
-    >
-      <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow py-16 px-4 sm:px-6 lg:px-8">
+    <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow py-16 px-4 sm:px-6 lg:px-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="max-w-4xl mx-auto space-y-10">
         
-        {/* Back Link */}
-        <Link href="/careers" className="inline-flex items-center gap-1 text-slate-400 hover:text-indigo-400 text-xs font-bold transition">
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Career Library</span>
-        </Link>
+        {/* Breadcrumb Navigation for SEO */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+          <Link href="/" className="hover:text-indigo-400 transition">Home</Link>
+          <span className="text-slate-600">/</span>
+          <Link href="/careers" className="hover:text-indigo-400 transition">Career Options</Link>
+          <span className="text-slate-600">/</span>
+          <span className="text-slate-200 truncate">{career.title}</span>
+        </nav>
 
         {/* Header Block */}
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 shadow-md">
@@ -227,7 +285,6 @@ export default async function CareerDetailPage({ params }) {
         </div>
 
       </div>
-      </div>
-    </AuthRequiredGate>
+    </div>
   );
 }

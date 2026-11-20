@@ -2,14 +2,108 @@ import React from 'react';
 import prisma from '@/lib/prisma';
 import ScholarshipCard from '@/components/ScholarshipCard';
 import { Award, ShieldCheck, Info } from 'lucide-react';
+import Link from 'next/link';
+
+export const metadata = {
+  title: 'Scholarships for 10th & 12th Students in Telangana | ePASS, Welfare & Merit Aid',
+  description: 'Explore Telangana state ePASS scholarships, Post-Matric fee reimbursement, central sector merit scholarships, and minority financial aid for Intermediate, Polytechnic, and ITI students.',
+  keywords: [
+    'Scholarships after 10th',
+    'Telangana ePASS scholarship',
+    'Post matric scholarship Telangana',
+    'Fee reimbursement Telangana',
+    'Polytechnic scholarships',
+    'MeeSeva caste income certificate scholarship',
+    'NMMS scholarship Telangana',
+    'Intermediate scholarships Hyderabad'
+  ],
+  alternates: {
+    canonical: '/scholarships/',
+  },
+  openGraph: {
+    title: 'Scholarships for 10th & 12th Students in Telangana | Career365Compass',
+    description: 'Find verified state and national scholarships, eligibility cutoffs, document checklists, and application portals.',
+    url: 'https://career365compass.in/scholarships/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Telangana Post-10th Scholarships & Financial Aid Directory',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Scholarships in Telangana | Career365Compass',
+    description: 'Explore state ePASS scholarships, fee reimbursement, and financial aid for post-10th courses.',
+    images: ['/images/portal-features.jpg'],
+  },
+};
 
 export default async function ScholarshipsPage() {
   const scholarships = await prisma.scholarship.findMany({
     orderBy: { lastDate: 'asc' }
   });
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://career365compass.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Scholarships Directory",
+            "item": "https://career365compass.in/scholarships/"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Which documents are required for Telangana ePASS Post-Matric Scholarship?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Key documents for ePASS include: SSC Hall Ticket Number and Memo, Aadhaar Card, Caste Certificate and Family Income Certificate issued through MeeSeva in the current financial year, College Admission Allotment Order, and a Nationalized Bank Passbook in the student's name."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Are Polytechnic Diploma students eligible for tuition fee reimbursement?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, students securing admission through TS POLYCET in Government and eligible Private Polytechnics who satisfy parental income limits are eligible for RTF (Reimbursement of Tuition Fees) and MTF (Maintenance Fees)."
+            }
+          }
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient text-left">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+        <Link href="/" className="hover:text-indigo-400 transition">Home</Link>
+        <span className="text-slate-600">/</span>
+        <span className="text-slate-200">Scholarships & Financial Aid</span>
+      </nav>
       
       {/* Title */}
       <div className="space-y-3">

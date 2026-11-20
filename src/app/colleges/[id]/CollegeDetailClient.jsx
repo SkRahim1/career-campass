@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import MapComponent from '@/components/MapComponent';
-import AuthRequiredGate from '@/components/AuthRequiredGate';
 import {
   Star,
   MapPin,
@@ -86,12 +85,12 @@ function getCollegeWhatsApp(college) {
   };
 }
 
-export default function CollegeDetailClient({ id }) {
+export default function CollegeDetailClient({ id, initialCollege }) {
   const { user } = useAuth();
   const router = useRouter();
   
-  const [college, setCollege] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [college, setCollege] = useState(initialCollege || null);
+  const [loading, setLoading] = useState(!initialCollege);
   const [activeTab, setActiveTab] = useState('overview');
   const tabRefs = useRef({});
 
@@ -161,7 +160,7 @@ export default function CollegeDetailClient({ id }) {
   };
 
   const fetchCollegeDetails = async () => {
-    setLoading(true);
+    if (!initialCollege) setLoading(true);
     try {
       const docRef = doc(db, 'colleges', String(id));
       const docSnap = await getDoc(docRef);
@@ -185,14 +184,13 @@ export default function CollegeDetailClient({ id }) {
           });
         });
         
-        setCollege({
+        setCollege((prev) => ({
+          ...(prev || {}),
           id: docSnap.id,
           ...collegeData,
           reviews: collegeReviews,
           totalReviews: collegeReviews.length
-        });
-      } else {
-        console.error('College not found in Firestore');
+        }));
       }
     } catch (err) {
       console.error('Error fetching college details:', err);
@@ -273,28 +271,53 @@ export default function CollegeDetailClient({ id }) {
 
   const jsonLd = college ? {
     "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "name": college.name,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": college.address,
-      "addressLocality": "Hyderabad",
-      "addressRegion": "Telangana",
-      "addressCountry": "IN"
-    },
-    "description": college.description,
-    "telephone": college.phone || undefined,
-    "url": college.website || undefined
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://career365compass.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Colleges in Hyderabad",
+            "item": "https://career365compass.in/colleges/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": college.name,
+            "item": `https://career365compass.in/colleges/${id}/`
+          }
+        ]
+      },
+      {
+        "@type": "CollegeOrUniversity",
+        "@id": `https://career365compass.in/colleges/${id}/#college`,
+        "name": college.name,
+        "description": college.description,
+        "telephone": college.phone || undefined,
+        "email": college.email || undefined,
+        "url": college.website || `https://career365compass.in/colleges/${id}/`,
+        "image": college.coverImageUrl || undefined,
+        "logo": college.logoUrl || undefined,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": college.address,
+          "addressLocality": "Hyderabad",
+          "addressRegion": "Telangana",
+          "addressCountry": "IN"
+        }
+      }
+    ]
   } : null;
 
   return (
-    <AuthRequiredGate
-      featureName={`${college.name} Details`}
-      featureDescription="Sign in or register to view full fee structures, admission cutoffs, campus facilities, and student reviews."
-      iconName="landmark"
-      redirectPath={`/colleges/${id}`}
-    >
-      <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow">
+    <div className="bg-slate-950 bg-grid-pattern bg-radial-gradient flex-grow">
       {jsonLd && (
         <script
           type="application/ld+json"
@@ -358,13 +381,22 @@ export default function CollegeDetailClient({ id }) {
           </div>
         )}
 
+        {/* Semantic Breadcrumbs for Navigation & SEO */}
+        <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-400">
+          <Link href="/" className="hover:text-indigo-400 transition font-medium">Home</Link>
+          <span className="text-slate-600">/</span>
+          <Link href="/colleges" className="hover:text-indigo-400 transition font-medium">Colleges in Hyderabad</Link>
+          <span className="text-slate-600">/</span>
+          <span className="text-slate-200 font-semibold truncate max-w-xs">{college.name}</span>
+        </nav>
+
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
           
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center flex-grow">
             {/* Logo */}
             <div className="w-24 h-24 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 shrink-0 flex items-center justify-center p-2 shadow-inner overflow-hidden">
               {college.logoUrl ? (
-                <img src={college.logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                <img src={college.logoUrl} alt={`${college.name} Logo`} className="w-full h-full object-contain" />
               ) : (
                 <Landmark className="w-12 h-12 text-indigo-400" />
               )}
@@ -1085,6 +1117,5 @@ export default function CollegeDetailClient({ id }) {
       )}
 
       </div>
-    </AuthRequiredGate>
   );
 }

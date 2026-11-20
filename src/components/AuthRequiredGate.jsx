@@ -39,9 +39,14 @@ export default function AuthRequiredGate({
   children
 }) {
   const { user, loading } = useAuth();
+  const [mounted, setMounted] = React.useState(false);
 
-  // 1. While authentication state is checking
-  if (loading) {
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // 1. While authentication state is checking on client
+  if (mounted && loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-center space-y-4">
         <div className="w-12 h-12 border-3 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>

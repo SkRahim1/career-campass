@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import CollegeCard from '@/components/CollegeCard';
-import AuthRequiredGate from '@/components/AuthRequiredGate';
 import { Search, Filter, SlidersHorizontal, ArrowRightLeft, Sparkles, Building2, HelpCircle, X, Check } from 'lucide-react';
 import Link from 'next/link';
 import { db } from '@/lib/firebase';
@@ -342,13 +341,7 @@ export default function CollegesSearchPage() {
   );
 
   return (
-    <AuthRequiredGate
-      featureName="Junior & Polytechnic Colleges Search"
-      featureDescription="Sign in or register to search 54+ verified colleges, compare fee structures, and check campus facilities across Hyderabad."
-      iconName="college"
-      redirectPath="/colleges"
-    >
-      <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient flex-grow relative text-left">
+    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10 bg-radial-gradient flex-grow relative text-left">
       
       {/* Title */}
       <div className="space-y-3">
@@ -510,6 +503,5 @@ export default function CollegesSearchPage() {
         </div>
       )}
       </div>
-    </AuthRequiredGate>
   );
 }

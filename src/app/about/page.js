@@ -25,9 +25,81 @@ import {
 export const metadata = {
   title: 'About Us & Leadership | Career365Compass & Excellence Voices',
   description: 'Learn about Career365Compass and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.',
+  keywords: [
+    'About Career365Compass',
+    'Excellence Voices',
+    'Rahim Shaikh',
+    'Raviteja Pendem',
+    'Lakshya Rana',
+    'Career guidance Hyderabad',
+    'Class 10 educational mentoring'
+  ],
+  alternates: {
+    canonical: '/about/',
+  },
+  openGraph: {
+    title: 'About Us & Leadership | Career365Compass & Excellence Voices',
+    description: 'Learn about Career365Compass and Excellence Voices leadership empowering students across Telangana.',
+    url: 'https://career365compass.in/about/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'About Career365Compass & Excellence Voices Leadership',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'About Career365Compass & Leadership',
+    description: 'Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.',
+    images: ['/images/portal-features.jpg'],
+  },
 };
 
 export default function AboutPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "@id": "https://career365compass.in/about/#webpage",
+        "name": "About Career365Compass & Leadership",
+        "url": "https://career365compass.in/about/",
+        "description": "Learn about Career365Compass and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.",
+        "publisher": {
+          "@type": "EducationalOrganization",
+          "name": "Career365Compass",
+          "url": "https://career365compass.in"
+        }
+      },
+      {
+        "@type": "EducationalOrganization",
+        "@id": "https://career365compass.in/#organization",
+        "name": "Career365Compass",
+        "url": "https://career365compass.in",
+        "founder": [
+          {
+            "@type": "Person",
+            "name": "Rahim Shaikh",
+            "jobTitle": "Director & Founder"
+          },
+          {
+            "@type": "Person",
+            "name": "Raviteja Pendem",
+            "jobTitle": "Director"
+          },
+          {
+            "@type": "Person",
+            "name": "Lakshya Rana",
+            "jobTitle": "Director"
+          }
+        ]
+      }
+    ]
+  };
   const pillars = [
     {
       icon: Target,
@@ -91,6 +163,10 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors selection:bg-indigo-500 selection:text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Background Glows */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl"></div>

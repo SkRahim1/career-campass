@@ -1,0 +1,16 @@
+{
+  "name": "Career365Compass",
+  "short_name": "Career365",
+  "description": "Telangana's premier student guidance portal for career options after 10th, courses after 12th, and best colleges in Hyderabad.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32 48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

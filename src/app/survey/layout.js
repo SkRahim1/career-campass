@@ -11,11 +11,27 @@ export const metadata = {
     'Intermediate stream selector'
   ],
   alternates: {
-    canonical: '/survey',
+    canonical: '/survey/',
   },
   openGraph: {
     title: 'How to Choose a Career After 10th - Student Guidance Survey | Career365Compass',
     description: 'Get personalized stream and college suggestions tailored to your 10th class interests and score.',
+    url: 'https://career365compass.in/survey/',
+    type: 'website',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Take the Student Career Guidance Survey on Career365Compass',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Student Guidance Survey | Career365Compass',
+    description: 'Find your best stream (MPC, BiPC, MEC, CEC, Polytechnic) in 5 minutes.',
+    images: ['/images/portal-features.jpg'],
   },
 };
 

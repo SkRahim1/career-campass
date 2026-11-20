@@ -30,14 +30,15 @@ import {
   CheckSquare
 } from 'lucide-react';
 
-export default function ExamDetailClient({ slug }) {
-  const [exam, setExam] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function ExamDetailClient({ slug, initialExam }) {
+  const [exam, setExam] = useState(initialExam || null);
+  const [loading, setLoading] = useState(!initialExam);
   const [activeTab, setActiveTab] = useState('eligibility'); // 'eligibility' | 'apply' | 'pattern' | 'opportunities'
   const [copied, setCopied] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
 
   useEffect(() => {
+    if (initialExam) return;
     async function fetchExam() {
       setLoading(true);
       try {
@@ -50,7 +51,7 @@ export default function ExamDetailClient({ slug }) {
       }
     }
     fetchExam();
-  }, [slug]);
+  }, [slug, initialExam]);
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {
@@ -110,8 +111,64 @@ export default function ExamDetailClient({ slug }) {
   const isOpen = exam.status === 'APPLICATIONS_OPEN';
   const isAfter10th = exam.stage === 'AFTER_10TH';
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://career365compass.in/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Competitive Exams",
+            "item": "https://career365compass.in/competitive-exams/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": exam.shortCode,
+            "item": `https://career365compass.in/competitive-exams/${slug}/`
+          }
+        ]
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        "@id": `https://career365compass.in/competitive-exams/${slug}/#exam`,
+        "name": exam.name,
+        "description": exam.description,
+        "credentialCategory": exam.category,
+        "recognizedBy": {
+          "@type": "Organization",
+          "name": exam.conductingBody
+        },
+        "url": exam.officialWebsite || `https://career365compass.in/competitive-exams/${slug}/`
+      },
+      ...(steps.length > 0 ? [{
+        "@type": "HowTo",
+        "name": `How to Apply for ${exam.shortCode} (${exam.name})`,
+        "description": `Step-by-step application walkthrough for ${exam.shortCode} entrance exam.`,
+        "step": steps.map((s) => ({
+          "@type": "HowToStep",
+          "position": s.stepNumber || 1,
+          "name": s.title,
+          "text": s.detail
+        }))
+      }] : [])
+    ]
+  };
+
   return (
     <div className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto w-full space-y-8 text-left bg-radial-gradient">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400">

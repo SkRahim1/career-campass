@@ -43,21 +43,31 @@ export const metadata = {
   authors: [{ name: 'Career365Compass - Excellence Voices' }],
   creator: 'Excellence Voices',
   publisher: 'Career365Compass',
+  manifest: '/manifest.json',
   alternates: {
     canonical: '/',
   },
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://career365compass.in',
+    url: 'https://career365compass.in/',
     siteName: 'Career365Compass',
     title: 'Career365Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
     description: 'Explore career options after 10th, courses after 12th, best courses after MPC & BiPC, Telangana entrance exams, and degree colleges in Telangana.',
+    images: [
+      {
+        url: '/images/portal-features.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Career365Compass Student Guidance & College Discovery Portal',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Career365Compass | Career Options After 10th & Best Colleges in Hyderabad',
     description: 'Explore career options after 10th, courses after 12th, MPC & BiPC pathways, and college admission eligibility in Telangana.',
+    images: ['/images/portal-features.jpg'],
   },
   robots: {
     index: true,
