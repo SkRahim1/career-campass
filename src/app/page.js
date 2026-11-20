@@ -6,7 +6,7 @@ import CareerCard from '@/components/CareerCard';
 import ScholarshipCard from '@/components/ScholarshipCard';
 import ExamCard from '@/components/ExamCard';
 import HomeAuthModal from '@/components/HomeAuthModal';
-import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList, Trophy } from 'lucide-react';
+import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList, Trophy, ChevronDown } from 'lucide-react';
 
 export const metadata = {
   title: 'Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
@@ -199,7 +199,7 @@ export default async function LandingPage() {
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
           <Link href="/survey" className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 text-white font-extrabold px-8 py-3.5 rounded-2xl shadow-lg shadow-indigo-500/20 transition text-center cursor-pointer text-xs flex items-center justify-center gap-2">
             <ClipboardList className="w-4 h-4" />
-            <span>Take Student Survey (5â€“7 Min)</span>
+            <span>Take Student Survey (5-7 Min)</span>
           </Link>
           <Link href="/colleges" className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 dark:border-slate-800 dark:hover:border-slate-700 font-bold px-8 py-3.5 rounded-2xl transition text-center cursor-pointer text-xs">
             Find Colleges
@@ -223,7 +223,7 @@ export default async function LandingPage() {
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-normal">
               Most search platforms are driven by paid sponsorships and advertisements, which promote expensive private institutions. 
-              <strong> Career365Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all optionsâ€”regardless of budget.
+              <strong> Career365Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options — regardless of budget.
             </p>
           </div>
 
@@ -608,7 +608,7 @@ export default async function LandingPage() {
           <div className="space-y-3 max-w-2xl">
             <div className="inline-flex items-center gap-1.5 bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-500/20 px-3 py-1 rounded-full text-[9px] font-extrabold uppercase">
               <ClipboardList className="w-3.5 h-3.5" />
-              <span>5â€“7 Minute Interactive Survey</span>
+              <span>5-7 Minute Interactive Survey</span>
             </div>
             <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
               Tell Us About Your Goals & Educational Preferences
@@ -640,7 +640,7 @@ export default async function LandingPage() {
             <details key={idx} className="group bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 [&_summary::-webkit-details-marker]:hidden cursor-pointer transition shadow-sm">
               <summary className="flex justify-between items-center gap-4 text-slate-800 dark:text-slate-200 font-bold text-sm select-none">
                 <span>{faq.q}</span>
-                <span className="text-slate-400 group-open:rotate-180 transition shrink-0">â–¼</span>
+                <ChevronDown className="w-4 h-4 text-slate-400 group-open:rotate-180 transition shrink-0" />
               </summary>
               <p className="text-slate-600 dark:text-slate-400 text-xs leading-relaxed mt-3 border-t border-slate-200 dark:border-slate-800/60 pt-3 font-normal">
                 {faq.a}
