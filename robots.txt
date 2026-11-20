@@ -1,7 +1,10 @@
 User-Agent: *
 Allow: /
-Disallow: /admin
-Disallow: /profile
-Disallow: /college-portal
+Disallow: /admin/
+Disallow: /college-portal/
+Disallow: /profile/
+Disallow: /saved-colleges/
+Disallow: /login/
+Disallow: /register/
 
 Sitemap: https://career365compass.in/sitemap.xml
