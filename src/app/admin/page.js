@@ -42,7 +42,9 @@ import {
   GraduationCap,
   TrendingUp,
   Award,
-  BookOpen
+  BookOpen,
+  UserCheck,
+  Calendar
 } from 'lucide-react';
 import Link from 'next/link';
 import { 
