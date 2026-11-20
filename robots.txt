@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /profile
 Disallow: /college-portal
 
-Sitemap: https://career365compass.com/sitemap.xml
+Sitemap: https://career365compass.in/sitemap.xml
