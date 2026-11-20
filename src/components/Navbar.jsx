@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList, Info, Trophy } from 'lucide-react';
+import { Menu, X, Compass, Bookmark, GraduationCap, User, LogOut, LayoutDashboard, Bell, Sun, Moon, Building2, BookOpen, Award, ChevronRight, ClipboardList, Info, Trophy, PlusCircle } from 'lucide-react';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -77,6 +77,10 @@ export default function Navbar() {
               <Link href="/survey" className="hover:opacity-90 transition font-bold text-xs flex items-center gap-1 text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800/60 px-2 py-1 xl:px-2.5 xl:py-1 rounded-full shadow-xs whitespace-nowrap shrink-0">
                 <ClipboardList className="w-3.5 h-3.5 text-purple-500 animate-pulse shrink-0" />
                 <span>Survey</span>
+              </Link>
+              <Link href="/contribute" className="hover:opacity-95 transition font-bold text-xs flex items-center gap-1 text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-2.5 py-1 xl:px-3 xl:py-1 rounded-full shadow-xs whitespace-nowrap shrink-0">
+                <PlusCircle className="w-3.5 h-3.5 shrink-0" />
+                <span>+ Add College</span>
               </Link>
             </div>
 
@@ -317,6 +321,22 @@ export default function Navbar() {
                 <p className="text-[10px] text-slate-500 dark:text-slate-400">Institutional self-registration & dashboard</p>
               </div>
               <ChevronRight className="w-4 h-4 text-indigo-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+
+            {/* Contribute / Add College */}
+            <Link
+              href="/contribute"
+              onClick={toggleMenu}
+              className="flex items-center gap-3.5 p-3 rounded-2xl bg-gradient-to-r from-purple-50/90 to-indigo-50/90 dark:from-purple-950/40 dark:to-indigo-950/40 border border-purple-200 dark:border-purple-800/60 hover:border-purple-400 transition group text-left shadow-xs"
+            >
+              <div className="p-2.5 rounded-xl bg-purple-600 text-white group-hover:scale-105 transition-transform shrink-0">
+                <PlusCircle className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="font-extrabold text-xs text-purple-700 dark:text-purple-300 transition">+ Add a College</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">Volunteer & catalog local colleges (No extra signup)</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-purple-400 ml-auto group-hover:translate-x-0.5 transition-transform" />
             </Link>
 
             {/* 7. About Us */}

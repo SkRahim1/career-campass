@@ -335,6 +335,29 @@ export default function CollegeDetailClient({ id }) {
           </div>
         )}
 
+        {/* Community Volunteer Recognition Banner */}
+        {college.contributedByName && (
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-indigo-500/15 border border-emerald-500/30 text-emerald-300 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                <Sparkles className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="font-bold text-sm text-emerald-200">
+                  Community Contributed by <span className="underline decoration-emerald-400 font-extrabold">{college.contributedByName}</span>
+                </p>
+                <p className="text-[11px] text-emerald-300/80">
+                  This college profile was scouted & submitted by a student volunteer and verified by Career365Compass Super Admin.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Verified Volunteer Data
+            </span>
+          </div>
+        )}
+
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
           
           <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center flex-grow">
@@ -370,6 +393,12 @@ export default function CollegeDetailClient({ id }) {
                 {college.affiliation && (
                   <span className="text-[9px] font-extrabold uppercase bg-slate-800 text-indigo-300 border border-slate-700 px-2.5 py-1 rounded-full">
                     {college.affiliation}
+                  </span>
+                )}
+                {college.contributedByName && (
+                  <span className="text-[9px] font-extrabold uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-emerald-400" />
+                    <span>Scouted by {college.contributedByName}</span>
                   </span>
                 )}
               </div>

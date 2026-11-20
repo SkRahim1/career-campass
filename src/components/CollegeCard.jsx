@@ -168,6 +168,14 @@ export default function CollegeCard({
               {college.name}
             </Link>
           </h3>
+
+          {/* Volunteer / Community Contributor Attribution */}
+          {college.contributedByName && (
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800/60 px-2 py-0.5 rounded-md w-fit">
+              <Sparkles className="w-3 h-3 text-purple-500 shrink-0" />
+              <span>Contributed by {college.contributedByName}</span>
+            </div>
+          )}
  
           {/* Location & PIN */}
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">

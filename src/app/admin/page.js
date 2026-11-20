@@ -3298,6 +3298,12 @@ export default function AdminDashboardPage() {
                                   <span>Verified Badge</span>
                                 </span>
                               )}
+                              {col.contributedByName && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30 flex items-center gap-1">
+                                  <Sparkles className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
+                                  <span>Volunteer: {col.contributedByName}</span>
+                                </span>
+                              )}
                             </div>
                             <p className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
                               <span>📍 {col.address || col.district || 'Hyderabad'}</span>
@@ -3334,11 +3340,15 @@ export default function AdminDashboardPage() {
                         {/* Details Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-850 text-xs">
                           <div>
-                            <span className="text-[10px] text-slate-500 uppercase font-semibold block">Representative</span>
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold block">
+                              {col.contributedByName ? 'Volunteer Contributor' : 'Representative'}
+                            </span>
                             <p className="text-slate-800 dark:text-slate-200 font-medium">
-                              {col.principalName || col.registeredByName || 'Official Rep'}
+                              {col.contributedByName ? col.contributedByName : (col.principalName || col.registeredByName || 'Official Rep')}
                             </p>
-                            <p className="text-slate-500 dark:text-slate-400 text-[11px]">{col.principalDesignation || 'Authorised Contact'}</p>
+                            <p className="text-slate-500 dark:text-slate-400 text-[11px]">
+                              {col.contributedByName ? (col.contributedByEmail || 'Community Scout') : (col.principalDesignation || 'Authorised Contact')}
+                            </p>
                           </div>
                           <div>
                             <span className="text-[10px] text-slate-500 uppercase font-semibold block">Contact Details</span>
@@ -4306,6 +4316,26 @@ export default function AdminDashboardPage() {
 
             {/* Profile Overview */}
             <div className="space-y-4">
+              {/* Volunteer Contributor Banner if present */}
+              {(selectedReviewCollege.contributedByName || selectedReviewCollege.sourceType === 'COMMUNITY_CONTRIBUTION') && (
+                <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <p className="font-bold text-emerald-300">
+                        Scouted & Contributed by Community Volunteer: <span className="underline">{selectedReviewCollege.contributedByName || 'Student Scout'}</span>
+                      </p>
+                      <p className="text-[11px] text-emerald-400/80">
+                        Account Email: {selectedReviewCollege.contributedByEmail || 'Registered User'} • Zero-friction scout submission. Public attribution badge will be shown on live page once approved.
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-[10px] shrink-0 border border-emerald-500/30">
+                    Volunteer Contribution
+                  </span>
+                </div>
+              )}
+
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h4 className="text-base font-extrabold text-slate-900 dark:text-white">{selectedReviewCollege.name}</h4>
