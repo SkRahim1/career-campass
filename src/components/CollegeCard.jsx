@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Star, MapPin, Bookmark, Heart, Sparkles, ShieldCheck } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export default function CollegeCard({
   onCompareToggle
 }) {
   const { user, updateProfile } = useAuth();
+  const router = useRouter();
   const [isBookmarked, setIsBookmarked] = useState(isBookmarkedInitial);
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
@@ -81,6 +83,14 @@ export default function CollegeCard({
   const isVerified = college.status === 'APPROVED' || college.isApproved || college.verified;
   const isNumericId = !isNaN(Number(college.id));
   const collegeUrl = isNumericId ? `/colleges/${college.id}` : `/colleges/details?id=${college.id}`;
+  const targetUrl = user ? collegeUrl : `/login?redirect=${encodeURIComponent(collegeUrl)}`;
+
+  const handleViewDetails = (e) => {
+    if (!user) {
+      e.preventDefault();
+      router.push(targetUrl);
+    }
+  };
 
   return (
     <div className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 shadow-md hover:shadow-indigo-500/5 transition duration-305 flex flex-col h-full animate-fade-in">
@@ -164,7 +174,7 @@ export default function CollegeCard({
  
           {/* Title */}
           <h3 className="text-slate-800 dark:text-slate-100 font-bold text-base leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
-            <Link href={collegeUrl}>
+            <Link href={targetUrl} onClick={handleViewDetails}>
               {college.name}
             </Link>
           </h3>
@@ -208,7 +218,8 @@ export default function CollegeCard({
           </div>
           
           <Link
-            href={collegeUrl}
+            href={targetUrl}
+            onClick={handleViewDetails}
             className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1 group-hover:translate-x-0.5 transition-transform cursor-pointer"
           >
             <span>Details</span>
