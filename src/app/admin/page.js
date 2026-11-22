@@ -3349,6 +3349,12 @@ export default function AdminDashboardPage() {
                             <p className="text-slate-500 dark:text-slate-400 text-[11px]">
                               {col.contributedByName ? (col.contributedByEmail || 'Community Scout') : (col.principalDesignation || 'Authorised Contact')}
                             </p>
+                            {col.contributedByName && (col.contributedByPhone || col.contributedByMobile) && (
+                              <p className="text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold flex items-center gap-1 mt-0.5">
+                                <Phone className="w-3 h-3 shrink-0" />
+                                <span>{col.contributedByPhone || col.contributedByMobile}</span>
+                              </p>
+                            )}
                           </div>
                           <div>
                             <span className="text-[10px] text-slate-500 uppercase font-semibold block">Contact Details</span>
@@ -4326,7 +4332,11 @@ export default function AdminDashboardPage() {
                         Scouted & Contributed by Community Volunteer: <span className="underline">{selectedReviewCollege.contributedByName || 'Student Scout'}</span>
                       </p>
                       <p className="text-[11px] text-emerald-400/80">
-                        Account Email: {selectedReviewCollege.contributedByEmail || 'Registered User'} • Zero-friction scout submission. Public attribution badge will be shown on live page once approved.
+                        Account Email: {selectedReviewCollege.contributedByEmail || 'Registered User'}
+                        {(selectedReviewCollege.contributedByPhone || selectedReviewCollege.contributedByMobile) && (
+                          <span> • Mobile: <strong className="text-emerald-200">{selectedReviewCollege.contributedByPhone || selectedReviewCollege.contributedByMobile}</strong></span>
+                        )}
+                        {' • Zero-friction scout submission. Public attribution badge will be shown on live page once approved.'}
                       </p>
                     </div>
                   </div>
@@ -4355,10 +4365,24 @@ export default function AdminDashboardPage() {
               {/* Representative & Contacts */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
-                  <span className="font-bold text-slate-300 block uppercase text-[10px]">Authorised Representative</span>
-                  <p className="text-slate-200 font-semibold">{selectedReviewCollege.principalName || 'Not specified'}</p>
-                  <p className="text-slate-400">{selectedReviewCollege.principalDesignation || 'Principal'}</p>
-                  {selectedReviewCollege.principalMessage && (
+                  <span className="font-bold text-slate-300 block uppercase text-[10px]">
+                    {selectedReviewCollege.contributedByName ? 'Volunteer Contributor' : 'Authorised Representative'}
+                  </span>
+                  <p className="text-slate-200 font-semibold">
+                    {selectedReviewCollege.contributedByName || selectedReviewCollege.principalName || 'Not specified'}
+                  </p>
+                  <p className="text-slate-400">
+                    {selectedReviewCollege.contributedByName
+                      ? (selectedReviewCollege.contributedByEmail || 'Community Volunteer Scout')
+                      : (selectedReviewCollege.principalDesignation || 'Principal')}
+                  </p>
+                  {selectedReviewCollege.contributedByName && (selectedReviewCollege.contributedByPhone || selectedReviewCollege.contributedByMobile) && (
+                    <p className="text-emerald-400 font-semibold text-[11px] flex items-center gap-1 pt-1">
+                      <Phone className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span>Volunteer Mobile: {selectedReviewCollege.contributedByPhone || selectedReviewCollege.contributedByMobile}</span>
+                    </p>
+                  )}
+                  {selectedReviewCollege.principalMessage && !selectedReviewCollege.contributedByName && (
                     <p className="text-slate-400 italic text-[11px] pt-1">&ldquo;{selectedReviewCollege.principalMessage}&rdquo;</p>
                   )}
                 </div>

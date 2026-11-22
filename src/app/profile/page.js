@@ -624,6 +624,13 @@ export default function ProfilePage() {
                       📍 {col.address || col.district || 'Telangana'}
                     </p>
 
+                    {(col.contributedByPhone || col.contributedByMobile) && (
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                        <Smartphone className="w-3 h-3 text-slate-400 shrink-0" />
+                        <span>Contact: {col.contributedByPhone || col.contributedByMobile}</span>
+                      </p>
+                    )}
+
                     {col.streams && col.streams.length > 0 && (
                       <div className="flex flex-wrap gap-1 pt-1">
                         {col.streams.map((s, idx) => (

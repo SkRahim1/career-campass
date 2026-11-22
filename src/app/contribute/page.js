@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -90,6 +90,8 @@ export default function ContributeCollegePage() {
     affiliation: 'Board of Intermediate Education, Telangana (TSBIE)',
     fieldNotes: '',
     publicAttribution: true,
+    volunteerName: '',
+    volunteerMobile: '',
     hasHostel: false,
     hasTransport: false,
     hasLibrary: true,
@@ -116,6 +118,16 @@ export default function ContributeCollegePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [successData, setSuccessData] = useState(null);
+
+  useEffect(() => {
+    if (user) {
+      setForm(prev => ({
+        ...prev,
+        volunteerName: prev.volunteerName || user.name || '',
+        volunteerMobile: prev.volunteerMobile || user.mobileNumber || ''
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -149,6 +161,21 @@ export default function ContributeCollegePage() {
       return;
     }
 
+    const cleanVolunteerMobile = (form.volunteerMobile || '').trim().replace(/[\s\-\+]/g, '');
+    const tenDigitVolunteerMobile = cleanVolunteerMobile.length === 12 && cleanVolunteerMobile.startsWith('91')
+      ? cleanVolunteerMobile.slice(2)
+      : cleanVolunteerMobile;
+
+    if (!tenDigitVolunteerMobile) {
+      setError('Please enter your mobile number as a volunteer contributor.');
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(tenDigitVolunteerMobile)) {
+      setError('Please enter a valid 10-digit Indian mobile number (e.g. 9848012345) for volunteer verification.');
+      return;
+    }
+
     const activeStreams = selectedStreams.filter(s => s.enabled);
     if (activeStreams.length === 0) {
       setError('Please select at least one stream/course offered by this college.');
@@ -177,7 +204,9 @@ export default function ContributeCollegePage() {
       }
 
       const collegeId = String(nextId);
-      const contributorDisplayName = form.publicAttribution ? (user.name || user.email?.split('@')[0] || 'Community Volunteer') : 'Anonymous Volunteer';
+      const contributorDisplayName = form.publicAttribution
+        ? (form.volunteerName?.trim() || user.name || user.email?.split('@')[0] || 'Community Volunteer')
+        : 'Anonymous Volunteer';
 
       const payload = {
         id: collegeId,
@@ -240,17 +269,32 @@ export default function ContributeCollegePage() {
         sourceType: 'COMMUNITY_CONTRIBUTION',
         contributedByName: contributorDisplayName,
         contributedByEmail: user.email || '',
+        contributedByPhone: tenDigitVolunteerMobile,
+        contributedByMobile: tenDigitVolunteerMobile,
         contributedByUid: user.uid,
         createdAt: new Date().toISOString()
       };
 
       await setDoc(doc(db, 'colleges', collegeId), payload);
 
+      // Also persist volunteer mobile to user account if missing
+      if (user?.uid && !user.mobileNumber) {
+        try {
+          const { updateDoc } = await import('firebase/firestore');
+          await updateDoc(doc(db, 'users', user.uid), {
+            mobileNumber: tenDigitVolunteerMobile
+          });
+        } catch (uErr) {
+          console.warn('Could not update user mobile number in profile:', uErr);
+        }
+      }
+
       setSuccessData({
         id: collegeId,
         name: payload.name,
         district: payload.district,
-        contributedByName: contributorDisplayName
+        contributedByName: contributorDisplayName,
+        contributedByMobile: tenDigitVolunteerMobile
       });
 
       // Reset form
@@ -258,7 +302,10 @@ export default function ContributeCollegePage() {
         name: '', ownership: 'PRIVATE', category: 'JUNIOR_COLLEGE', district: 'Hyderabad',
         address: '', pincode: '', nearbyLandmark: '', phone: '', whatsappNumber: '', email: '',
         website: '', description: '', affiliation: 'Board of Intermediate Education, Telangana (TSBIE)',
-        fieldNotes: '', publicAttribution: true, hasHostel: false, hasTransport: false,
+        fieldNotes: '', publicAttribution: true,
+        volunteerName: user?.name || '',
+        volunteerMobile: user?.mobileNumber || tenDigitVolunteerMobile,
+        hasHostel: false, hasTransport: false,
         hasLibrary: true, hasLabs: true, hasWifi: false, hasSports: false, hasSmartClassroom: false,
         hasCctv: true, hasComputerLabs: true, hasCafeteria: false
       });
@@ -644,14 +691,70 @@ export default function ContributeCollegePage() {
             </div>
           </div>
 
-          {/* Section 5: Volunteer Notes & Public Attribution */}
+          {/* Section 5: Volunteer Contributor Details & Recognition */}
           <div className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl space-y-4 shadow-xs">
             <h2 className="font-bold text-xs uppercase tracking-wider text-purple-600 dark:text-purple-400 border-b border-slate-100 dark:border-slate-800 pb-2.5 flex items-center gap-2">
               <Award className="w-4 h-4" />
-              <span>5. Volunteer Recognition & Field Insights</span>
+              <span>5. Volunteer Contributor Details & Recognition</span>
             </h2>
 
             <div className="space-y-4 text-xs">
+              {/* Volunteer Contact & Identity Box */}
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50/70 via-indigo-50/40 to-purple-50/70 dark:from-purple-950/30 dark:via-indigo-950/20 dark:to-purple-950/30 border border-purple-200 dark:border-purple-800/60 space-y-3">
+                <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 font-bold text-xs">
+                  <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                  <span>Volunteer Scout Credentials</span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300">
+                      Volunteer Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="volunteerName"
+                      value={form.volunteerName}
+                      onChange={handleInputChange}
+                      placeholder="e.g. Rahul Kumar"
+                      className="block w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-800/80 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-500 text-xs sm:text-sm transition"
+                    />
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      Account: {user?.email}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                      <span>
+                        Volunteer Mobile Number <span className="text-red-500">*</span>
+                      </span>
+                      <span className="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider">
+                        Required
+                      </span>
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-purple-500">
+                        <Phone className="w-3.5 h-3.5" />
+                      </div>
+                      <input
+                        type="tel"
+                        name="volunteerMobile"
+                        required
+                        maxLength={10}
+                        value={form.volunteerMobile}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 9848012345"
+                        className="block w-full pl-9 pr-3.5 py-2.5 bg-white dark:bg-slate-900 border border-purple-200 dark:border-purple-800/80 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-purple-500 text-xs sm:text-sm font-mono transition"
+                      />
+                    </div>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                      Mandatory for Admin verification before publishing. Kept private from public directory.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <div className="p-4 rounded-2xl bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800/60 space-y-2">
                 <label className="flex items-center gap-2.5 cursor-pointer select-none">
                   <input
@@ -666,7 +769,7 @@ export default function ContributeCollegePage() {
                   </span>
                 </label>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 pl-6">
-                  When enabled, this college profile will publicly display: <span className="text-purple-600 dark:text-purple-300 font-semibold">“🤝 Community Contributed by {user?.name || 'You'} · Verified by Super Admin”</span>.
+                  When enabled, this college profile will publicly display: <span className="text-purple-600 dark:text-purple-300 font-semibold">“🤝 Community Contributed by {form.volunteerName?.trim() || user?.name || 'You'} · Verified by Super Admin”</span>.
                 </p>
               </div>
 
