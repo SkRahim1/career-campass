@@ -1,3 +1,3 @@
 :HL["/_next/static/css/97a296eb6a0a733b.css","style"]
-:HL["/_next/static/css/952c5ccb8fcb9859.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"scholarships","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"HA2V2Toat4VrXc8ONroR4"}
+:HL["/_next/static/css/372534fe2772292b.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"scholarships","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"w6_lT2i3PlXa-f3yw0LYB"}
