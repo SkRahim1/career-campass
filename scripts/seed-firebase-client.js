@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { initializeApp } = require('firebase/app');
-const { getFirestore, doc, setDoc } = require('firebase/firestore');
+const { getFirestore, doc, setDoc, getDocs, collection } = require('firebase/firestore');
+const { getAuth, signInWithEmailAndPassword } = require('firebase/auth');
 const fs = require('fs');
 const path = require('path');
 
@@ -34,11 +35,28 @@ const firebaseConfig = {
 console.log('Configured Firebase Config project ID:', firebaseConfig.projectId);
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Authenticating as Super Admin to Firebase...');
+  const userCred = await signInWithEmailAndPassword(auth, 'admin@career365compass.com', 'admin123');
+  console.log('Successfully authenticated as admin UID:', userCred.user.uid);
+
   console.log('Seeding Cloud Firestore using Client SDK...');
+
+  // Map existing Firestore colleges by name to preserve IDs where possible
+  console.log('Fetching existing Firestore colleges to preserve IDs...');
+  const existingSnap = await getDocs(collection(db, 'colleges'));
+  const existingByName = {};
+  existingSnap.forEach(d => {
+    const data = d.data();
+    if (data.name) {
+      existingByName[data.name.trim().toLowerCase()] = d.id;
+    }
+  });
+  console.log(`Found ${existingSnap.size} existing colleges in Firestore.`);
   
   // -- SEED COLLEGES --
   console.log('Fetching colleges from SQLite...');
@@ -54,11 +72,20 @@ async function main() {
     }
   });
 
-  console.log(`Found ${sqliteColleges.length} colleges. Seeding to Firestore...`);
+  console.log(`Found ${sqliteColleges.length} colleges in SQLite. Seeding to Firestore...`);
   for (const college of sqliteColleges) {
     const { streams, gallery, reviews, ...collegeData } = college;
+    const targetId = String(college.id);
+    const numericId = college.id;
+
     const docData = {
       ...collegeData,
+      id: numericId,
+      area: college.area || college.nearbyLandmark || '',
+      isApproved: true,
+      isLive: true,
+      status: 'APPROVED',
+      verified: true,
       streams: streams.map(s => ({
         streamName: s.streamName,
         annualFee: s.annualFee,
@@ -67,17 +94,20 @@ async function main() {
         admissionType: s.admissionType,
         reservationInfo: s.reservationInfo
       })),
-      gallery: gallery.map(g => g.imageUrl),
-      averageRating: collegeData.averageRating || 4.0,
+      gallery: gallery.length > 0 ? gallery.map(g => g.imageUrl) : [
+        'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80',
+        'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80'
+      ],
+      averageRating: collegeData.averageRating || 4.2,
       totalReviews: reviews.length
     };
-    await setDoc(doc(db, 'colleges', String(college.id)), docData);
+    await setDoc(doc(db, 'colleges', targetId), docData);
     
     // Seed reviews
     for (const r of reviews) {
       await setDoc(doc(db, 'reviews', String(r.id)), {
         id: r.id,
-        collegeId: r.collegeId,
+        collegeId: numericId,
         userId: String(r.userId),
         rating: r.rating,
         reviewText: r.reviewText,
@@ -120,27 +150,31 @@ async function main() {
   console.log('Admission updates seeded.');
 
   // -- SEED COMPETITIVE EXAMS --
-  console.log('Fetching competitive exams from SQLite...');
-  const sqliteExams = await prisma.competitiveExam.findMany();
-  console.log(`Found ${sqliteExams.length} competitive exams. Seeding to Firestore...`);
-  for (const exam of sqliteExams) {
-    const { id, createdAt, updatedAt, ...rest } = exam;
-    await setDoc(doc(db, 'competitive-exams', exam.slug), {
-      ...rest,
-      howToApplySteps: typeof rest.howToApplySteps === 'string' ? JSON.parse(rest.howToApplySteps) : rest.howToApplySteps,
-      documentsRequired: typeof rest.documentsRequired === 'string' ? JSON.parse(rest.documentsRequired) : rest.documentsRequired,
-      examPattern: typeof rest.examPattern === 'string' ? JSON.parse(rest.examPattern) : rest.examPattern,
-      createdAt: createdAt.toISOString(),
-      updatedAt: updatedAt.toISOString()
-    });
+  try {
+    console.log('Fetching competitive exams from SQLite...');
+    const sqliteExams = await prisma.competitiveExam.findMany();
+    console.log(`Found ${sqliteExams.length} competitive exams. Seeding to Firestore...`);
+    for (const exam of sqliteExams) {
+      const { id, createdAt, updatedAt, ...rest } = exam;
+      await setDoc(doc(db, 'competitive-exams', exam.slug), {
+        ...rest,
+        howToApplySteps: typeof rest.howToApplySteps === 'string' ? JSON.parse(rest.howToApplySteps) : rest.howToApplySteps,
+        documentsRequired: typeof rest.documentsRequired === 'string' ? JSON.parse(rest.documentsRequired) : rest.documentsRequired,
+        examPattern: typeof rest.examPattern === 'string' ? JSON.parse(rest.examPattern) : rest.examPattern,
+        createdAt: createdAt.toISOString(),
+        updatedAt: updatedAt.toISOString()
+      });
+    }
+    console.log('Competitive exams seeded.');
+  } catch (err) {
+    console.warn('Competitive exams Firestore seed skipped (static fallback active):', err.message);
   }
-  console.log('Competitive exams seeded.');
 
   // Seed profile document templates for default users
   console.log('Seeding default profiles into "users" collection...');
   
   const adminProfile = {
-    uid: 'admin-default-uid',
+    uid: userCred.user.uid,
     name: 'Super Admin',
     email: 'admin@career365compass.com',
     role: 'SUPER_ADMIN',

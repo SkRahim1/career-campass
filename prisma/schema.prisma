@@ -42,6 +42,7 @@ model College {
   establishedYear   Int?
   
   // Location
+  area              String?
   address           String
   nearbyLandmark    String?
   district          String   @default("Hyderabad")

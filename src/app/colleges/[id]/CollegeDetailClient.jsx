@@ -163,30 +163,51 @@ export default function CollegeDetailClient({ id, initialCollege }) {
     if (!initialCollege) setLoading(true);
     try {
       const docRef = doc(db, 'colleges', String(id));
-      const docSnap = await getDoc(docRef);
+      let docSnap = await getDoc(docRef);
+      let collegeData = null;
+      let targetDocId = String(id);
+
       if (docSnap.exists()) {
-        const collegeData = docSnap.data();
-        
+        collegeData = docSnap.data();
+      } else {
+        // Fallback: Query by numeric id field if doc ID does not match directly
+        const numericId = parseInt(id, 10);
+        if (!isNaN(numericId)) {
+          const qCol = query(collection(db, 'colleges'), where('id', '==', numericId));
+          const qSnap = await getDocs(qCol);
+          if (!qSnap.empty) {
+            collegeData = qSnap.docs[0].data();
+            targetDocId = qSnap.docs[0].id;
+          }
+        }
+      }
+
+      if (collegeData) {
         // Fetch approved reviews from firestore
+        const collegeNumId = parseInt(collegeData.id || targetDocId, 10);
         const q = query(
           collection(db, 'reviews'),
-          where('collegeId', '==', parseInt(id)),
+          where('collegeId', '==', isNaN(collegeNumId) ? targetDocId : collegeNumId),
           where('isApproved', '==', true)
         );
-        const reviewsSnap = await getDocs(q);
-        const collegeReviews = [];
-        reviewsSnap.forEach((d) => {
-          const r = d.data();
-          collegeReviews.push({
-            id: d.id,
-            ...r,
-            user: { name: r.userName || 'Anonymous Student' }
+        let collegeReviews = [];
+        try {
+          const reviewsSnap = await getDocs(q);
+          reviewsSnap.forEach((d) => {
+            const r = d.data();
+            collegeReviews.push({
+              id: d.id,
+              ...r,
+              user: { name: r.userName || 'Anonymous Student' }
+            });
           });
-        });
-        
+        } catch (e) {
+          console.warn('Reviews fetch failed, continuing without reviews:', e);
+        }
+
         setCollege((prev) => ({
           ...(prev || {}),
-          id: docSnap.id,
+          id: targetDocId,
           ...collegeData,
           reviews: collegeReviews,
           totalReviews: collegeReviews.length

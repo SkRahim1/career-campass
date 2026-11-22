@@ -9,25 +9,26 @@ import { collection, getDocs } from 'firebase/firestore';
 
 const HYDERABAD_AREAS = [
   'Abdullapurmet', 'Abids', 'Alwal', 'Amberpet', 'Ameerpet', 'Asif Nagar', 'Attapur',
-  'Bachupally', 'Badangpet', 'Bahadurpura', 'Balanagar', 'Banjara Hills', 'Begumpet', 'Bolarum', 'Bowenpally',
-  'Chanda Nagar', 'Chandrayangutta', 'Charminar', 'Chikkadpally',
-  'Dilsukhnagar',
+  'Bachupally', 'Badangpet', 'Bahadurpura', 'Balanagar', 'Banjara Hills', 'Begumpet', 'BHEL', 'Boduppal', 'Bolarum', 'Bollarum', 'Bowenpally',
+  'Chanda Nagar', 'Chandrayangutta', 'Charminar', 'Chikkadpally', 'Chintal',
+  'Dammaiguda', 'Dilsukhnagar',
   'ECIL',
   'Falaknuma',
-  'Gachibowli', 'Ghatkesar',
-  'Habsiguda', 'Hayathnagar', 'Himayatnagar', 'Hitec City',
+  'Gachibowli', 'Gandi Maisamma', 'Gandipet', 'Ghatkesar',
+  'Habsiguda', 'Hafeezpet', 'Hayathnagar', 'Himayatnagar', 'Hitec City',
   'Ibrahimpatnam',
   'Jeedimetla', 'Jubilee Hills',
-  'Kachiguda', 'Karwan', 'Khairatabad', 'Kompally', 'Kondapur', 'Kothapet', 'Koti', 'KPHB Colony', 'Kukatpally',
-  'L.B. Nagar', 'Langar Houz',
-  'Madhapur', 'Malakpet', 'Malkajgiri', 'Mallapur', 'Mallepally', 'Manikonda', 'Marredpally', 'Masab Tank', 'Medchal', 'Mehdipatnam',
-  'Nacharam', 'Nampally', 'Nanakramguda', 'Narayanaguda', 'Narsingi', 'Nayapul', 'Nizampet',
-  'Patancheru',
+  'Kachiguda', 'Karwan', 'Khairatabad', 'Kokapet', 'Kompally', 'Kondapur', 'Kothapet', 'Koti', 'KPHB Colony', 'Kukatpally', 'Kushaiguda',
+  'L.B. Nagar', 'Langar Houz', 'Lingampally',
+  'Madhapur', 'Malakpet', 'Malkajgiri', 'Mallapur', 'Mallepally', 'Manikonda', 'Marredpally', 'Masab Tank', 'Medchal', 'Mehdipatnam', 'Meerpet', 'Miyapur', 'Moinabad', 'Moosapet',
+  'Nacharam', 'Nagole', 'Nampally', 'Nanakramguda', 'Narayanaguda', 'Narsingi', 'Nayapul', 'Neredmet', 'Nizampet',
+  'Patancheru', 'Pocharam', 'Pragathi Nagar',
   'Quthbullapur',
-  'Safilguda', 'Sainikpuri', 'Sanathnagar', 'Santoshnagar', 'Saroornagar', 'Secunderabad', 'Shaikpet', 'Shamshabad', 'Somajiguda',
+  'Rajendranagar', 'RC Puram',
+  'Safilguda', 'Sainikpuri', 'Sanathnagar', 'Santoshnagar', 'Saroornagar', 'Secunderabad', 'Shaikpet', 'Shamirpet', 'Shamshabad', 'Shapur Nagar', 'Somajiguda', 'SR Nagar', 'Suchitra',
   'Tarnaka', 'Tolichowki',
   'Uppal',
-  'Vidyanagar',
+  'Vanasthalipuram', 'Vidyanagar',
   'Yousufguda'
 ];
 
@@ -109,12 +110,30 @@ export default function CollegesSearchPage() {
     // Area
     if (area !== 'ALL') {
       const areaLower = area.toLowerCase();
-      filtered = filtered.filter(c => 
-        (c.address && c.address.toLowerCase().includes(areaLower)) ||
-        (c.name && c.name.toLowerCase().includes(areaLower)) ||
-        (c.area && c.area.toLowerCase().includes(areaLower)) ||
-        (c.nearbyLandmark && c.nearbyLandmark.toLowerCase().includes(areaLower))
-      );
+      const isBolarumVariant = areaLower === 'bolarum' || areaLower === 'bollarum';
+      const isBhelVariant = areaLower === 'bhel' || areaLower === 'rc puram';
+      const isLingampallyVariant = areaLower === 'lingampally' || areaLower === 'serilingampally';
+      const isKokapetVariant = areaLower === 'kokapet' || areaLower === 'gandipet';
+      const isHafeezpetVariant = areaLower === 'hafeezpet' || areaLower === 'madeenaguda';
+      filtered = filtered.filter(c => {
+        const fullText = `${c.address || ''} ${c.name || ''} ${c.area || ''} ${c.nearbyLandmark || ''}`.toLowerCase();
+        if (isBolarumVariant) {
+          return fullText.includes('bolarum') || fullText.includes('bollarum');
+        }
+        if (isBhelVariant) {
+          return fullText.includes('bhel') || fullText.includes('rc puram') || fullText.includes('ramachandrapuram');
+        }
+        if (isLingampallyVariant) {
+          return fullText.includes('lingampally') || fullText.includes('serilingampally');
+        }
+        if (isKokapetVariant) {
+          return fullText.includes('kokapet') || fullText.includes('gandipet');
+        }
+        if (isHafeezpetVariant) {
+          return fullText.includes('hafeezpet') || fullText.includes('madeenaguda');
+        }
+        return fullText.includes(areaLower);
+      });
     }
 
     // Ownership
@@ -220,7 +239,7 @@ export default function CollegesSearchPage() {
           onChange={(e) => setArea(e.target.value)}
           className="w-full bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl py-2.5 px-3 text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 transition"
         >
-          <option value="ALL">All Areas (70+ Locations)</option>
+          <option value="ALL">All Areas (75+ Locations)</option>
           {HYDERABAD_AREAS.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}

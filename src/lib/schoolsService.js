@@ -180,6 +180,316 @@ export const DEFAULT_SCHOOLS = [
     medium: 'English Medium',
     udiseCode: '36201701717',
     isActive: true
+  },
+  {
+    id: 'school_ghs_moosapet',
+    name: 'Govt High School, Moosapet',
+    district: 'Medchal-Malkajgiri',
+    location: 'Moosapet, Kukatpally',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36211801818',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_pragathi_nagar',
+    name: 'ZPHS Pragathi Nagar',
+    district: 'Medchal-Malkajgiri',
+    location: 'Pragathi Nagar, Kukatpally',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36211901919',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_bolarum',
+    name: 'Govt High School, Bolarum',
+    district: 'Hyderabad',
+    location: 'Bolarum, Secunderabad',
+    category: 'Government High School',
+    medium: 'English & Telugu',
+    udiseCode: '36202002020',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_bachupally',
+    name: 'ZPHS Bachupally',
+    district: 'Medchal-Malkajgiri',
+    location: 'Bachupally, Hyderabad',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36212102121',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_miyapur',
+    name: 'Govt High School, Miyapur',
+    district: 'Medchal-Malkajgiri',
+    location: 'Miyapur, Hyderabad',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36212202222',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_patancheru',
+    name: 'ZPHS Patancheru',
+    district: 'Sangareddy',
+    location: 'Patancheru, Sangareddy',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36232302323',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_nizampet',
+    name: 'Govt High School, Nizampet',
+    district: 'Medchal-Malkajgiri',
+    location: 'Nizampet, Hyderabad',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36212402424',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_chintal',
+    name: 'Govt High School, Chintal',
+    district: 'Medchal-Malkajgiri',
+    location: 'Chintal, Quthbullapur',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36212502525',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_kondapur',
+    name: 'Govt High School, Kondapur',
+    district: 'Ranga Reddy',
+    location: 'Kondapur, Serilingampally',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36222602626',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_madhapur',
+    name: 'Govt High School, Madhapur',
+    district: 'Ranga Reddy',
+    location: 'Madhapur, Hitec City',
+    category: 'Government High School',
+    medium: 'English Medium',
+    udiseCode: '36222702727',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_dammaiguda',
+    name: 'ZPHS Dammaiguda',
+    district: 'Medchal-Malkajgiri',
+    location: 'Dammaiguda, Medchal-Malkajgiri',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36212802828',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_shapur_nagar',
+    name: 'Govt High School, Shapur Nagar',
+    district: 'Medchal-Malkajgiri',
+    location: 'Shapur Nagar, Jeedimetla',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36212902929',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_attapur',
+    name: 'Govt High School, Attapur',
+    district: 'Ranga Reddy',
+    location: 'Attapur, Rajendranagar',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36223003030',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_srnagar',
+    name: 'Govt High School, SR Nagar',
+    district: 'Hyderabad',
+    location: 'SR Nagar, Ameerpet',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36203103131',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_suchitra',
+    name: 'Govt High School, Suchitra',
+    district: 'Medchal-Malkajgiri',
+    location: 'Suchitra, Jeedimetla',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36213203232',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_rcpuram',
+    name: 'ZPHS Ramachandrapuram (BHEL)',
+    district: 'Sangareddy',
+    location: 'RC Puram, BHEL',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36233303333',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_serilingampally',
+    name: 'Govt High School, Serilingampally',
+    district: 'Ranga Reddy',
+    location: 'Lingampally, Serilingampally',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36223403434',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_nagole',
+    name: 'ZPHS Nagole',
+    district: 'Medchal-Malkajgiri',
+    location: 'Nagole, Uppal',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36213503535',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_boduppal',
+    name: 'ZPHS Boduppal',
+    district: 'Medchal-Malkajgiri',
+    location: 'Boduppal, Peerzadiguda',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36213603636',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_vanasthalipuram',
+    name: 'Govt High School, Vanasthalipuram',
+    district: 'Ranga Reddy',
+    location: 'Vanasthalipuram, Hayathnagar',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36223703737',
+    isActive: true
+  },
+  {
+    id: 'school_tms_rajendranagar',
+    name: 'Telangana Model School, Rajendranagar',
+    district: 'Ranga Reddy',
+    location: 'Rajendranagar, Budvel',
+    category: 'Model School',
+    medium: 'English Medium',
+    udiseCode: '36223803838',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_neredmet',
+    name: 'Govt High School, Neredmet',
+    district: 'Medchal-Malkajgiri',
+    location: 'Neredmet, Secunderabad',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36213903939',
+    isActive: true
+  },
+  {
+    id: 'school_keyes_marredpally',
+    name: 'Keyes High School for Girls, Marredpally',
+    district: 'Hyderabad',
+    location: 'East Marredpally, Secunderabad',
+    category: 'Aided High School',
+    medium: 'English & Telugu',
+    udiseCode: '36204004040',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_shamirpet',
+    name: 'Govt High School, Shamirpet',
+    district: 'Medchal-Malkajgiri',
+    location: 'Shamirpet, Rajiv Rahadari',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36214104141',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_gandimaisamma',
+    name: 'ZPHS Gandi Maisamma',
+    district: 'Medchal-Malkajgiri',
+    location: 'Gandi Maisamma, Dundigal',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36214204242',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_pocharam',
+    name: 'ZPHS Pocharam',
+    district: 'Medchal-Malkajgiri',
+    location: 'Pocharam, Ghatkesar',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36214304343',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_meerpet',
+    name: 'Govt High School, Meerpet',
+    district: 'Ranga Reddy',
+    location: 'Meerpet, Badangpet',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36224404444',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_gandipet',
+    name: 'Govt High School, Gandipet',
+    district: 'Ranga Reddy',
+    location: 'Gandipet, Kokapet',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36224504545',
+    isActive: true
+  },
+  {
+    id: 'school_zphs_moinabad',
+    name: 'ZPHS Moinabad',
+    district: 'Ranga Reddy',
+    location: 'Moinabad, Chevella Road',
+    category: 'Zilla Parishad High School (ZPHS)',
+    medium: 'Telugu & English',
+    udiseCode: '36224604646',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_hafeezpet',
+    name: 'Govt High School, Hafeezpet',
+    district: 'Ranga Reddy',
+    location: 'Hafeezpet, Serilingampally',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36224704747',
+    isActive: true
+  },
+  {
+    id: 'school_ghs_kushaiguda',
+    name: 'Govt High School, Kushaiguda',
+    district: 'Medchal-Malkajgiri',
+    location: 'Kushaiguda, ECIL',
+    category: 'Government High School',
+    medium: 'Telugu & English',
+    udiseCode: '36214804848',
+    isActive: true
   }
 ];
 
