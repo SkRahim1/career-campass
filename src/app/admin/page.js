@@ -2149,104 +2149,104 @@ export default function AdminDashboardPage() {
                   {/* Modal Header */}
                   <div className="flex justify-between items-start border-b border-slate-200 dark:border-slate-800 pb-4">
                     <div>
-                      <span className="text-[10px] uppercase font-extrabold tracking-wider bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-full">
+                      <span className="text-[10px] uppercase font-extrabold tracking-wider bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-200 dark:border-purple-500/20 px-2.5 py-0.5 rounded-full">
                         Class 10 Guidance Profile
                       </span>
                       <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
                         {selectedSurvey.q1_fullName}
                       </h3>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
                         {selectedSurvey.q2_schoolName} • {selectedSurvey.q3_classSection} • {selectedSurvey.q5_location}
                       </p>
                     </div>
                     <button
                       onClick={() => setSelectedSurvey(null)}
-                      className="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                      className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
                     >
                       <X className="w-5 h-5" />
                     </button>
                   </div>
 
                   {/* Sections Breakdown */}
-                  <div className="space-y-6 text-xs text-slate-300">
+                  <div className="space-y-6 text-xs text-slate-700 dark:text-slate-300">
                     
                     {/* Section 1 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 1: Student Information</h4>
-                      <div className="grid grid-cols-2 gap-2 text-slate-400">
-                        <p><strong className="text-slate-200">1. Full Name:</strong> {selectedSurvey.q1_fullName}</p>
-                        <p><strong className="text-slate-200">2. School:</strong> {selectedSurvey.q2_schoolName}</p>
-                        <p><strong className="text-slate-200">3. Class & Section:</strong> {selectedSurvey.q3_classSection}</p>
-                        <p><strong className="text-slate-200">4. Mobile:</strong> {selectedSurvey.q4_mobileNumber || 'Not provided'}</p>
-                        <p className="col-span-2"><strong className="text-slate-200">5. Location:</strong> {selectedSurvey.q5_location}</p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 1: Student Information</h4>
+                      <div className="grid grid-cols-2 gap-2 text-slate-700 dark:text-slate-300">
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">1. Full Name:</strong> {selectedSurvey.q1_fullName}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">2. School:</strong> {selectedSurvey.q2_schoolName}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">3. Class & Section:</strong> {selectedSurvey.q3_classSection}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">4. Mobile:</strong> {selectedSurvey.q4_mobileNumber || 'Not provided'}</p>
+                        <p className="col-span-2"><strong className="text-slate-900 dark:text-slate-100 font-semibold">5. Location:</strong> {selectedSurvey.q5_location}</p>
                       </div>
                     </div>
 
                     {/* Section 2 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 2: Career Aspirations</h4>
-                      <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">6. Future Goal:</strong> <span className="text-purple-300 font-bold">{selectedSurvey.q6_careerGoal}</span></p>
-                        <p><strong className="text-slate-200">7. Why interested:</strong> {selectedSurvey.q7_careerReason}</p>
-                        <p><strong className="text-slate-200">8. Decision influence:</strong> {selectedSurvey.q8_decisionInfluence}</p>
-                        <p><strong className="text-slate-200">9. Enjoyed subjects:</strong> {selectedSurvey.q9_enjoyedSubjects}</p>
-                        <p><strong className="text-slate-200">10. Clear goal:</strong> {selectedSurvey.q10_clearCareerGoal}</p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 2: Career Aspirations</h4>
+                      <div className="space-y-1.5 text-slate-700 dark:text-slate-300">
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">6. Future Goal:</strong> <span className="text-purple-600 dark:text-purple-300 font-bold">{selectedSurvey.q6_careerGoal}</span></p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">7. Why interested:</strong> {selectedSurvey.q7_careerReason}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">8. Decision influence:</strong> {selectedSurvey.q8_decisionInfluence}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">9. Enjoyed subjects:</strong> {selectedSurvey.q9_enjoyedSubjects}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">10. Clear goal:</strong> {selectedSurvey.q10_clearCareerGoal}</p>
                       </div>
                     </div>
 
                     {/* Section 3 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 3: Education After Class 10</h4>
-                      <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">11. Path after 10th:</strong> {selectedSurvey.q11_pathAfter10th}</p>
-                        <p><strong className="text-slate-200">12. Preferred stream:</strong> <span className="text-indigo-300 font-bold">{selectedSurvey.q12_intermediateStream}</span></p>
-                        <p><strong className="text-slate-200">13. Reason for stream:</strong> {selectedSurvey.q13_streamReason}</p>
-                        <p><strong className="text-slate-200">14. Opportunities awareness:</strong> {selectedSurvey.q14_streamOpportunitiesAwareness}</p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 3: Education After Class 10</h4>
+                      <div className="space-y-1.5 text-slate-700 dark:text-slate-300">
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">11. Path after 10th:</strong> {selectedSurvey.q11_pathAfter10th}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">12. Preferred stream:</strong> <span className="text-indigo-600 dark:text-indigo-300 font-bold">{selectedSurvey.q12_intermediateStream}</span></p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">13. Reason for stream:</strong> {selectedSurvey.q13_streamReason}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">14. Opportunities awareness:</strong> {selectedSurvey.q14_streamOpportunitiesAwareness}</p>
                       </div>
                     </div>
 
                     {/* Section 4 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 4: Entrance Examinations</h4>
-                      <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">15. Heard about exams:</strong> {selectedSurvey.q15_entranceExamsAwareness || 'N/A'}</p>
-                        <p><strong className="text-slate-200">16. Exams known:</strong> {selectedSurvey.q16_entranceExamsKnown || 'N/A'}</p>
-                        <p><strong className="text-slate-200">17. Planning to write:</strong> {selectedSurvey.q17_planningEntranceExam || 'N/A'}</p>
-                        <p><strong className="text-slate-200">18. Competitive exams interest:</strong> <span className="text-indigo-400 font-semibold">{selectedSurvey.q18_competitiveExamsInterest || 'N/A'}</span></p>
-                        <p><strong className="text-slate-200">19. JEE/NEET prep plan:</strong> {selectedSurvey.q19_jeeNeetPrepPlan || 'N/A'}</p>
-                        <p><strong className="text-slate-200">20. JEE/NEET familiarity:</strong> {selectedSurvey.q20_jeeNeetFamiliarity || 'N/A'}</p>
-                        <p><strong className="text-slate-200">21. Need exam guidance:</strong> {selectedSurvey.q21_needExamGuidance || selectedSurvey.q18_needExamGuidance || 'N/A'}</p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 4: Entrance Examinations</h4>
+                      <div className="space-y-1.5 text-slate-700 dark:text-slate-300">
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">15. Heard about exams:</strong> {selectedSurvey.q15_entranceExamsAwareness || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">16. Exams known:</strong> {selectedSurvey.q16_entranceExamsKnown || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">17. Planning to write:</strong> {selectedSurvey.q17_planningEntranceExam || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">18. Competitive exams interest:</strong> <span className="text-indigo-600 dark:text-indigo-400 font-semibold">{selectedSurvey.q18_competitiveExamsInterest || 'N/A'}</span></p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">19. JEE/NEET prep plan:</strong> {selectedSurvey.q19_jeeNeetPrepPlan || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">20. JEE/NEET familiarity:</strong> {selectedSurvey.q20_jeeNeetFamiliarity || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">21. Need exam guidance:</strong> {selectedSurvey.q21_needExamGuidance || selectedSurvey.q18_needExamGuidance || 'N/A'}</p>
                       </div>
                     </div>
 
                     {/* Section 5 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-2">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 5: College Preferences</h4>
-                      <div className="space-y-1.5 text-slate-400">
-                        <p><strong className="text-slate-200">22. Colleges awareness:</strong> {selectedSurvey.q22_collegesAwareness || selectedSurvey.q19_collegesAwareness || 'N/A'}</p>
-                        <p><strong className="text-slate-200">23. College type preference:</strong> {selectedSurvey.q23_collegeTypePreference || selectedSurvey.q20_collegeTypePreference || 'N/A'}</p>
-                        <p><strong className="text-slate-200">24. Study location preference:</strong> {selectedSurvey.q24_studyLocationPreference || selectedSurvey.q21_studyLocationPreference || 'N/A'}</p>
-                        <p><strong className="text-slate-200">25. Annual budget:</strong> <span className="text-emerald-400 font-bold">{selectedSurvey.q25_annualBudget || selectedSurvey.q22_annualBudget || 'N/A'}</span></p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-2">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 5: College Preferences</h4>
+                      <div className="space-y-1.5 text-slate-700 dark:text-slate-300">
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">22. Colleges awareness:</strong> {selectedSurvey.q22_collegesAwareness || selectedSurvey.q19_collegesAwareness || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">23. College type preference:</strong> {selectedSurvey.q23_collegeTypePreference || selectedSurvey.q20_collegeTypePreference || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">24. Study location preference:</strong> {selectedSurvey.q24_studyLocationPreference || selectedSurvey.q21_studyLocationPreference || 'N/A'}</p>
+                        <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">25. Annual budget:</strong> <span className="text-emerald-600 dark:text-emerald-400 font-bold">{selectedSurvey.q25_annualBudget || selectedSurvey.q22_annualBudget || 'N/A'}</span></p>
                       </div>
                     </div>
 
                     {/* Section 6 */}
-                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-850 space-y-3">
-                      <h4 className="font-bold text-indigo-400 uppercase text-[10px] tracking-wider">Section 6: Career Guidance</h4>
-                      <p><strong className="text-slate-200">26. Govt scholarships interest:</strong> {selectedSurvey.q26_govtScholarshipInfoInterest || selectedSurvey.q23_govtScholarshipInfoInterest || 'N/A'}</p>
+                    <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-3">
+                      <h4 className="font-bold text-indigo-600 dark:text-indigo-400 uppercase text-[10px] tracking-wider">Section 6: Career Guidance</h4>
+                      <p><strong className="text-slate-900 dark:text-slate-100 font-semibold">26. Govt scholarships interest:</strong> {selectedSurvey.q26_govtScholarshipInfoInterest || selectedSurvey.q23_govtScholarshipInfoInterest || 'N/A'}</p>
                       <div>
-                        <strong className="text-slate-200 block mb-1">27. Guidance areas needed:</strong>
+                        <strong className="text-slate-900 dark:text-slate-100 font-semibold block mb-1">27. Guidance areas needed:</strong>
                         <div className="flex flex-wrap gap-1.5">
                           {(selectedSurvey.q27_guidanceAreas || selectedSurvey.q24_guidanceAreas || []).map((area, idx) => (
-                            <span key={idx} className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
+                            <span key={idx} className="bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
                               ✓ {area}
                             </span>
                           ))}
                         </div>
                       </div>
-                      <div className="border-t border-slate-900 pt-2">
-                        <strong className="text-slate-200 block mb-1">28. Biggest confusion / concern:</strong>
-                        <p className="bg-slate-900/60 p-3 rounded-xl border border-slate-850 text-slate-300 italic leading-relaxed">
+                      <div className="border-t border-slate-200 dark:border-slate-800 pt-2">
+                        <strong className="text-slate-900 dark:text-slate-100 font-semibold block mb-1">28. Biggest confusion / concern:</strong>
+                        <p className="bg-white dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 italic leading-relaxed">
                           &quot;{selectedSurvey.q28_biggestConfusion || selectedSurvey.q25_biggestConfusion || 'No specific confusion noted.'}&quot;
                         </p>
                       </div>

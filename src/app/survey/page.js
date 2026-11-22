@@ -224,31 +224,149 @@ export default function SurveyPage() {
         }
       }
 
-      // 3. Fetch college recommendations based on stream and location
+      // 3. Multi-factor Smart College Recommendations (Stream + Location Proximity + Budget)
       try {
         const colSnap = await getDocs(collection(db, 'colleges'));
         const allCols = [];
-        colSnap.forEach(d => allCols.push({ id: d.id, ...d.data() }));
-
-        const stream = (formData.q12_intermediateStream || '').toUpperCase();
-        let matched = allCols.filter(c => {
-          if (stream && stream !== 'NOT SURE') {
-            return c.streams?.some(s => s.streamName?.toUpperCase().includes(stream));
+        colSnap.forEach(d => {
+          const cData = d.data();
+          if (cData.isLive !== false && cData.status !== 'REJECTED' && cData.status !== 'UNPUBLISHED') {
+            allCols.push({ id: d.id, ...cData });
           }
-          return false;
         });
 
-        if (formData.q5_location) {
-          const locMatched = matched.filter(c => 
-            (c.address || '').toLowerCase().includes(formData.q5_location.toLowerCase())
-          );
-          if (locMatched.length > 0) {
-            matched = [...locMatched, ...matched.filter(c => !locMatched.includes(c))];
-          }
+        const selectedStream = (formData.q12_intermediateStream || '').toUpperCase();
+        const userLoc = (formData.q5_location || '').trim().toLowerCase();
+        const budgetStr = formData.q25_annualBudget || '';
+        const prefCollegeType = formData.q23_collegeTypePreference || '';
+
+        // Geographic area clusters for nearby recommendation when exact area is saturated
+        const areaClusters = {
+          'pragathi': ['pragathi', 'bachupally', 'nizampet', 'kukatpally', 'kphb', 'moosapet', 'miyapur', 'hafeezpet', 'chintal'],
+          'bachupally': ['bachupally', 'pragathi', 'nizampet', 'kukatpally', 'kphb', 'miyapur', 'mallampet', 'bollarum'],
+          'kukatpally': ['kukatpally', 'kphb', 'pragathi', 'nizampet', 'moosapet', 'bachupally', 'balanagar', 'miyapur'],
+          'kphb': ['kphb', 'kukatpally', 'pragathi', 'nizampet', 'moosapet', 'bachupally', 'hafeezpet', 'miyapur'],
+          'nizampet': ['nizampet', 'pragathi', 'bachupally', 'kukatpally', 'kphb', 'miyapur'],
+          'miyapur': ['miyapur', 'hafeezpet', 'chanda nagar', 'kukatpally', 'nizampet', 'bachupally'],
+          'dilsukhnagar': ['dilsukhnagar', 'kothapet', 'l.b. nagar', 'malakpet', 'saroornagar', 'chaitanyapuri', 'gaddi annaram'],
+          'l.b. nagar': ['l.b. nagar', 'dilsukhnagar', 'kothapet', 'vanasthalipuram', 'hayathnagar', 'nagole', 'mansoorabad'],
+          'ameerpet': ['ameerpet', 'sr nagar', 'begumpet', 'sanathnagar', 'panjagutta', 'somajiguda', 'yousufguda'],
+          'secunderabad': ['secunderabad', 'marredpally', 'begumpet', 'bowenpally', 'malkajgiri', 'safilguda', 'ecil', 'bolarum'],
+          'bowenpally': ['bowenpally', 'marredpally', 'secunderabad', 'begumpet', 'bolarum', 'alwal', 'balanagar', 'suchitra'],
+          'ecil': ['ecil', 'kushaiguda', 'as rao nagar', 'neredmet', 'sainikpuri', 'dammaiguda', 'moula ali', 'nacharam'],
+          'uppal': ['uppal', 'boduppal', 'ramanthapur', 'habsiguda', 'nacharam', 'mallapur', 'pocharam', 'nagole'],
+          'charminar': ['charminar', 'falaknuma', 'chandrayangutta', 'bahadurpura', 'nayapul', 'santoshnagar', 'moghalpura'],
+          'mehdipatnam': ['mehdipatnam', 'tolichowki', 'masab tank', 'attapur', 'asif nagar', 'gudimalkapur', 'humayun nagar'],
+          'gachibowli': ['gachibowli', 'madhapur', 'hitec city', 'kondapur', 'nanakramguda', 'khajaguda', 'manikonda']
+        };
+
+        // Determine budget target range
+        let targetMin = 0;
+        let targetMax = 9999999;
+        let prefersGovt = false;
+        if (budgetStr.includes('Below') || (budgetStr.includes('10,000') && !budgetStr.includes('25,000'))) {
+          targetMin = 0; targetMax = 15000;
+        } else if (budgetStr.includes('10,000') && budgetStr.includes('25,000')) {
+          targetMin = 8000; targetMax = 28000;
+        } else if (budgetStr.includes('25,000') && budgetStr.includes('50,000')) {
+          targetMin = 20000; targetMax = 55000;
+        } else if (budgetStr.includes('50,000') && budgetStr.includes('1,00,000')) {
+          targetMin = 48000; targetMax = 110000;
+        } else if (budgetStr.includes('Above')) {
+          targetMin = 95000; targetMax = 9999999;
+        } else if (budgetStr.toLowerCase().includes('government') || budgetStr.toLowerCase().includes('scholarship')) {
+          targetMin = 0; targetMax = 15000;
+          prefersGovt = true;
         }
 
-        const topColleges = (matched.length > 0 ? matched : allCols).slice(0, 3);
-        setSuggestedColleges(topColleges);
+        const scoredColleges = allCols.map(c => {
+          const streams = c.streams || c.streamsList || [];
+          const matchingStream = streams.find(s => 
+            selectedStream && selectedStream !== 'NOT SURE'
+              ? s.streamName?.toUpperCase().includes(selectedStream)
+              : true
+          );
+
+          // If student explicitly requested a stream and college doesn't offer it, severely penalize
+          if (selectedStream && selectedStream !== 'NOT SURE' && !matchingStream) {
+            return { college: c, score: -9999, fee: 0 };
+          }
+
+          let score = 50;
+          const fee = matchingStream ? (matchingStream.annualFee || 0) : (c.hostelFee ? Number(c.hostelFee) : 35000);
+          const locText = `${c.address || ''} ${c.area || ''} ${c.nearbyLandmark || ''}`.toLowerCase();
+          const nameText = (c.name || '').toLowerCase();
+
+          // 1. Location scoring (prioritizing true address/area matches)
+          if (userLoc) {
+            if (locText.includes(userLoc)) {
+              score += 160; // Direct address or area match!
+            } else {
+              const tokens = userLoc.split(/\s+/).filter(t => t.length > 2 && !['nagar', 'colony', 'road', 'near', 'main'].includes(t));
+              if (tokens.some(t => locText.includes(t))) {
+                score += 130; // Direct token match in address/area
+              } else {
+                // Check cluster neighborhoods
+                let isClusterMatch = false;
+                for (const [key, neighbors] of Object.entries(areaClusters)) {
+                  if (userLoc.includes(key)) {
+                    if (neighbors.some(n => locText.includes(n))) {
+                      isClusterMatch = true;
+                      break;
+                    }
+                  }
+                }
+                if (isClusterMatch) {
+                  score += 75; // Proximity cluster match!
+                } else if (tokens.some(t => nameText.includes(t))) {
+                  score += 20; // Only matched in name
+                }
+              }
+            }
+          }
+
+          // 2. Budget scoring
+          if (budgetStr && !budgetStr.toLowerCase().includes('not sure')) {
+            if (prefersGovt && c.ownership === 'GOVERNMENT') {
+              score += 80;
+            } else if (fee >= targetMin && fee <= targetMax) {
+              score += 80; // Right inside student's preferred budget!
+            } else if (fee < targetMin) {
+              score += 45; // Below budget (more affordable)
+            } else {
+              // Exceeds budget
+              const over = fee - targetMax;
+              if (over <= 15000) {
+                score += 15; // Slightly above budget
+              } else if (over <= 30000) {
+                score -= 35; // Noticeably above budget
+              } else {
+                score -= 85; // Far above budget - heavily penalize
+              }
+            }
+          }
+
+          // 3. College Type preference
+          if (prefCollegeType) {
+            if (prefCollegeType.toLowerCase().includes('government') && c.ownership === 'GOVERNMENT') {
+              score += 35;
+            } else if (prefCollegeType.toLowerCase().includes('private') && c.ownership === 'PRIVATE') {
+              score += 20;
+            } else if (prefCollegeType.toLowerCase().includes('corporate') && (nameText.includes('chaitanya') || nameText.includes('narayana') || nameText.includes('resonance'))) {
+              score += 25;
+            }
+          }
+
+          // 4. Rating boost
+          score += (c.averageRating || 4.0) * 2;
+
+          return { college: c, score, fee };
+        });
+
+        // Filter valid scores and sort descending
+        scoredColleges.sort((a, b) => b.score - a.score);
+        const topColleges = scoredColleges.slice(0, 3).map(s => s.college);
+        setSuggestedColleges(topColleges.length > 0 ? topColleges : allCols.slice(0, 3));
       } catch (cErr) {
         console.warn('Could not query colleges:', cErr);
       }
@@ -394,27 +512,27 @@ export default function SurveyPage() {
           </div>
 
           {/* Personalized Insights Summary */}
-          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100/80 rounded-2xl p-5 text-left space-y-3 text-xs">
-            <p className="font-bold text-slate-300 flex items-center gap-1.5 uppercase text-[10px] tracking-wider text-indigo-400">
+          <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-5 text-left space-y-3 text-xs">
+            <p className="font-bold flex items-center gap-1.5 uppercase text-[10px] tracking-wider text-indigo-600 dark:text-indigo-400">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Your Survey Snapshot</span>
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
               <div>
-                <span className="text-slate-500 block text-[10px] uppercase">Aspirations:</span>
-                <span className="text-slate-200 font-bold">{formData.q6_careerGoal || 'Exploring options'}</span>
+                <span className="text-slate-600 dark:text-slate-400 block text-[10px] uppercase font-semibold">Aspirations:</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.q6_careerGoal || 'Exploring options'}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px] uppercase">Preferred Stream:</span>
-                <span className="text-slate-200 font-bold">{formData.q12_intermediateStream || 'General Guidance'}</span>
+                <span className="text-slate-600 dark:text-slate-400 block text-[10px] uppercase font-semibold">Preferred Stream:</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.q12_intermediateStream || 'General Guidance'}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px] uppercase">Path After 10th:</span>
-                <span className="text-slate-200 font-bold">{formData.q11_pathAfter10th || 'Intermediate'}</span>
+                <span className="text-slate-600 dark:text-slate-400 block text-[10px] uppercase font-semibold">Path After 10th:</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.q11_pathAfter10th || 'Intermediate'}</span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px] uppercase">Annual Budget:</span>
-                <span className="text-slate-200 font-bold">{formData.q25_annualBudget || formData.q22_annualBudget || 'Not specified'}</span>
+                <span className="text-slate-600 dark:text-slate-400 block text-[10px] uppercase font-semibold">Annual Budget:</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">{formData.q25_annualBudget || formData.q22_annualBudget || 'Not specified'}</span>
               </div>
             </div>
           </div>
@@ -430,9 +548,9 @@ export default function SurveyPage() {
             </button>
             <Link
               href="/colleges"
-              className="bg-slate-950 hover:bg-slate-850 text-slate-200 border border-slate-800 font-bold p-3.5 rounded-xl transition text-xs flex items-center justify-center gap-2 cursor-pointer"
+              className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 font-bold p-3.5 rounded-xl transition text-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Building2 className="w-4 h-4 text-purple-400" />
+              <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               <span>Browse All Colleges</span>
             </Link>
           </div>
@@ -464,14 +582,14 @@ export default function SurveyPage() {
               {/* Close Button */}
               <button
                 onClick={() => setShowPopup(false)}
-                className="absolute top-5 right-5 p-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+                className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
 
               {/* Header */}
               <div className="space-y-2 pr-8">
-                <div className="inline-flex items-center gap-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase">
+                <div className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Instant College Suggestions</span>
                 </div>
@@ -479,14 +597,14 @@ export default function SurveyPage() {
                   Great job, {formData.q1_fullName || 'Student'}!
                 </h2>
                 <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
-                  Based on your goal to become a <strong className="text-purple-300">{formData.q6_careerGoal || 'Professional'}</strong> and your preferred stream <strong className="text-indigo-300">{formData.q12_intermediateStream || 'your choice'}</strong>, here are top college recommendations in Hyderabad matching your profile:
+                  Based on your goal to become a <strong className="text-purple-600 dark:text-purple-300 font-bold">{formData.q6_careerGoal || 'Professional'}</strong> and your preferred stream <strong className="text-indigo-600 dark:text-indigo-300 font-bold">{formData.q12_intermediateStream || 'your choice'}</strong>, here are top college recommendations in Hyderabad matching your profile:
                 </p>
               </div>
 
               {/* Suggested Colleges List */}
               <div className="space-y-3">
-                <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-400 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
                   <span>Top College Matches for You</span>
                 </h3>
 
@@ -497,46 +615,47 @@ export default function SurveyPage() {
                 ) : (
                   <div className="space-y-3">
                     {suggestedColleges.map((col) => {
-                      const feeStream = col.streams?.find(s => 
+                      const streams = col.streams || col.streamsList || [];
+                      const feeStream = streams.find(s => 
                         s.streamName?.toUpperCase().includes((formData.q12_intermediateStream || '').toUpperCase())
-                      ) || col.streams?.[0];
+                      ) || streams[0];
 
                       return (
                         <div 
                           key={col.id}
-                          className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 hover:border-indigo-500/40 rounded-2xl p-4 transition flex flex-col sm:flex-row justify-between sm:items-center gap-3"
+                          className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 hover:border-indigo-500/40 rounded-2xl p-4 transition flex flex-col sm:flex-row justify-between sm:items-center gap-3 shadow-xs"
                         >
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                              <span className="text-[9px] uppercase font-extrabold px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20">
                                 {col.ownership || 'COLLEGE'}
                               </span>
-                              <span className="text-slate-400 text-[10px] font-semibold flex items-center gap-0.5">
-                                <Star className="w-3 h-3 text-yellow-400 fill-current" />
+                              <span className="text-slate-600 dark:text-slate-300 text-[10px] font-bold flex items-center gap-0.5">
+                                <Star className="w-3 h-3 text-yellow-500 dark:text-yellow-400 fill-current" />
                                 <span>{col.averageRating || '4.0'}</span>
                               </span>
                             </div>
-                            <h4 className="text-slate-100 font-bold text-sm leading-snug">
+                            <h4 className="text-slate-900 dark:text-slate-100 font-bold text-sm sm:text-base leading-snug">
                               {col.name}
                             </h4>
-                            <p className="text-slate-500 text-[11px] flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-slate-500 shrink-0" />
-                              <span>{col.address || 'Hyderabad, Telangana'}</span>
+                            <p className="text-slate-600 dark:text-slate-400 text-xs flex items-center gap-1 mt-0.5">
+                              <MapPin className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 shrink-0" />
+                              <span>{col.address || col.area || 'Hyderabad, Telangana'}</span>
                             </p>
                           </div>
 
-                          <div className="sm:text-right shrink-0 flex sm:flex-col justify-between items-center sm:items-end gap-2 border-t sm:border-t-0 border-slate-900 pt-2 sm:pt-0">
+                          <div className="sm:text-right shrink-0 flex sm:flex-col justify-between items-center sm:items-end gap-2 border-t sm:border-t-0 border-slate-200 dark:border-slate-800 pt-2 sm:pt-0">
                             {feeStream && (
                               <div className="text-left sm:text-right">
-                                <span className="text-[9px] text-slate-500 block uppercase">Annual Fee:</span>
-                                <span className="text-emerald-400 font-extrabold text-xs">
+                                <span className="text-[10px] text-slate-600 dark:text-slate-400 block uppercase font-bold">Annual Fee:</span>
+                                <span className="text-emerald-600 dark:text-emerald-400 font-extrabold text-xs sm:text-sm">
                                   ₹{feeStream.annualFee ? feeStream.annualFee.toLocaleString('en-IN') : 'Nominal'} / yr
                                 </span>
                               </div>
                             )}
                             <Link
                               href={`/colleges/details?id=${col.id}`}
-                              className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold px-3 py-1.5 rounded-xl text-xs transition"
+                              className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition shadow-sm cursor-pointer"
                             >
                               View College →
                             </Link>
