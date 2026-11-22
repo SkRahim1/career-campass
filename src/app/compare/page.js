@@ -136,7 +136,7 @@ function ComparePageContent() {
                       {college.ownership}
                     </span>
                     <h3 className="text-slate-100 font-bold text-sm leading-snug">
-                      <Link href={`/colleges/${college.id}`} className="hover:text-indigo-400 transition">
+                      <Link href={`/colleges/details?id=${college.id}`} className="hover:text-indigo-400 transition">
                         {college.name}
                       </Link>
                     </h3>

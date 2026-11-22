@@ -661,22 +661,22 @@ export default function CollegeDetailClient({ id, initialCollege }) {
             {/* Contact Columns */}
             <div className="space-y-4">
               <h3 className="text-slate-900 dark:text-slate-100 font-bold text-sm">Contact & Location Links</h3>
-              <div className="space-y-3 text-xs text-slate-700 dark:text-slate-300">
+              <div className="space-y-3 text-xs text-slate-800 dark:text-slate-200">
                 {college.phone && (
                   <p className="flex items-center gap-2.5 font-medium">
                     <Phone className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                    <span>{college.phone}</span>
+                    <span className="text-slate-900 dark:text-slate-100 font-semibold">{college.phone}</span>
                   </p>
                 )}
                 {whatsappInfo && (
                   <p className="flex items-center gap-2.5">
                     <MessageCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span className="text-slate-500 dark:text-slate-400 font-medium">WhatsApp:</span>
+                    <span className="text-slate-600 dark:text-slate-400 font-medium">WhatsApp:</span>
                     <a
                       href={whatsappInfo.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline font-bold"
+                      className="text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline font-bold"
                     >
                       {whatsappInfo.displayNumber} ({whatsappInfo.shortBadge}) →
                     </a>
@@ -685,13 +685,13 @@ export default function CollegeDetailClient({ id, initialCollege }) {
                 {college.email && (
                   <p className="flex items-center gap-2.5 font-medium">
                     <Mail className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                    <a href={`mailto:${college.email}`} className="hover:underline">{college.email}</a>
+                    <a href={`mailto:${college.email}`} className="text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline font-semibold">{college.email}</a>
                   </p>
                 )}
                 {college.officeTimings && (
-                  <p className="flex items-center gap-2.5 font-medium">
+                  <p className="flex items-center gap-2.5 font-medium text-slate-800 dark:text-slate-200">
                     <Clock className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                    <span>Office Hours: {college.officeTimings}</span>
+                    <span>Office Hours: <strong className="text-slate-900 dark:text-slate-100">{college.officeTimings}</strong></span>
                   </p>
                 )}
                 {college.website && (
@@ -699,7 +699,7 @@ export default function CollegeDetailClient({ id, initialCollege }) {
                     href={college.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2.5 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 hover:underline font-semibold"
+                    className="flex items-center gap-2.5 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300 hover:underline font-semibold"
                   >
                     <Globe className="w-4 h-4 shrink-0" />
                     <span>{college.website.replace('http://', '').replace('https://', '')}</span>
@@ -710,7 +710,7 @@ export default function CollegeDetailClient({ id, initialCollege }) {
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${college.name.split(',')[0]}, ${college.address}`)}`} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="flex items-center gap-2.5 text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition font-semibold"
+                    className="flex items-center gap-2.5 text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300 hover:underline transition font-semibold"
                   >
                     <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>View on Google Maps (Directions)</span>
@@ -722,13 +722,13 @@ export default function CollegeDetailClient({ id, initialCollege }) {
             {/* Admission Info summary */}
             <div className="space-y-4">
               <h3 className="text-slate-900 dark:text-slate-100 font-bold text-sm">General Parameters</h3>
-              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
-                <p><span className="font-semibold text-slate-500 dark:text-slate-400">Gender Demographics:</span> <span className="font-medium text-slate-900 dark:text-slate-100">{college.genderType === 'CO_ED' ? 'Co-Educational' : college.genderType}</span></p>
-                <p><span className="font-semibold text-slate-500 dark:text-slate-400">Hostel Facility:</span> <span className="font-medium text-slate-900 dark:text-slate-100">{college.hasHostel ? 'Available' : 'Not Available'}</span></p>
-                <p><span className="font-semibold text-slate-500 dark:text-slate-400">Bus Transport:</span> <span className="font-medium text-slate-900 dark:text-slate-100">{college.hasTransport ? 'Available' : 'Not Available'}</span></p>
-                <p><span className="font-semibold text-slate-500 dark:text-slate-400">Wi-Fi:</span> <span className="font-medium text-slate-900 dark:text-slate-100">{college.hasWifi ? 'Yes' : 'No'}</span></p>
-                {college.boardCode && <p><span className="font-semibold text-slate-500 dark:text-slate-400">Board Code:</span> <span className="font-medium text-slate-900 dark:text-slate-100">{college.boardCode}</span></p>}
-                {college.hostelFee && <p><span className="font-semibold text-slate-500 dark:text-slate-400">Hostel Fee:</span> <span className="font-medium text-slate-900 dark:text-slate-100">₹{Number(college.hostelFee).toLocaleString('en-IN')}/yr</span></p>}
+              <div className="grid grid-cols-2 gap-3 text-xs bg-slate-50 dark:bg-slate-950 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <p><span className="font-semibold text-slate-600 dark:text-slate-400">Gender Demographics:</span> <span className="font-bold text-slate-900 dark:text-slate-100">{college.genderType === 'CO_ED' ? 'Co-Educational' : college.genderType}</span></p>
+                <p><span className="font-semibold text-slate-600 dark:text-slate-400">Hostel Facility:</span> <span className="font-bold text-slate-900 dark:text-slate-100">{college.hasHostel ? 'Available' : 'Not Available'}</span></p>
+                <p><span className="font-semibold text-slate-600 dark:text-slate-400">Bus Transport:</span> <span className="font-bold text-slate-900 dark:text-slate-100">{college.hasTransport ? 'Available' : 'Not Available'}</span></p>
+                <p><span className="font-semibold text-slate-600 dark:text-slate-400">Wi-Fi:</span> <span className="font-bold text-slate-900 dark:text-slate-100">{college.hasWifi ? 'Yes' : 'No'}</span></p>
+                {college.boardCode && <p><span className="font-semibold text-slate-600 dark:text-slate-400">Board Code:</span> <span className="font-bold text-slate-900 dark:text-slate-100">{college.boardCode}</span></p>}
+                {college.hostelFee && <p><span className="font-semibold text-slate-600 dark:text-slate-400">Hostel Fee:</span> <span className="font-bold text-slate-900 dark:text-slate-100">₹{Number(college.hostelFee).toLocaleString('en-IN')}/yr</span></p>}
               </div>
             </div>
           </div>

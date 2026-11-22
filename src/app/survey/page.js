@@ -535,7 +535,7 @@ export default function SurveyPage() {
                               </div>
                             )}
                             <Link
-                              href={`/colleges/${col.id}`}
+                              href={`/colleges/details?id=${col.id}`}
                               className="bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-bold px-3 py-1.5 rounded-xl text-xs transition"
                             >
                               View College →

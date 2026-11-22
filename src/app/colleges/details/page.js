@@ -10,7 +10,7 @@ function CollegeDetailsInner() {
 
   if (!id) {
     return (
-      <div className="min-h-[60vh] bg-slate-950 flex items-center justify-center text-slate-400 text-xs">
+      <div className="min-h-[60vh] bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-600 dark:text-slate-400 text-xs">
         No college ID specified in query.
       </div>
     );
@@ -22,8 +22,8 @@ function CollegeDetailsInner() {
 export default function CollegeDetailsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-[60vh] bg-slate-950 flex items-center justify-center text-slate-400 text-xs">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="min-h-[60vh] bg-slate-50 dark:bg-slate-950 flex items-center justify-center text-slate-600 dark:text-slate-400 text-xs">
+        <div className="w-8 h-8 border-2 border-indigo-600 dark:border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
       </div>
     }>
       <CollegeDetailsInner />

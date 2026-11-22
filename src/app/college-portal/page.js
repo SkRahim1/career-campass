@@ -898,7 +898,7 @@ export default function CollegePortalPage() {
               </span>
             </div>
             <Link
-              href={`/colleges/${collegeData.id}`}
+              href={`/colleges/details?id=${collegeData.id}`}
               className="underline text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-semibold text-[11px] flex items-center gap-1"
             >
               <span>View Public Page</span>

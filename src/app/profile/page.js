@@ -518,7 +518,7 @@ export default function ProfilePage() {
                         </span>
                       </div>
                       <h4 className="text-slate-100 font-bold text-sm leading-snug group-hover:text-indigo-400 transition">
-                        <Link href={`/colleges/${college.id}`}>
+                        <Link href={`/colleges/details?id=${college.id}`}>
                           {college.name}
                         </Link>
                       </h4>
@@ -531,7 +531,7 @@ export default function ProfilePage() {
                       <span className="font-bold text-slate-350">
                         ₹{college.streams.find(s => s.streamName.toUpperCase() === formData.preferredStream.toUpperCase())?.annualFee.toLocaleString('en-IN') || 'TBD'} / yr
                       </span>
-                      <Link href={`/colleges/${college.id}`} className="text-indigo-400 hover:text-indigo-300 font-bold">
+                      <Link href={`/colleges/details?id=${college.id}`} className="text-indigo-400 hover:text-indigo-300 font-bold">
                         View Profile →
                       </Link>
                     </div>
@@ -644,7 +644,7 @@ export default function ProfilePage() {
                     </span>
                     {isApproved ? (
                       <Link
-                        href={`/colleges/${col.id}`}
+                        href={`/colleges/details?id=${col.id}`}
                         className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold flex items-center gap-1"
                       >
                         <span>View Live Profile</span>

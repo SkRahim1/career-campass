@@ -2519,7 +2519,7 @@ export default function AdminDashboardPage() {
 
                 <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-emerald-500/20">
                   <Link
-                    href={`/colleges/${createdCollegeSuccess.id}`}
+                    href={`/colleges/details?id=${createdCollegeSuccess.id}`}
                     target="_blank"
                     className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm"
                   >
@@ -3389,7 +3389,7 @@ export default function AdminDashboardPage() {
                             </button>
 
                             <Link
-                              href={`/colleges/${col.id}`}
+                              href={`/colleges/details?id=${col.id}`}
                               target="_blank"
                               className="px-3 py-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 text-xs font-medium flex items-center gap-1"
                             >

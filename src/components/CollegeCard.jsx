@@ -81,8 +81,8 @@ export default function CollegeCard({
     : 'Fee on inquiry';
 
   const isVerified = college.status === 'APPROVED' || college.isApproved || college.verified;
-  const isNumericId = !isNaN(Number(college.id));
-  const collegeUrl = isNumericId ? `/colleges/${college.id}` : `/colleges/details?id=${college.id}`;
+  const isPrerendered = !isNaN(Number(college.id)) && Number(college.id) >= 6526 && Number(college.id) <= 7217;
+  const collegeUrl = isPrerendered ? `/colleges/${college.id}` : `/colleges/details?id=${college.id}`;
   const targetUrl = user ? collegeUrl : `/login?redirect=${encodeURIComponent(collegeUrl)}`;
 
   const handleViewDetails = (e) => {

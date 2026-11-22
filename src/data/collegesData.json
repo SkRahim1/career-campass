@@ -2755,6 +2755,39 @@
     "id": 6712
   },
   {
+    "name": "Narayana Junior College, Miyapur",
+    "area": "Miyapur",
+    "address": "Miyapur Metro Terminal Road, Miyapur, Hyderabad, Telangana 500049",
+    "landmark": "Opp. Miyapur Metro Station Entrance",
+    "phone": "040-23465849",
+    "email": "miyapur.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2006,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 66000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "State board curriculum with national entrance prep."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 45000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with computers."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6713
+  },
+  {
     "name": "Sri Chaitanya Junior College, Miyapur",
     "area": "Miyapur",
     "address": "Allwyn X Roads, Miyapur, Hyderabad, Telangana 500049",
@@ -2794,39 +2827,6 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 6714
-  },
-  {
-    "name": "Narayana Junior College, Miyapur",
-    "area": "Miyapur",
-    "address": "Miyapur Metro Terminal Road, Miyapur, Hyderabad, Telangana 500049",
-    "landmark": "Opp. Miyapur Metro Station Entrance",
-    "phone": "040-23465849",
-    "email": "miyapur.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2006,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 66000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "State board curriculum with national entrance prep."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 45000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with computers."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6713
   },
   {
     "name": "Resonance Junior College, Miyapur",
@@ -3091,319 +3091,6 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 6734
-  },
-  {
-    "name": "Narayana Junior College, Chintal",
-    "area": "Chintal",
-    "address": "Ranga Nagar, Chintal, Hyderabad, Telangana 500054",
-    "landmark": "Near IDPL Colony Gate",
-    "phone": "040-23465854",
-    "email": "chintal.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2009,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 58000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "General scholarships."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 42000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with tally."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6755
-  },
-  {
-    "name": "Narayana Junior College, Kondapur",
-    "area": "Kondapur",
-    "address": "Raghavendra Colony, Kondapur, Hyderabad, Telangana 500084",
-    "landmark": "Near KIMS Cuddles & Kondapur RTA Office",
-    "phone": "040-23465884",
-    "email": "kondapur.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2011,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 75000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT-JEE Olympiad campus."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 78000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET super-60 batch."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 60000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "CA foundation."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6748
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Kondapur",
-    "area": "Kondapur",
-    "address": "Hafeezpet Road, Kondapur, Hyderabad, Telangana 500084",
-    "landmark": "Near Kondapur Junction & AMB Cinemas",
-    "phone": "040-64500184",
-    "email": "kondapur.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2012,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 78000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Integrated JEE campus."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 80000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Medical academy."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6753
-  },
-  {
-    "name": "Government Junior College, Kondapur",
-    "area": "Kondapur",
-    "address": "Masjid Banda Road, Kondapur, Hyderabad, Telangana 500084",
-    "landmark": "Near Botanical Garden West Gate",
-    "phone": "040-23110184",
-    "email": "gjc.kondapur@telangana.gov.in",
-    "website": "http://gjc-kondapur.ts.gov.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "GOVERNMENT",
-    "estYear": 1999,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 1200,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State policy."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 1000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State policy."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6749
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Madhapur",
-    "area": "Madhapur",
-    "address": "Ayyappa Society Main Road, Madhapur, Hyderabad, Telangana 500081",
-    "landmark": "Near 100 Feet Road Y-Junction",
-    "phone": "040-64500181",
-    "email": "madhapur.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2008,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 82000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT-JEE elite batch."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 85000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET academy."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 65000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Business economics track."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6747
-  },
-  {
-    "name": "Government Vocational Junior College, Madhapur",
-    "area": "Madhapur",
-    "address": "Khanamet, Near Shilparamam, Madhapur, Hyderabad, Telangana 500081",
-    "landmark": "Opp. Shilparamam Arts Village",
-    "phone": "040-23110181",
-    "email": "gvjc.madhapur@telangana.gov.in",
-    "website": "http://gvjc-madhapur.ts.gov.in",
-    "category": "VOCATIONAL",
-    "ownership": "GOVERNMENT",
-    "estYear": 1995,
-    "streamsList": [
-      {
-        "streamName": "Vocational",
-        "annualFee": 1500,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Digital arts and IT trades."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 1000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State quota."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6750
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Uppal",
-    "area": "Uppal",
-    "address": "Ramanthapur - Uppal Main Road, Uppal, Hyderabad, Telangana 500039",
-    "landmark": "Near Uppal Stadium Metro Station",
-    "phone": "040-64500139",
-    "email": "uppal.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2006,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 62000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "JEE Mains coaching included."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 65000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET coaching included."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 48000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with mathematics."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6752
-  },
-  {
-    "name": "Narayana Junior College, Uppal",
-    "area": "Uppal",
-    "address": "Peerzadiguda Road, Uppal, Hyderabad, Telangana 500039",
-    "landmark": "Near Rajiv Gandhi International Cricket Stadium",
-    "phone": "040-23465839",
-    "email": "uppal.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2008,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 60000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.5 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "General scholarships."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 42000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Direct admission."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6754
-  },
-  {
-    "name": "Government ITI for Boys, Uppal",
-    "area": "Uppal",
-    "address": "IDA Uppal, Hyderabad, Telangana 500039",
-    "landmark": "Near Modern Food Industries",
-    "phone": "040-27201039",
-    "email": "uppal.iti@telangana.gov.in",
-    "website": "http://www.govtiti-uppal.org",
-    "category": "ITI",
-    "ownership": "GOVERNMENT",
-    "estYear": 1976,
-    "streamsList": [
-      {
-        "streamName": "ITI",
-        "annualFee": 1200,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "10th GPA",
-        "admissionType": "COUNSELLING",
-        "reservationInfo": "State ITI quota."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6751
   },
   {
     "name": "Government Junior College, Dammaiguda",
@@ -3850,16 +3537,98 @@
     "id": 6746
   },
   {
-    "name": "Government Junior College, SR Nagar",
-    "area": "SR Nagar",
-    "address": "Community Hall Road, B.K. Guda, Sanjeeva Reddy Nagar, Hyderabad, Telangana 500038",
-    "landmark": "Near SR Nagar Post Office & Metro Station",
-    "phone": "040-23812038",
-    "email": "gjc.srnagar@telangana.gov.in",
-    "website": "http://gjc-srnagar.ts.gov.in",
+    "name": "Sri Chaitanya Junior College, Madhapur",
+    "area": "Madhapur",
+    "address": "Ayyappa Society Main Road, Madhapur, Hyderabad, Telangana 500081",
+    "landmark": "Near 100 Feet Road Y-Junction",
+    "phone": "040-64500181",
+    "email": "madhapur.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2008,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 82000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT-JEE elite batch."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 85000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET academy."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 65000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Business economics track."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6747
+  },
+  {
+    "name": "Narayana Junior College, Kondapur",
+    "area": "Kondapur",
+    "address": "Raghavendra Colony, Kondapur, Hyderabad, Telangana 500084",
+    "landmark": "Near KIMS Cuddles & Kondapur RTA Office",
+    "phone": "040-23465884",
+    "email": "kondapur.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2011,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 75000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT-JEE Olympiad campus."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 78000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET super-60 batch."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 60000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "CA foundation."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6748
+  },
+  {
+    "name": "Government Junior College, Kondapur",
+    "area": "Kondapur",
+    "address": "Masjid Banda Road, Kondapur, Hyderabad, Telangana 500084",
+    "landmark": "Near Botanical Garden West Gate",
+    "phone": "040-23110184",
+    "email": "gjc.kondapur@telangana.gov.in",
+    "website": "http://gjc-kondapur.ts.gov.in",
     "category": "JUNIOR_COLLEGE",
     "ownership": "GOVERNMENT",
-    "estYear": 1978,
+    "estYear": 1999,
     "streamsList": [
       {
         "streamName": "MPC",
@@ -3867,15 +3636,7 @@
         "minQualification": "10th Class Pass",
         "requiredMarks": "Pass",
         "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 1250,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
+        "reservationInfo": "State policy."
       },
       {
         "streamName": "CEC",
@@ -3883,20 +3644,210 @@
         "minQualification": "10th Class Pass",
         "requiredMarks": "Pass",
         "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      },
-      {
-        "streamName": "HEC",
-        "annualFee": 900,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
+        "reservationInfo": "State policy."
       }
     ],
     "hasHostel": false,
     "hasTransport": false,
-    "id": 6896
+    "id": 6749
+  },
+  {
+    "name": "Government Vocational Junior College, Madhapur",
+    "area": "Madhapur",
+    "address": "Khanamet, Near Shilparamam, Madhapur, Hyderabad, Telangana 500081",
+    "landmark": "Opp. Shilparamam Arts Village",
+    "phone": "040-23110181",
+    "email": "gvjc.madhapur@telangana.gov.in",
+    "website": "http://gvjc-madhapur.ts.gov.in",
+    "category": "VOCATIONAL",
+    "ownership": "GOVERNMENT",
+    "estYear": 1995,
+    "streamsList": [
+      {
+        "streamName": "Vocational",
+        "annualFee": 1500,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Digital arts and IT trades."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 1000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State quota."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6750
+  },
+  {
+    "name": "Government ITI for Boys, Uppal",
+    "area": "Uppal",
+    "address": "IDA Uppal, Hyderabad, Telangana 500039",
+    "landmark": "Near Modern Food Industries",
+    "phone": "040-27201039",
+    "email": "uppal.iti@telangana.gov.in",
+    "website": "http://www.govtiti-uppal.org",
+    "category": "ITI",
+    "ownership": "GOVERNMENT",
+    "estYear": 1976,
+    "streamsList": [
+      {
+        "streamName": "ITI",
+        "annualFee": 1200,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "10th GPA",
+        "admissionType": "COUNSELLING",
+        "reservationInfo": "State ITI quota."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6751
+  },
+  {
+    "name": "Sri Chaitanya Junior College, Uppal",
+    "area": "Uppal",
+    "address": "Ramanthapur - Uppal Main Road, Uppal, Hyderabad, Telangana 500039",
+    "landmark": "Near Uppal Stadium Metro Station",
+    "phone": "040-64500139",
+    "email": "uppal.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2006,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 62000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "JEE Mains coaching included."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 65000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET coaching included."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 48000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with mathematics."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6752
+  },
+  {
+    "name": "Sri Chaitanya Junior College, Kondapur",
+    "area": "Kondapur",
+    "address": "Hafeezpet Road, Kondapur, Hyderabad, Telangana 500084",
+    "landmark": "Near Kondapur Junction & AMB Cinemas",
+    "phone": "040-64500184",
+    "email": "kondapur.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2012,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 78000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Integrated JEE campus."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 80000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Medical academy."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6753
+  },
+  {
+    "name": "Narayana Junior College, Uppal",
+    "area": "Uppal",
+    "address": "Peerzadiguda Road, Uppal, Hyderabad, Telangana 500039",
+    "landmark": "Near Rajiv Gandhi International Cricket Stadium",
+    "phone": "040-23465839",
+    "email": "uppal.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2008,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 60000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "General scholarships."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 42000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Direct admission."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6754
+  },
+  {
+    "name": "Narayana Junior College, Chintal",
+    "area": "Chintal",
+    "address": "Ranga Nagar, Chintal, Hyderabad, Telangana 500054",
+    "landmark": "Near IDPL Colony Gate",
+    "phone": "040-23465854",
+    "email": "chintal.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2009,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 58000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.5 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "General scholarships."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 42000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with tally."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6755
   },
   {
     "name": "Narayana Junior College, SR Nagar",
@@ -3938,47 +3889,6 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 6861
-  },
-  {
-    "name": "Sri Chaitanya Junior College, SR Nagar",
-    "area": "SR Nagar",
-    "address": "Opposite State Bank of India, Vengal Rao Nagar Road, SR Nagar, Hyderabad, Telangana 500038",
-    "landmark": "Near SR Nagar Police Station",
-    "phone": "040-66772038",
-    "email": "srnagar.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2002,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 68000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "JEE Mains & Advanced integrated."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 70000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "AIIMS & NEET coaching."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 45000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with computing."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6897
   },
   {
     "name": "Government Junior College, Suchitra",
@@ -4284,88 +4194,6 @@
     "id": 6871
   },
   {
-    "name": "Narayana Junior College, Lingampally",
-    "area": "Lingampally",
-    "address": "Gulmohar Park Colony Road, Lingampally, Hyderabad, Telangana 500019",
-    "landmark": "Near Serilingampally Sub-Registrar Office",
-    "phone": "040-66480019",
-    "email": "lingampally.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2006,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 62000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT Olympiad curriculum."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 65000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET medical coaching."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 45000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Integrated commerce program."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6873
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Lingampally",
-    "area": "Lingampally",
-    "address": "Beside Vijetha Supermarket, Tara Nagar, Lingampally, Hyderabad, Telangana 500019",
-    "landmark": "Near Lingampally Bus Terminus",
-    "phone": "040-66120019",
-    "email": "lingampally.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2009,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 64000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Engineering entrance batches."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 66000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Medicine entrance batches."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 43000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Direct admission."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6899
-  },
-  {
     "name": "Government Junior College, Nagole",
     "area": "Nagole",
     "address": "Nagole - Bandlaguda Road, Nagole, Hyderabad, Telangana 500068",
@@ -4405,6 +4233,47 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 6872
+  },
+  {
+    "name": "Narayana Junior College, Lingampally",
+    "area": "Lingampally",
+    "address": "Gulmohar Park Colony Road, Lingampally, Hyderabad, Telangana 500019",
+    "landmark": "Near Serilingampally Sub-Registrar Office",
+    "phone": "040-66480019",
+    "email": "lingampally.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2006,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 62000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT Olympiad curriculum."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 65000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET medical coaching."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 45000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Integrated commerce program."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6873
   },
   {
     "name": "Sri Gayatri Junior College, Nagole",
@@ -5062,6 +4931,178 @@
     "id": 6892
   },
   {
+    "name": "Government Junior College, SR Nagar",
+    "area": "SR Nagar",
+    "address": "Community Hall Road, B.K. Guda, Sanjeeva Reddy Nagar, Hyderabad, Telangana 500038",
+    "landmark": "Near SR Nagar Post Office & Metro Station",
+    "phone": "040-23812038",
+    "email": "gjc.srnagar@telangana.gov.in",
+    "website": "http://gjc-srnagar.ts.gov.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "GOVERNMENT",
+    "estYear": 1978,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 1200,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 1250,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 1000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      },
+      {
+        "streamName": "HEC",
+        "annualFee": 900,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6896
+  },
+  {
+    "name": "Sri Chaitanya Junior College, SR Nagar",
+    "area": "SR Nagar",
+    "address": "Opposite State Bank of India, Vengal Rao Nagar Road, SR Nagar, Hyderabad, Telangana 500038",
+    "landmark": "Near SR Nagar Police Station",
+    "phone": "040-66772038",
+    "email": "srnagar.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2002,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 68000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "JEE Mains & Advanced integrated."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 70000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "AIIMS & NEET coaching."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 45000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with computing."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6897
+  },
+  {
+    "name": "Sri Chaitanya Junior College, Lingampally",
+    "area": "Lingampally",
+    "address": "Beside Vijetha Supermarket, Tara Nagar, Lingampally, Hyderabad, Telangana 500019",
+    "landmark": "Near Lingampally Bus Terminus",
+    "phone": "040-66120019",
+    "email": "lingampally.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2009,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 64000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Engineering entrance batches."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 66000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Medicine entrance batches."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 43000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Direct admission."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6899
+  },
+  {
+    "name": "Narayana Junior College, Marredpally",
+    "area": "Marredpally",
+    "address": "Shenoy Nursing Home Road, East Marredpally, Secunderabad, Telangana 500026",
+    "landmark": "Near Shenoy Nursing Home & Teachers Colony",
+    "phone": "040-66221026",
+    "email": "marredpally.njc@narayanagroup.com",
+    "website": "http://www.narayanagroup.com",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2004,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 65000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "National entrance coaching."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 68000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET coaching integrated."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 48000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Integrated CA foundation."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 6906
+  },
+  {
     "name": "St. Ann's Junior College, West Marredpally",
     "area": "Marredpally",
     "address": "Sarojini Devi Road, West Marredpally, Secunderabad, Telangana 500026",
@@ -5109,96 +5150,6 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 6907
-  },
-  {
-    "name": "Narayana Junior College, Marredpally",
-    "area": "Marredpally",
-    "address": "Shenoy Nursing Home Road, East Marredpally, Secunderabad, Telangana 500026",
-    "landmark": "Near Shenoy Nursing Home & Teachers Colony",
-    "phone": "040-66221026",
-    "email": "marredpally.njc@narayanagroup.com",
-    "website": "http://www.narayanagroup.com",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2004,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 65000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "National entrance coaching."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 68000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET coaching integrated."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 48000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Integrated CA foundation."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 6906
-  },
-  {
-    "name": "Government Junior College, Shamirpet",
-    "area": "Shamirpet",
-    "address": "Main Rajiv Rahadari Road, Shamirpet Mandal, Medchal-Malkajgiri District, Telangana 500078",
-    "landmark": "Opposite Shamirpet Police Station & Mandal Revenue Office",
-    "phone": "08418-245078",
-    "email": "gjc.shamirpet@telangana.gov.in",
-    "website": "http://gjc-shamirpet.ts.gov.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "GOVERNMENT",
-    "estYear": 1989,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 1200,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 1250,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 1000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      },
-      {
-        "streamName": "HEC",
-        "annualFee": 900,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7082
   },
   {
     "name": "CMR Group Junior College, Shamirpet",
@@ -5281,309 +5232,6 @@
     "hasHostel": true,
     "hasTransport": false,
     "id": 7059
-  },
-  {
-    "name": "Government Polytechnic, Gandi Maisamma",
-    "area": "Gandi Maisamma",
-    "address": "Dundigal Road, Gandi Maisamma X Roads, Medchal-Malkajgiri, Telangana 500043",
-    "landmark": "Near Gandi Maisamma Temple Junction & ORR Exit 5",
-    "phone": "08418-255043",
-    "email": "gpt.gandimaisamma@telangana.gov.in",
-    "website": "http://gpt-gandimaisamma.ts.gov.in",
-    "category": "POLYTECHNIC",
-    "ownership": "GOVERNMENT",
-    "estYear": 1988,
-    "streamsList": [
-      {
-        "streamName": "Diploma in Civil Engineering",
-        "annualFee": 3800,
-        "minQualification": "10th Pass (POLYCET)",
-        "requiredMarks": "POLYCET Rank",
-        "admissionType": "ENTRANCE_BASED",
-        "reservationInfo": "POLYCET counselling quota."
-      },
-      {
-        "streamName": "Diploma in Mechanical Engineering",
-        "annualFee": 3800,
-        "minQualification": "10th Pass (POLYCET)",
-        "requiredMarks": "POLYCET Rank",
-        "admissionType": "ENTRANCE_BASED",
-        "reservationInfo": "POLYCET counselling quota."
-      },
-      {
-        "streamName": "Diploma in Computer Engineering",
-        "annualFee": 3800,
-        "minQualification": "10th Pass (POLYCET)",
-        "requiredMarks": "POLYCET Rank",
-        "admissionType": "ENTRANCE_BASED",
-        "reservationInfo": "State reservation quota."
-      },
-      {
-        "streamName": "Diploma in Electrical & Electronics",
-        "annualFee": 3800,
-        "minQualification": "10th Pass (POLYCET)",
-        "requiredMarks": "POLYCET Rank",
-        "admissionType": "ENTRANCE_BASED",
-        "reservationInfo": "State reservation quota."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7080
-  },
-  {
-    "name": "MLR Institute Junior Wing, Gandi Maisamma",
-    "area": "Gandi Maisamma",
-    "address": "Dundigal Police Station Road, Gandi Maisamma, Hyderabad, Telangana 500043",
-    "landmark": "Beside MLR Campus, Near Air Force Academy Road",
-    "phone": "040-29562043",
-    "email": "mlr.junior@mlrinstitutions.ac.in",
-    "website": "http://mlrinstitutions.ac.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2005,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 68000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Aeronautical & tech foundation."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 70000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Integrated science labs."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 48000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with statistics."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7075
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Gandi Maisamma",
-    "area": "Gandi Maisamma",
-    "address": "Bowrampet - Gandi Maisamma Main Road, Medchal District, Telangana 500043",
-    "landmark": "Near Bowrampet Junction & ORR Service Road",
-    "phone": "040-66992043",
-    "email": "gandimaisamma.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2012,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 65000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT-JEE Mains and Advanced."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 67000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET coaching batches."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 42000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Direct admission."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7081
-  },
-  {
-    "name": "Government Junior College, Pocharam",
-    "area": "Pocharam",
-    "address": "Infosys SEZ Road, Pocharam Municipality, Medchal-Malkajgiri, Telangana 500088",
-    "landmark": "Near Singapore Township (Sanskruti Township) & Infosys Gate 1",
-    "phone": "08415-225088",
-    "email": "gjc.pocharam@telangana.gov.in",
-    "website": "http://gjc-pocharam.ts.gov.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "GOVERNMENT",
-    "estYear": 1995,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 1200,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 1250,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 1000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7074
-  },
-  {
-    "name": "Sree Nidhi Junior College, Pocharam",
-    "area": "Pocharam",
-    "address": "Yamnampet, Ghatkesar - Pocharam Road, Hyderabad, Telangana 500088",
-    "landmark": "Near Sree Nidhi Institute Campus & Warangal Highway",
-    "phone": "040-27632088",
-    "email": "info@sreenidhi.edu.in",
-    "website": "http://www.sreenidhi.edu.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 1997,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 64000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Engineering entrance foundation."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 66000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Medical entrance foundation."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 45000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with computing."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7079
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Pocharam",
-    "area": "Pocharam",
-    "address": "Singapore Township Commercial Complex, Pocharam, Hyderabad, Telangana 500088",
-    "landmark": "Opposite Sanskruti Township Main Gate",
-    "phone": "040-66882088",
-    "email": "pocharam.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2011,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 62000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT-JEE coaching integrated."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 64000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET coaching integrated."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 40000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Direct admission."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7076
-  },
-  {
-    "name": "Government Junior College, Meerpet",
-    "area": "Meerpet",
-    "address": "Jillelguda Road, Meerpet Municipal Corporation, Ranga Reddy District, Telangana 500097",
-    "landmark": "Near Meerpet Police Station & Venkateshwara Swamy Temple",
-    "phone": "040-24090097",
-    "email": "gjc.meerpet@telangana.gov.in",
-    "website": "http://gjc-meerpet.ts.gov.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "GOVERNMENT",
-    "estYear": 1996,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 1200,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 1250,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "State reservation quota applies."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 1000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      },
-      {
-        "streamName": "HEC",
-        "annualFee": 900,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "MERIT_BASED",
-        "reservationInfo": "Direct admission on merit."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7083
   },
   {
     "name": "TKR Educational Society Junior College, Meerpet",
@@ -5717,6 +5365,47 @@
     "id": 7062
   },
   {
+    "name": "Sri Chaitanya Junior College, Kokapet",
+    "area": "Kokapet",
+    "address": "Neopolis Layout Road, Kokapet, Hyderabad, Telangana 500075",
+    "landmark": "Near Kokapet One Golden Mile & Financial District Extension",
+    "phone": "040-66993075",
+    "email": "kokapet.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2016,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 72000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT-JEE Olympiad curriculum."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 75000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET medical coaching."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 55000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with computing."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7063
+  },
+  {
     "name": "Rockwell +2 Junior College, Kokapet",
     "area": "Kokapet",
     "address": "Golden Mile Road, Kokapet, Gandipet Mandal, Hyderabad, Telangana 500075",
@@ -5764,47 +5453,6 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 7064
-  },
-  {
-    "name": "Sri Chaitanya Junior College, Kokapet",
-    "area": "Kokapet",
-    "address": "Neopolis Layout Road, Kokapet, Hyderabad, Telangana 500075",
-    "landmark": "Near Kokapet One Golden Mile & Financial District Extension",
-    "phone": "040-66993075",
-    "email": "kokapet.scjc@srichaitanya.net",
-    "website": "http://www.srichaitanya.net",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2016,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 72000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "IIT-JEE Olympiad curriculum."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 75000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "8.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "NEET medical coaching."
-      },
-      {
-        "streamName": "MEC",
-        "annualFee": 55000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Commerce with computing."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7063
   },
   {
     "name": "Government Junior College, Moinabad",
@@ -5905,47 +5553,6 @@
     "id": 7066
   },
   {
-    "name": "Swathi Junior College, Moinabad",
-    "area": "Moinabad",
-    "address": "Chilkur Balaji Temple Road, Moinabad, Hyderabad, Telangana 501504",
-    "landmark": "Near Chilkur Balaji X Roads",
-    "phone": "08417-252888",
-    "email": "swathi.moinabad@gmail.com",
-    "website": "http://swathigroup.edu.in",
-    "category": "JUNIOR_COLLEGE",
-    "ownership": "PRIVATE",
-    "estYear": 2004,
-    "streamsList": [
-      {
-        "streamName": "MPC",
-        "annualFee": 45000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "General merit scholarships."
-      },
-      {
-        "streamName": "BiPC",
-        "annualFee": 48000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "7.0 GPA",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Pre-medical program."
-      },
-      {
-        "streamName": "CEC",
-        "annualFee": 35000,
-        "minQualification": "10th Class Pass",
-        "requiredMarks": "Pass",
-        "admissionType": "DIRECT",
-        "reservationInfo": "Direct admission."
-      }
-    ],
-    "hasHostel": false,
-    "hasTransport": false,
-    "id": 7068
-  },
-  {
     "name": "Government Junior College, Hafeezpet",
     "area": "Hafeezpet",
     "address": "Hafeezpet Main Road, Serilingampally Mandal, Hyderabad, Telangana 500049",
@@ -5985,6 +5592,47 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 7067
+  },
+  {
+    "name": "Swathi Junior College, Moinabad",
+    "area": "Moinabad",
+    "address": "Chilkur Balaji Temple Road, Moinabad, Hyderabad, Telangana 501504",
+    "landmark": "Near Chilkur Balaji X Roads",
+    "phone": "08417-252888",
+    "email": "swathi.moinabad@gmail.com",
+    "website": "http://swathigroup.edu.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2004,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 45000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "General merit scholarships."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 48000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Pre-medical program."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 35000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Direct admission."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7068
   },
   {
     "name": "Sri Chaitanya Junior College, Hafeezpet",
@@ -6206,6 +5854,358 @@
     "hasHostel": false,
     "hasTransport": false,
     "id": 7073
+  },
+  {
+    "name": "Government Junior College, Pocharam",
+    "area": "Pocharam",
+    "address": "Infosys SEZ Road, Pocharam Municipality, Medchal-Malkajgiri, Telangana 500088",
+    "landmark": "Near Singapore Township (Sanskruti Township) & Infosys Gate 1",
+    "phone": "08415-225088",
+    "email": "gjc.pocharam@telangana.gov.in",
+    "website": "http://gjc-pocharam.ts.gov.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "GOVERNMENT",
+    "estYear": 1995,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 1200,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 1250,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 1000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7074
+  },
+  {
+    "name": "MLR Institute Junior Wing, Gandi Maisamma",
+    "area": "Gandi Maisamma",
+    "address": "Dundigal Police Station Road, Gandi Maisamma, Hyderabad, Telangana 500043",
+    "landmark": "Beside MLR Campus, Near Air Force Academy Road",
+    "phone": "040-29562043",
+    "email": "mlr.junior@mlrinstitutions.ac.in",
+    "website": "http://mlrinstitutions.ac.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2005,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 68000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Aeronautical & tech foundation."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 70000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Integrated science labs."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 48000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with statistics."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7075
+  },
+  {
+    "name": "Sri Chaitanya Junior College, Pocharam",
+    "area": "Pocharam",
+    "address": "Singapore Township Commercial Complex, Pocharam, Hyderabad, Telangana 500088",
+    "landmark": "Opposite Sanskruti Township Main Gate",
+    "phone": "040-66882088",
+    "email": "pocharam.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2011,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 62000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT-JEE coaching integrated."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 64000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET coaching integrated."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 40000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Direct admission."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7076
+  },
+  {
+    "name": "Sree Nidhi Junior College, Pocharam",
+    "area": "Pocharam",
+    "address": "Yamnampet, Ghatkesar - Pocharam Road, Hyderabad, Telangana 500088",
+    "landmark": "Near Sree Nidhi Institute Campus & Warangal Highway",
+    "phone": "040-27632088",
+    "email": "info@sreenidhi.edu.in",
+    "website": "http://www.sreenidhi.edu.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 1997,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 64000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Engineering entrance foundation."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 66000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Medical entrance foundation."
+      },
+      {
+        "streamName": "MEC",
+        "annualFee": 45000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "7.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Commerce with computing."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7079
+  },
+  {
+    "name": "Government Polytechnic, Gandi Maisamma",
+    "area": "Gandi Maisamma",
+    "address": "Dundigal Road, Gandi Maisamma X Roads, Medchal-Malkajgiri, Telangana 500043",
+    "landmark": "Near Gandi Maisamma Temple Junction & ORR Exit 5",
+    "phone": "08418-255043",
+    "email": "gpt.gandimaisamma@telangana.gov.in",
+    "website": "http://gpt-gandimaisamma.ts.gov.in",
+    "category": "POLYTECHNIC",
+    "ownership": "GOVERNMENT",
+    "estYear": 1988,
+    "streamsList": [
+      {
+        "streamName": "Diploma in Civil Engineering",
+        "annualFee": 3800,
+        "minQualification": "10th Pass (POLYCET)",
+        "requiredMarks": "POLYCET Rank",
+        "admissionType": "ENTRANCE_BASED",
+        "reservationInfo": "POLYCET counselling quota."
+      },
+      {
+        "streamName": "Diploma in Mechanical Engineering",
+        "annualFee": 3800,
+        "minQualification": "10th Pass (POLYCET)",
+        "requiredMarks": "POLYCET Rank",
+        "admissionType": "ENTRANCE_BASED",
+        "reservationInfo": "POLYCET counselling quota."
+      },
+      {
+        "streamName": "Diploma in Computer Engineering",
+        "annualFee": 3800,
+        "minQualification": "10th Pass (POLYCET)",
+        "requiredMarks": "POLYCET Rank",
+        "admissionType": "ENTRANCE_BASED",
+        "reservationInfo": "State reservation quota."
+      },
+      {
+        "streamName": "Diploma in Electrical & Electronics",
+        "annualFee": 3800,
+        "minQualification": "10th Pass (POLYCET)",
+        "requiredMarks": "POLYCET Rank",
+        "admissionType": "ENTRANCE_BASED",
+        "reservationInfo": "State reservation quota."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7080
+  },
+  {
+    "name": "Sri Chaitanya Junior College, Gandi Maisamma",
+    "area": "Gandi Maisamma",
+    "address": "Bowrampet - Gandi Maisamma Main Road, Medchal District, Telangana 500043",
+    "landmark": "Near Bowrampet Junction & ORR Service Road",
+    "phone": "040-66992043",
+    "email": "gandimaisamma.scjc@srichaitanya.net",
+    "website": "http://www.srichaitanya.net",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "PRIVATE",
+    "estYear": 2012,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 65000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "IIT-JEE Mains and Advanced."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 67000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "8.0 GPA",
+        "admissionType": "DIRECT",
+        "reservationInfo": "NEET coaching batches."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 42000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "DIRECT",
+        "reservationInfo": "Direct admission."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7081
+  },
+  {
+    "name": "Government Junior College, Shamirpet",
+    "area": "Shamirpet",
+    "address": "Main Rajiv Rahadari Road, Shamirpet Mandal, Medchal-Malkajgiri District, Telangana 500078",
+    "landmark": "Opposite Shamirpet Police Station & Mandal Revenue Office",
+    "phone": "08418-245078",
+    "email": "gjc.shamirpet@telangana.gov.in",
+    "website": "http://gjc-shamirpet.ts.gov.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "GOVERNMENT",
+    "estYear": 1989,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 1200,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 1250,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 1000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      },
+      {
+        "streamName": "HEC",
+        "annualFee": 900,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7082
+  },
+  {
+    "name": "Government Junior College, Meerpet",
+    "area": "Meerpet",
+    "address": "Jillelguda Road, Meerpet Municipal Corporation, Ranga Reddy District, Telangana 500097",
+    "landmark": "Near Meerpet Police Station & Venkateshwara Swamy Temple",
+    "phone": "040-24090097",
+    "email": "gjc.meerpet@telangana.gov.in",
+    "website": "http://gjc-meerpet.ts.gov.in",
+    "category": "JUNIOR_COLLEGE",
+    "ownership": "GOVERNMENT",
+    "estYear": 1996,
+    "streamsList": [
+      {
+        "streamName": "MPC",
+        "annualFee": 1200,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "BiPC",
+        "annualFee": 1250,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "State reservation quota applies."
+      },
+      {
+        "streamName": "CEC",
+        "annualFee": 1000,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      },
+      {
+        "streamName": "HEC",
+        "annualFee": 900,
+        "minQualification": "10th Class Pass",
+        "requiredMarks": "Pass",
+        "admissionType": "MERIT_BASED",
+        "reservationInfo": "Direct admission on merit."
+      }
+    ],
+    "hasHostel": false,
+    "hasTransport": false,
+    "id": 7083
   },
   {
     "name": "Government Junior College, Ameerpet",
@@ -6901,5 +6901,94 @@
       }
     ],
     "id": 7216
+  },
+  {
+    "facilities": {
+      "transport": false,
+      "smartClassrooms": false,
+      "notes": "",
+      "cctv": true,
+      "cafeteria": false,
+      "wifi": false,
+      "library": true,
+      "sports": false,
+      "labs": false,
+      "playground": false,
+      "computerLabs": false,
+      "hostel": false
+    },
+    "hasComputerLabs": false,
+    "hasPlayground": false,
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=APJ%20ABDUL%20KALAM%20JUNIOR%20COLLEGE%2C%20H.No.%2032-142%2C%20Plot%20No.%2019%2C%20Survey%20No.%20272%2C%20Shapur%20Nagar%2C%20IDA%20Jeedimetla%2C%20Quthbullapur%2C%20Hyderabad%2C%20Telangana",
+    "approvedAt": "2026-11-22T15:19:59.917Z",
+    "principalName": "",
+    "principalDesignation": "Principal",
+    "nearbyLandmark": "Beside SV Model School, Near Vegetable Market, Shapur Nagar, IDA Jeedimetla",
+    "streams": [
+      {
+        "admissionType": "DIRECT",
+        "minQualification": "10th Class",
+        "streamName": "BiPC",
+        "requiredMarks": "Pass",
+        "annualFee": 25000,
+        "reservationInfo": ""
+      },
+      {
+        "annualFee": 25000,
+        "admissionType": "DIRECT",
+        "streamName": "MPC",
+        "reservationInfo": "",
+        "requiredMarks": "Pass",
+        "minQualification": "10th Class"
+      }
+    ],
+    "name": "APJ ABDUL KALAM JUNIOR COLLEGE",
+    "website": "",
+    "boardCode": "59343",
+    "averageRating": 4.5,
+    "ownership": "PRIVATE",
+    "hasLabs": false,
+    "createdBy": "SUPER_ADMIN",
+    "category": "JUNIOR_COLLEGE",
+    "address": "H.No. 32-142, Plot No. 19, Survey No. 272, Shapur Nagar, IDA Jeedimetla, Quthbullapur, Hyderabad, Telangana",
+    "scholarships": "Fee concessions available for meritorious students (>9.0 GPA), SC/ST/BC welfare, and sports quota.",
+    "hasLibrary": true,
+    "hasCctv": true,
+    "hasSports": false,
+    "genderType": "CO_ED",
+    "district": "Hyderabad",
+    "isApproved": true,
+    "documents": [],
+    "establishedYear": null,
+    "gallery": [
+      "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=600&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=600&auto=format&fit=crop&q=80"
+    ],
+    "status": "APPROVED",
+    "hasTransport": false,
+    "verified": false,
+    "isLive": true,
+    "pincode": "500055",
+    "principalMessage": "",
+    "publishedAt": "2026-11-22T15:19:59.917Z",
+    "hasWifi": false,
+    "coverImageUrl": "https://images.unsplash.com/photo-1562774053-701939374585?w=1200&auto=format&fit=crop&q=80",
+    "whatsappNumber": "9059436735",
+    "phone": "9059436735",
+    "admissions": {
+      "startDate": "",
+      "endDate": "",
+      "procedure": "Direct walk-in or online counseling with SSC memo.",
+      "applyLink": ""
+    },
+    "hasCafeteria": false,
+    "email": "apjabdulkalamjrclg@gmail.com",
+    "description": "APJ Abdul Kalam Junior College is a co-educational private junior college located in Shapur Nagar, IDA Jeedimetla, Hyderabad, Telangana. The institution provides Intermediate education for students pursuing their higher secondary studies under the Telangana State Board of Intermediate Education (TSBIE).\n\nThe college is listed as offering Mathematics, Physics and Chemistry (MPC), and Botany, Zoology, Physics and Chemistry (BiPC) combinations. With English as its medium of instruction, the institution serves students from Shapur Nagar, Jeedimetla, Quthbullapur and surrounding areas.\n\nThe college aims to support students in developing their academic knowledge and preparing for higher education and future career opportunities.",
+    "id": 7217,
+    "affiliation": "Board of Intermediate Education, Telangana (TSBIE)",
+    "hasSmartClassroom": false,
+    "createdAt": "2026-11-22T15:19:59.913Z",
+    "hasHostel": false,
+    "totalReviews": 0
   }
 ]
