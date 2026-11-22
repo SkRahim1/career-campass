@@ -12,7 +12,6 @@ import CollegeDetailClient from './colleges/[id]/CollegeDetailClient';
  * CollegeDetailClient from Firestore without showing a 404.
  */
 export default function NotFound() {
-  const [dynamicCollegeId, setDynamicCollegeId] = useState(null);
   const [resolving, setResolving] = useState(true);
 
   useEffect(() => {
@@ -21,15 +20,12 @@ export default function NotFound() {
       // Match /colleges/:id or /colleges/:id/
       const match = pathname.match(/\/colleges\/([^\/]+)\/?$/);
       if (match && match[1] && match[1] !== 'details') {
-        setDynamicCollegeId(match[1]);
+        window.location.replace(`/colleges/details?id=${encodeURIComponent(match[1])}`);
+        return;
       }
       setResolving(false);
     }
   }, []);
-
-  if (dynamicCollegeId) {
-    return <CollegeDetailClient id={dynamicCollegeId} />;
-  }
 
   if (resolving) {
     return (

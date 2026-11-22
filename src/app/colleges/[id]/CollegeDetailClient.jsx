@@ -180,14 +180,21 @@ export default function CollegeDetailClient({ id, initialCollege }) {
       if (docSnap.exists()) {
         collegeData = docSnap.data();
       } else {
-        // Fallback: Query by numeric id field if doc ID does not match directly
-        const numericId = parseInt(id, 10);
-        if (!isNaN(numericId)) {
-          const qCol = query(collection(db, 'colleges'), where('id', '==', numericId));
-          const qSnap = await getDocs(qCol);
-          if (!qSnap.empty) {
-            collegeData = qSnap.docs[0].data();
-            targetDocId = qSnap.docs[0].id;
+        // Fallback: Query by id field as string or numeric if doc ID does not match directly
+        const qColStr = query(collection(db, 'colleges'), where('id', '==', String(id)));
+        const qSnapStr = await getDocs(qColStr);
+        if (!qSnapStr.empty) {
+          collegeData = qSnapStr.docs[0].data();
+          targetDocId = qSnapStr.docs[0].id;
+        } else {
+          const numericId = parseInt(id, 10);
+          if (!isNaN(numericId)) {
+            const qColNum = query(collection(db, 'colleges'), where('id', '==', numericId));
+            const qSnapNum = await getDocs(qColNum);
+            if (!qSnapNum.empty) {
+              collegeData = qSnapNum.docs[0].data();
+              targetDocId = qSnapNum.docs[0].id;
+            }
           }
         }
       }
@@ -742,7 +749,7 @@ export default function CollegeDetailClient({ id, initialCollege }) {
           </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {college.streams?.map((s, idx) => {
+                {Array.isArray(college.streams) && college.streams.map((s, idx) => {
                   const total = (Number(s.annualFee) || 0) + (Number(s.admissionFee) || 0) + (Number(s.otherCharges) || 0);
                   return (
                     <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
@@ -797,7 +804,7 @@ export default function CollegeDetailClient({ id, initialCollege }) {
                 })}
               </div>
 
-          {(!college.streams || college.streams.length === 0) && (
+          {(!Array.isArray(college.streams) || college.streams.length === 0) && (
             <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl p-8 text-center text-xs">
               No streams listed yet for this college. Please enquire directly with admissions for streams and intake.
             </div>
@@ -870,21 +877,27 @@ export default function CollegeDetailClient({ id, initialCollege }) {
           {/* Step-by-Step Procedure */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Step-by-Step Admission Procedure</h4>
-            <div className="space-y-4 relative border-l border-slate-200 dark:border-slate-800 pl-6 ml-3">
-              {(college.admissions?.procedure || [
-                'Check eligibility criteria and cutoff GPA for chosen stream.',
-                'Prepare required certificates (10th memo, Transfer Certificate, Bonafide, Aadhaar).',
-                'Submit application online or visit admissions administrative block in person.',
-                'Confirm provisional seat allotment with verification of original documents.'
-              ]).map((step, idx) => (
-                <div key={idx} className="relative">
-                  <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-white dark:border-slate-900 text-xs font-bold flex items-center justify-center text-white shadow-sm">
-                    {idx + 1}
-                  </span>
-                  <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{step}</p>
-                </div>
-              ))}
-            </div>
+            {typeof college.admissions?.procedure === 'string' && college.admissions.procedure.trim() ? (
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
+                {college.admissions.procedure}
+              </div>
+            ) : (
+              <div className="space-y-4 relative border-l border-slate-200 dark:border-slate-800 pl-6 ml-3">
+                {(Array.isArray(college.admissions?.procedure) && college.admissions.procedure.length > 0 ? college.admissions.procedure : [
+                  'Check eligibility criteria and cutoff GPA for chosen stream.',
+                  'Prepare required certificates (10th memo, Transfer Certificate, Bonafide, Aadhaar).',
+                  'Submit application online or visit admissions administrative block in person.',
+                  'Confirm provisional seat allotment with verification of original documents.'
+                ]).map((step, idx) => (
+                  <div key={idx} className="relative">
+                    <span className="absolute -left-9 top-0.5 w-6 h-6 rounded-full bg-indigo-600 border border-white dark:border-slate-900 text-xs font-bold flex items-center justify-center text-white shadow-sm">
+                      {idx + 1}
+                    </span>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-medium">{step}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -896,24 +909,39 @@ export default function CollegeDetailClient({ id, initialCollege }) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(college.scholarships && college.scholarships.length > 0 ? college.scholarships : [
-              {
-                title: 'Telangana State ePASS Fee Reimbursement',
-                description: 'Full or partial tuition fee reimbursement provided by TS Government for eligible SC, ST, BC, and Minority candidates.',
-                eligibility: 'Annual parental income under ₹2 Lakhs (Urban) / ₹1.5 Lakhs (Rural).'
-              },
-              {
-                title: 'Merit Academic Fee Waiver',
-                description: 'Institution provides fee concessions for high achievers securing 9.5+ GPA in SSC Board exams.',
-                eligibility: 'SSC Grade 9.5+ or CBSE 90%+'
-              }
-            ]).map((sch, idx) => (
-              <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
-                <h4 className="text-slate-900 dark:text-slate-100 font-bold text-sm">{sch.title}</h4>
-                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{sch.description}</p>
-                <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold pt-1">Eligibility: {sch.eligibility}</p>
+            {typeof college.scholarships === 'string' && college.scholarships.trim() ? (
+              <div className="col-span-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                <h4 className="text-slate-900 dark:text-slate-100 font-bold text-sm">Institutional Scholarships & Fee Concessions</h4>
+                <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">{college.scholarships}</p>
               </div>
-            ))}
+            ) : Array.isArray(college.scholarships) && college.scholarships.length > 0 ? (
+              college.scholarships.map((sch, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                  <h4 className="text-slate-900 dark:text-slate-100 font-bold text-sm">{sch.title}</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{sch.description}</p>
+                  {sch.eligibility && <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold pt-1">Eligibility: {sch.eligibility}</p>}
+                </div>
+              ))
+            ) : (
+              [
+                {
+                  title: 'Telangana State ePASS Fee Reimbursement',
+                  description: 'Full or partial tuition fee reimbursement provided by TS Government for eligible SC, ST, BC, and Minority candidates.',
+                  eligibility: 'Annual parental income under ₹2 Lakhs (Urban) / ₹1.5 Lakhs (Rural).'
+                },
+                {
+                  title: 'Merit Academic Fee Waiver',
+                  description: 'Institution provides fee concessions for high achievers securing 9.5+ GPA in SSC Board exams.',
+                  eligibility: 'SSC Grade 9.5+ or CBSE 90%+'
+                }
+              ].map((sch, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-2">
+                  <h4 className="text-slate-900 dark:text-slate-100 font-bold text-sm">{sch.title}</h4>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{sch.description}</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold pt-1">Eligibility: {sch.eligibility}</p>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -965,7 +993,7 @@ export default function CollegeDetailClient({ id, initialCollege }) {
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Official Documents, Prospectus & Brochures</h3>
           </div>
 
-          {college.documents && college.documents.length > 0 ? (
+          {Array.isArray(college.documents) && college.documents.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {college.documents.map((d, idx) => (
                 <div key={idx} className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
@@ -1034,13 +1062,13 @@ export default function CollegeDetailClient({ id, initialCollege }) {
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Campus Photo Gallery</h3>
           </div>
 
-          {college.gallery?.length === 0 ? (
+          {!Array.isArray(college.gallery) || college.gallery.length === 0 ? (
             <div className="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center text-slate-500 dark:text-slate-400 text-xs">
               No images uploaded.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {college.gallery?.map((img, idx) => (
+              {college.gallery.map((img, idx) => (
                 <div key={idx} className="relative h-48 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 group shadow-sm bg-slate-100 dark:bg-slate-950">
                   <img
                     src={img}
