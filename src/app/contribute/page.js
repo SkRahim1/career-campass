@@ -749,7 +749,7 @@ export default function ContributeCollegePage() {
                       />
                     </div>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400">
-                      Mandatory for Admin verification before publishing. Kept private from public directory.
+                      Mandatory for Admin verification only. Kept strictly confidential and never displayed on public college profiles or directories (only your name is credited).
                     </p>
                   </div>
                 </div>
