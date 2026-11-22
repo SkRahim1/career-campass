@@ -3,11 +3,13 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // ── Helper Functions ──────────────────────────────────────────────
-    // Check if the requesting user is a Super Admin (role stored in their Firestore document)
+    // Check if the requesting user is a Super Admin (role stored in their Firestore document or verified admin email)
     function isAdmin() {
-      return request.auth != null &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN';
+      return request.auth != null && (
+        request.auth.token.email in ['admin@career365compass.com', 'rahimskking@gmail.com'] ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SUPER_ADMIN')
+      );
     }
 
     // Check if the requesting user is a College Admin

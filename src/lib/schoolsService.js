@@ -502,21 +502,26 @@ export async function getSchoolsList(includeInactive = false) {
     const schoolsCol = collection(db, 'schools');
     const snap = await getDocs(schoolsCol);
     
-    if (snap.empty) {
-      return DEFAULT_SCHOOLS;
+    const schools = [];
+    const seenNames = new Set();
+
+    if (!snap.empty) {
+      snap.forEach((docSnap) => {
+        const data = docSnap.data();
+        if (includeInactive || data.isActive !== false) {
+          schools.push({ id: docSnap.id, ...data });
+          if (data.name) seenNames.add(data.name.trim().toLowerCase());
+        }
+      });
     }
 
-    const schools = [];
-    snap.forEach((docSnap) => {
-      const data = docSnap.data();
-      if (includeInactive || data.isActive !== false) {
-        schools.push({ id: docSnap.id, ...data });
+    // Always include default verified schools if not already present
+    DEFAULT_SCHOOLS.forEach((defSchool) => {
+      if (!seenNames.has(defSchool.name.trim().toLowerCase())) {
+        schools.push(defSchool);
+        seenNames.add(defSchool.name.trim().toLowerCase());
       }
     });
-
-    if (schools.length === 0) {
-      return DEFAULT_SCHOOLS;
-    }
 
     // Sort alphabetically by school name
     return schools.sort((a, b) => a.name.localeCompare(b.name));
