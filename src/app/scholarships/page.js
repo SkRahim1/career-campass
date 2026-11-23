@@ -6,8 +6,10 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Scholarships for 10th & 12th Students in Telangana | ePASS, Welfare & Merit Aid',
-  description: 'Explore Telangana state ePASS scholarships, Post-Matric fee reimbursement, central sector merit scholarships, and minority financial aid for Intermediate, Polytechnic, and ITI students.',
+  description: 'Explore Telangana state ePASS scholarships, Post-Matric fee reimbursement, central sector merit scholarships, and minority financial aid on Career 365 Compass (Career365Compass).',
   keywords: [
+    'Career 365 Compass',
+    'Career365Compass',
     'Scholarships after 10th',
     'Telangana ePASS scholarship',
     'Post matric scholarship Telangana',
@@ -21,8 +23,9 @@ export const metadata = {
     canonical: '/scholarships/',
   },
   openGraph: {
-    title: 'Scholarships for 10th & 12th Students in Telangana | Career365Compass',
-    description: 'Find verified state and national scholarships, eligibility cutoffs, document checklists, and application portals.',
+    title: 'Scholarships for 10th & 12th Students in Telangana | Career 365 Compass',
+    siteName: 'Career 365 Compass',
+    description: 'Find verified state and national scholarships, eligibility cutoffs, document checklists, and application portals on Career 365 Compass.',
     url: 'https://career365compass.in/scholarships/',
     type: 'website',
     images: [
@@ -30,14 +33,14 @@ export const metadata = {
         url: '/images/portal-features.jpg',
         width: 1200,
         height: 630,
-        alt: 'Telangana Post-10th Scholarships & Financial Aid Directory',
+        alt: 'Telangana Post-10th Scholarships & Financial Aid Directory - Career 365 Compass',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Scholarships in Telangana | Career365Compass',
-    description: 'Explore state ePASS scholarships, fee reimbursement, and financial aid for post-10th courses.',
+    title: 'Scholarships in Telangana | Career 365 Compass',
+    description: 'Explore state ePASS scholarships, fee reimbursement, and financial aid on Career 365 Compass.',
     images: ['/images/portal-features.jpg'],
   },
 };

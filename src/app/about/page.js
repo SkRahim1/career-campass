@@ -23,10 +23,13 @@ import {
 } from 'lucide-react';
 
 export const metadata = {
-  title: 'About Us & Leadership | Career365Compass & Excellence Voices',
-  description: 'Learn about Career365Compass and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.',
+  title: 'About Us & Leadership | Career 365 Compass & Excellence Voices',
+  description: 'Learn about Career 365 Compass (Career365Compass) and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 and 12th students.',
   keywords: [
-    'About Career365Compass',
+    'Career 365 Compass',
+    'Career365Compass',
+    'Career 365',
+    'About Career 365 Compass',
     'Excellence Voices',
     'Rahim Shaikh',
     'Raviteja Pendem',
@@ -38,8 +41,8 @@ export const metadata = {
     canonical: '/about/',
   },
   openGraph: {
-    title: 'About Us & Leadership | Career365Compass & Excellence Voices',
-    description: 'Learn about Career365Compass and Excellence Voices leadership empowering students across Telangana.',
+    title: 'About Us & Leadership | Career 365 Compass & Excellence Voices',
+    description: 'Learn about Career 365 Compass and Excellence Voices leadership empowering students across Telangana.',
     url: 'https://career365compass.in/about/',
     type: 'website',
     images: [
@@ -47,13 +50,13 @@ export const metadata = {
         url: '/images/portal-features.jpg',
         width: 1200,
         height: 630,
-        alt: 'About Career365Compass & Excellence Voices Leadership',
+        alt: 'About Career 365 Compass & Excellence Voices Leadership',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'About Career365Compass & Leadership',
+    title: 'About Career 365 Compass & Leadership',
     description: 'Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.',
     images: ['/images/portal-features.jpg'],
   },
@@ -66,19 +69,25 @@ export default function AboutPage() {
       {
         "@type": "AboutPage",
         "@id": "https://career365compass.in/about/#webpage",
-        "name": "About Career365Compass & Leadership",
+        "name": "About Career 365 Compass & Leadership",
         "url": "https://career365compass.in/about/",
-        "description": "Learn about Career365Compass and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.",
+        "description": "Learn about Career 365 Compass (Career365Compass) and Excellence Voices leadership. Guided by Directors Rahim Shaikh, Raviteja Pendem, and Lakshya Rana to empower Class 10 students.",
         "publisher": {
           "@type": "EducationalOrganization",
-          "name": "Career365Compass",
+          "name": "Career 365 Compass",
+          "alternateName": ["Career365Compass", "Career 365"],
           "url": "https://career365compass.in"
         }
       },
       {
         "@type": "EducationalOrganization",
         "@id": "https://career365compass.in/#organization",
-        "name": "Career365Compass",
+        "name": "Career 365 Compass",
+        "alternateName": [
+          "Career365Compass",
+          "Career 365",
+          "Career Compass"
+        ],
         "url": "https://career365compass.in",
         "founder": [
           {
@@ -191,7 +200,7 @@ export default function AboutPage() {
           </h1>
 
           <p className="text-slate-400 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
-            Career365Compass, powered in collaboration with <strong className="text-slate-200">Excellence Voices</strong>, is dedicated to guiding 10th-grade students through the crucial transition to Intermediate, Polytechnic, and beyond with honesty, transparency, and empathy.
+            <strong>Career 365 Compass</strong> (Career365Compass), powered in collaboration with <strong className="text-slate-200">Excellence Voices</strong>, is dedicated to guiding 10th-grade students through the crucial transition to Intermediate, Polytechnic, and beyond with honesty, transparency, and empathy.
           </p>
 
           {/* Quick Stats Grid */}

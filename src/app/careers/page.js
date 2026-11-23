@@ -6,8 +6,10 @@ import { BookOpen, Compass, Sparkles, GraduationCap, ArrowRight, CheckCircle2 } 
 
 export const metadata = {
   title: 'Career Options After 10th & Courses After 12th | Career Library',
-  description: 'Explore 50+ career options after 10th, courses after 12th, best courses after MPC, and courses after BiPC. Compare salary ranges, required entrance exams, and step-by-step career roadmaps for Telangana students.',
+  description: 'Explore 50+ career options after 10th, courses after 12th, best courses after MPC, and courses after BiPC on Career 365 Compass (Career365Compass). Compare salary ranges, required entrance exams, and step-by-step career roadmaps for Telangana students.',
   keywords: [
+    'Career 365 Compass',
+    'Career365Compass',
     'Career options after 10th',
     'Courses after 12th',
     'Best courses after MPC',
@@ -21,8 +23,9 @@ export const metadata = {
     canonical: '/careers/',
   },
   openGraph: {
-    title: 'Career Options After 10th & Courses After 12th | Career365Compass',
-    description: 'Comprehensive roadmaps for 50+ professions: eligibility, top courses after 12th, MPC & BiPC avenues, and salary expectations.',
+    title: 'Career Options After 10th & Courses After 12th | Career 365 Compass',
+    siteName: 'Career 365 Compass',
+    description: 'Comprehensive roadmaps for 50+ professions on Career 365 Compass: eligibility, top courses after 12th, MPC & BiPC avenues, and salary expectations.',
     url: 'https://career365compass.in/careers/',
     type: 'website',
     images: [
@@ -30,14 +33,14 @@ export const metadata = {
         url: '/images/portal-features.jpg',
         width: 1200,
         height: 630,
-        alt: '50+ Career Options After 10th and Courses After 12th',
+        alt: '50+ Career Options After 10th and Courses After 12th - Career 365 Compass',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Career Options After 10th & Courses After 12th | Career365Compass',
-    description: 'Explore step-by-step career roadmaps, salary ranges, and eligibility for 50+ professions.',
+    title: 'Career Options After 10th & Courses After 12th | Career 365 Compass',
+    description: 'Explore step-by-step career roadmaps, salary ranges, and eligibility for 50+ professions on Career 365 Compass.',
     images: ['/images/portal-features.jpg'],
   },
 };

@@ -9,16 +9,18 @@ export async function generateMetadata({ params }) {
   const career = await prisma.career.findUnique({
     where: { slug }
   });
-  if (!career) return { title: 'Career Not Found | Career365Compass' };
+  if (!career) return { title: 'Career Not Found | Career 365 Compass' };
   
-  const title = `${career.title} - Career Options After 10th & Roadmap | Career365Compass`;
-  const description = `Complete guide on how to become a ${career.title} in India. Explore required courses after 12th, intermediate streams, entry requirements, salary ranges, and career options after 10th.`;
+  const title = `${career.title} - Career Options After 10th & Roadmap | Career 365 Compass`;
+  const description = `Complete guide on how to become a ${career.title} in India on Career 365 Compass (Career365Compass). Explore required courses after 12th, intermediate streams, entry requirements, salary ranges, and career options after 10th.`;
   const canonicalUrl = `/careers/${slug}/`;
 
   return {
     title,
     description,
     keywords: [
+      'Career 365 Compass',
+      'Career365Compass',
       `${career.title} roadmap`,
       'Career options after 10th',
       'Courses after 12th',
@@ -33,6 +35,7 @@ export async function generateMetadata({ params }) {
     },
     openGraph: {
       title,
+      siteName: 'Career 365 Compass',
       description,
       url: `https://career365compass.in${canonicalUrl}`,
       type: 'article',
@@ -41,7 +44,7 @@ export async function generateMetadata({ params }) {
           url: '/images/portal-features.jpg',
           width: 1200,
           height: 630,
-          alt: `${career.title} Career Roadmap & Guidance`,
+          alt: `${career.title} Career Roadmap & Guidance - Career 365 Compass`,
         },
       ],
     },

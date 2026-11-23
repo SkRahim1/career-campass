@@ -8,16 +8,18 @@ export async function generateMetadata({ params }) {
     const exam = await prisma.competitiveExam.findUnique({
       where: { slug }
     });
-    if (!exam) return { title: 'Exam Not Found - Career365Compass' };
+    if (!exam) return { title: 'Exam Not Found | Career 365 Compass' };
 
     const title = `${exam.shortCode} - ${exam.name} | Eligibility, How & Where to Apply`;
-    const description = `Complete guide for ${exam.name} (${exam.shortCode}). Check college admission eligibility criteria, step-by-step application process, syllabus, and official updates for Telangana entrance exams and competitive exams after 12th.`;
+    const description = `Complete guide for ${exam.name} (${exam.shortCode}) on Career 365 Compass (Career365Compass). Check college admission eligibility criteria, step-by-step application process, syllabus, and official updates for Telangana entrance exams and competitive exams after 12th.`;
     const canonicalUrl = `/competitive-exams/${slug}/`;
     
     return {
       title,
       description,
       keywords: [
+        'Career 365 Compass',
+        'Career365Compass',
         exam.shortCode,
         exam.name,
         'Competitive exams after 12th',
@@ -33,7 +35,8 @@ export async function generateMetadata({ params }) {
         canonical: canonicalUrl,
       },
       openGraph: {
-        title: `${exam.shortCode} Exam Guide & Eligibility | Career365Compass`,
+        title: `${exam.shortCode} Exam Guide & Eligibility | Career 365 Compass`,
+        siteName: 'Career 365 Compass',
         description,
         url: `https://career365compass.in${canonicalUrl}`,
         type: 'article',
@@ -42,13 +45,13 @@ export async function generateMetadata({ params }) {
             url: '/images/portal-features.jpg',
             width: 1200,
             height: 630,
-            alt: `${exam.name} Examination Guide`,
+            alt: `${exam.name} Examination Guide - Career 365 Compass`,
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${exam.shortCode} Guide | Career365Compass`,
+        title: `${exam.shortCode} Guide | Career 365 Compass`,
         description,
         images: ['/images/portal-features.jpg'],
       },

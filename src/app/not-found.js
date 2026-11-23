@@ -41,7 +41,7 @@ export default function NotFound() {
         <h1 className="text-6xl font-extrabold text-indigo-600 dark:text-indigo-400 font-display">404</h1>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Page Not Found</h2>
         <p className="text-slate-600 dark:text-slate-400 text-sm">
-          The requested page could not be found or has been moved. Explore verified junior colleges in Hyderabad.
+          The requested page could not be found or has been moved. Explore verified junior colleges in Hyderabad on Career 365 Compass.
         </p>
         <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
           <Link

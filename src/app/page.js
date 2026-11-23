@@ -9,9 +9,14 @@ import HomeAuthModal from '@/components/HomeAuthModal';
 import { Compass, BookOpen, GraduationCap, Award, HelpCircle, ArrowRight, CheckCircle2, Star, Building2, Flame, MapPin, ShieldCheck, Milestone, Sparkles, ClipboardList, Trophy, ChevronDown } from 'lucide-react';
 
 export const metadata = {
-  title: 'Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
-  description: 'Explore verified career options after 10th, courses after 12th, best courses after MPC, courses after BiPC, Telangana entrance exams, and discover the best colleges in Hyderabad & degree colleges in Telangana with complete college admission eligibility criteria.',
+  title: 'Career 365 Compass | Career Options After 10th, Courses After 12th & Best Colleges in Hyderabad',
+  description: 'Career 365 Compass (Career365Compass) is Telangana\'s premier student guidance and college discovery portal. Explore verified career options after 10th, courses after 12th, best courses after MPC, courses after BiPC, Telangana entrance exams, and discover the best colleges in Hyderabad & degree colleges in Telangana with complete college admission eligibility criteria.',
   keywords: [
+    'Career 365 Compass',
+    'Career365Compass',
+    'Career 365',
+    'Career365 Compass',
+    'Career Compass 365',
     'Career options after 10th',
     'Courses after 12th',
     'Best colleges in Hyderabad',
@@ -114,25 +119,66 @@ export default async function LandingPage() {
       {
         "@type": "WebSite",
         "@id": "https://career365compass.in/#website",
-        "name": "Career365Compass",
-        "url": "https://career365compass.in",
-        "description": "Career guidance, college discovery, and entrance exam portal for students in Hyderabad and Telangana.",
+        "name": "Career 365 Compass",
+        "alternateName": [
+          "Career365Compass",
+          "Career 365",
+          "Career365 Compass",
+          "Career Compass 365"
+        ],
+        "url": "https://career365compass.in/",
+        "description": "Career 365 Compass is Telangana's premier student guidance, career roadmaps, and college discovery portal for students in Hyderabad and Telangana.",
+        "inLanguage": "en-IN",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://career365compass.in/colleges?search={search_term_string}",
+          "target": "https://career365compass.in/colleges/?search={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "EducationalOrganization",
         "@id": "https://career365compass.in/#organization",
-        "name": "Career365Compass",
-        "url": "https://career365compass.in",
+        "name": "Career 365 Compass",
+        "alternateName": [
+          "Career365Compass",
+          "Career 365",
+          "Career Compass"
+        ],
+        "url": "https://career365compass.in/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://career365compass.in/images/portal-features.jpg",
+          "width": 1200,
+          "height": 630
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Hyderabad",
+          "addressRegion": "Telangana",
+          "addressCountry": "IN"
+        },
         "parentOrganization": {
           "@type": "Organization",
           "name": "Excellence Voices",
           "url": "https://excellencevoices.in"
-        }
+        },
+        "founder": [
+          {
+            "@type": "Person",
+            "name": "Rahim Shaikh",
+            "jobTitle": "Co-founder & Director"
+          },
+          {
+            "@type": "Person",
+            "name": "Raviteja Pendem",
+            "jobTitle": "Director"
+          },
+          {
+            "@type": "Person",
+            "name": "Lakshya Rana",
+            "jobTitle": "Director"
+          }
+        ]
       },
       {
         "@type": "FAQPage",
@@ -169,31 +215,37 @@ export default async function LandingPage() {
           </div>
         )}
 
-        {/* Powered by Excellence Voices branding badge */}
-        <div className="inline-flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 px-4 py-2 rounded-2xl shadow-sm text-xs font-semibold">
-          <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Powered by</span>
-          <a href="https://excellencevoices.in" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:opacity-90 transition cursor-pointer">
-            {/* Visual voice wave graph */}
-            <div className="flex gap-0.5 items-center">
-              <span className="w-0.5 h-3 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
-              <span className="w-0.5 h-4.5 rounded-full bg-[#eba925]" />
-              <span className="w-0.5 h-2.5 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
-              <span className="w-0.5 h-5 rounded-full bg-[#eba925]" />
-              <span className="w-0.5 h-3 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
-            </div>
-            <span className="font-extrabold tracking-tight text-sm">
-              <span className="text-[#0d2d59] dark:text-slate-200">Excellence </span>
-              <span className="text-[#eba925]">Voices</span>
-            </span>
-          </a>
+        {/* Brand identity badge & Powered by Excellence Voices branding badge */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <div className="inline-flex items-center gap-2 bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 px-3.5 py-1.5 rounded-2xl shadow-sm text-xs font-bold">
+            <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-spin-slow shrink-0" />
+            <span>Career 365 Compass</span>
+          </div>
+          <div className="inline-flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 px-4 py-1.5 rounded-2xl shadow-sm text-xs font-semibold">
+            <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold tracking-wide">Powered by</span>
+            <a href="https://excellencevoices.in" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:opacity-90 transition cursor-pointer">
+              {/* Visual voice wave graph */}
+              <div className="flex gap-0.5 items-center">
+                <span className="w-0.5 h-3 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
+                <span className="w-0.5 h-4.5 rounded-full bg-[#eba925]" />
+                <span className="w-0.5 h-2.5 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
+                <span className="w-0.5 h-5 rounded-full bg-[#eba925]" />
+                <span className="w-0.5 h-3 rounded-full bg-[#0d2d59] dark:bg-indigo-400" />
+              </div>
+              <span className="font-extrabold tracking-tight text-sm">
+                <span className="text-[#0d2d59] dark:text-slate-200">Excellence </span>
+                <span className="text-[#eba925]">Voices</span>
+              </span>
+            </a>
+          </div>
         </div>
 
         <h1 className="text-3xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-transparent dark:bg-clip-text dark:bg-gradient-to-r dark:from-slate-100 dark:via-indigo-200 dark:to-indigo-400 max-w-4xl leading-tight font-display">
-          Understand Your Educational Choices After Class 10
+          Career 365 Compass: Understand Your Educational Choices After Class 10
         </h1>
         
         <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-base max-w-2xl leading-relaxed">
-          Transitioning from school can be confusing. Career365Compass is a verified guidance portal designed specifically to help 10th-class students in Telangana make confident next-step decisions.
+          Transitioning from school can be confusing. <strong>Career 365 Compass</strong> (Career365Compass) is a verified guidance and college discovery portal designed specifically to help 10th-class and 12th-grade students in Telangana make confident next-step decisions.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto justify-center">
@@ -223,7 +275,7 @@ export default async function LandingPage() {
             </h2>
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed font-normal">
               Most search platforms are driven by paid sponsorships and advertisements, which promote expensive private institutions. 
-              <strong> Career365Compass has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options — regardless of budget.
+              <strong> Career 365 Compass (Career365Compass) has zero ads and zero sponsorships</strong>. We exist purely to detail government and affordable educational avenues for high school graduates in Hyderabad, ensuring you know all options — regardless of budget.
             </p>
           </div>
 

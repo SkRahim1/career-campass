@@ -42,9 +42,9 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center shrink-0 mr-2 xl:mr-4">
-              <Link href="/" className="flex items-center gap-1.5 xl:gap-2 font-extrabold text-base xl:text-lg 2xl:text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 hover:opacity-90 transition shrink-0 whitespace-nowrap">
+              <Link href="/" title="Career 365 Compass - Home" className="flex items-center gap-1.5 xl:gap-2 font-extrabold text-base xl:text-lg 2xl:text-xl tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400 hover:opacity-90 transition shrink-0 whitespace-nowrap">
                 <Compass className="w-5 h-5 xl:w-6 xl:h-6 text-indigo-500 dark:text-indigo-400 animate-spin-slow shrink-0" />
-                <span className="font-display">Career365Compass</span>
+                <span className="font-display">Career 365 Compass</span>
               </Link>
             </div>
 
@@ -175,9 +175,9 @@ export default function Navbar() {
           
           {/* Header */}
           <div className="flex justify-between items-center pb-2 border-b border-slate-150 dark:border-slate-900">
-            <Link href="/" onClick={toggleMenu} className="flex items-center gap-2 font-extrabold text-base tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-              <Compass className="w-5 h-5 text-indigo-500 dark:text-indigo-450 animate-spin-slow animate-spin-slow" />
-              <span>Career365Compass</span>
+            <Link href="/" onClick={toggleMenu} title="Career 365 Compass - Home" className="flex items-center gap-2 font-extrabold text-base tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+              <Compass className="w-5 h-5 text-indigo-500 dark:text-indigo-450 animate-spin-slow" />
+              <span>Career 365 Compass</span>
             </Link>
             
             {/* Close Button */}
@@ -421,7 +421,7 @@ export default function Navbar() {
             
             {/* Tagline */}
             <p className="text-[9px] text-slate-500 dark:text-slate-600 text-center">
-              Career365Compass • Verified Counselling Portal
+              Career 365 Compass (Career365Compass) • Verified Counselling Portal
             </p>
           </div>
 
