@@ -1,3 +1,3 @@
 :HL["/_next/static/css/97a296eb6a0a733b.css","style"]
-:HL["/_next/static/css/14962d7c5b920b65.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"colleges","param":null,"prefetchHints":0,"slots":{"children":{"name":"id","param":{"type":"d","key":"7081","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"QRcnZTS-b1v9tjYRJquUM"}
+:HL["/_next/static/css/862ac7e6b7b5f8db.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"colleges","param":null,"prefetchHints":0,"slots":{"children":{"name":"id","param":{"type":"d","key":"7081","siblings":null},"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"-kjtcdrWXe4fn70ifMI7V"}
