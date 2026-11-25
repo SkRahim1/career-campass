@@ -21,7 +21,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 // Pre-configured default demo accounts for reference/display purposes.
 // NOTE: Passwords have been removed from this export — they must NOT appear in
@@ -144,8 +144,9 @@ export function AuthProvider({ children }) {
   // 2. Login — all accounts (including demo) authenticated via Firebase Auth.
   //    FIX H4: Client-side rate limiting on failed attempts.
   //    FIX M4: Generic error messages to prevent user enumeration.
-  const login = async (email, password) => {
-    const cleanEmail = (email || '').trim().toLowerCase();
+  const login = async (identifier, password) => {
+    const rawIdentifier = (identifier || '').trim();
+    let cleanEmail = rawIdentifier.toLowerCase();
     const cleanPassword = (password || '').trim();
 
     // FIX H4: Rate limit check
@@ -157,6 +158,41 @@ export function AuthProvider({ children }) {
     }
     if (_loginFailedAttempts >= LOGIN_MAX_ATTEMPTS) {
       throw new Error('Too many failed login attempts. Please wait before trying again.');
+    }
+
+    // Check if identifier is a 10-digit Indian mobile number
+    const isMobile = /^[6-9]\d{9}$/.test(rawIdentifier);
+    if (isMobile) {
+      const mobileNumber = rawIdentifier;
+      let resolvedEmail = null;
+
+      // 1. Look up in phone_registry
+      try {
+        const phoneDocRef = doc(db, 'phone_registry', mobileNumber);
+        const phoneDocSnap = await getDoc(phoneDocRef);
+        if (phoneDocSnap.exists() && phoneDocSnap.data().email) {
+          resolvedEmail = phoneDocSnap.data().email;
+        }
+      } catch (err) {
+        console.warn('phone_registry lookup warning:', err.message);
+      }
+
+      // 2. Fallback: check demo accounts for convenience
+      if (!resolvedEmail) {
+        for (const [accEmail, accData] of Object.entries(DEFAULT_ACCOUNTS)) {
+          if (accData.mobileNumber === mobileNumber) {
+            resolvedEmail = accEmail;
+            break;
+          }
+        }
+      }
+
+      if (!resolvedEmail) {
+        _loginFailedAttempts++;
+        if (_loginWindowStart === 0) _loginWindowStart = Date.now();
+        throw new Error(`No account found with mobile number ${mobileNumber}. Please register or verify your number.`);
+      }
+      cleanEmail = resolvedEmail.toLowerCase();
     }
 
     // All accounts (including demo) go through Firebase Auth
@@ -222,14 +258,14 @@ export function AuthProvider({ children }) {
       ) {
         _loginFailedAttempts++;
         if (_loginWindowStart === 0) _loginWindowStart = Date.now();
-        throw new Error('Invalid email or password.');
+        throw new Error('Invalid email, mobile number, or password.');
       } else if (err.code === 'auth/too-many-requests') {
         throw new Error('Too many failed attempts. Please wait a moment before trying again.');
       } else if (err.code === 'auth/network-request-failed') {
         throw new Error('Network error. Please check your internet connection.');
       }
-      // Re-throw rate-limit errors from above without incrementing counter
-      if (err.message === 'Too many failed login attempts. Please wait before trying again.') {
+      // Re-throw rate-limit and not-found errors from above without incrementing counter
+      if (err.message === 'Too many failed login attempts. Please wait before trying again.' || err.message?.includes('No account found')) {
         throw err;
       }
       _loginFailedAttempts++;
@@ -239,10 +275,30 @@ export function AuthProvider({ children }) {
   };
 
   // 3. Student Registration
-  //    FIX H6: Do NOT silently sign in on email-already-in-use; re-throw a clear error.
+  //    Enforces unique mobile number across accounts and stores student consent
   const register = async (userData) => {
-    const { email, password, name, mobileNumber, schoolName, percentage10th, preferredStream, preferredLocation, budget, hostelRequired } = userData;
+    const { email, password, name, mobileNumber, schoolName, percentage10th, preferredStream, preferredLocation, budget, hostelRequired, consentGiven } = userData;
     const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanMobile = (mobileNumber || '').trim();
+
+    // Enforce mobile number uniqueness
+    if (cleanMobile) {
+      if (!/^[6-9]\d{9}$/.test(cleanMobile)) {
+        throw new Error('Please enter a valid 10-digit Indian mobile number.');
+      }
+      try {
+        const phoneDocRef = doc(db, 'phone_registry', cleanMobile);
+        const phoneDocSnap = await getDoc(phoneDocRef);
+        if (phoneDocSnap.exists()) {
+          throw new Error(`The mobile number ${cleanMobile} is already registered to another account. Please sign in instead.`);
+        }
+      } catch (phoneCheckErr) {
+        if (phoneCheckErr.message?.includes('already registered')) {
+          throw phoneCheckErr;
+        }
+        console.warn('phone_registry availability check warning:', phoneCheckErr.message);
+      }
+    }
 
     try {
       let firebaseUser = null;
@@ -262,7 +318,7 @@ export function AuthProvider({ children }) {
         uid: firebaseUser?.uid || 'user-' + Date.now(),
         name: name || cleanEmail.split('@')[0],
         email: cleanEmail,
-        mobileNumber: mobileNumber || '',
+        mobileNumber: cleanMobile,
         role: 'STUDENT', // FIX H1: Always 'STUDENT' for new registrations
         schoolName: schoolName || null,
         percentage10th: percentage10th ? parseFloat(percentage10th) : null,
@@ -270,6 +326,8 @@ export function AuthProvider({ children }) {
         preferredLocation: preferredLocation || null,
         budget: budget ? parseFloat(budget) : null,
         hostelRequired: !!hostelRequired,
+        consentGiven: consentGiven !== undefined ? consentGiven : true,
+        consentTimestamp: new Date().toISOString(),
         savedColleges: [],
         hasCompletedSurvey: false
       };
@@ -277,6 +335,16 @@ export function AuthProvider({ children }) {
       try {
         if (firebaseUser) {
           await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
+          if (cleanMobile) {
+            // Register mobile number mapping atomically in phone_registry
+            await setDoc(doc(db, 'phone_registry', cleanMobile), {
+              uid: firebaseUser.uid,
+              email: cleanEmail,
+              name: newProfile.name,
+              role: 'STUDENT',
+              registeredAt: new Date().toISOString()
+            });
+          }
         }
       } catch (fsErr) {
         console.warn('Firestore write warning during registration:', fsErr.message);
@@ -308,6 +376,21 @@ export function AuthProvider({ children }) {
   const registerCollege = async (representativeData, collegeData) => {
     const { email, password, representativeName, designation, phone, mobileNumber } = representativeData;
     const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanMobile = (phone || mobileNumber || '').trim();
+
+    // Check contact number uniqueness in phone_registry
+    if (cleanMobile) {
+      try {
+        const phoneDocRef = doc(db, 'phone_registry', cleanMobile);
+        const phoneDocSnap = await getDoc(phoneDocRef);
+        if (phoneDocSnap.exists()) {
+          throw new Error(`The contact number ${cleanMobile} is already registered to another account. Please sign in instead.`);
+        }
+      } catch (pErr) {
+        if (pErr.message?.includes('already registered')) throw pErr;
+        console.warn('phone_registry check error:', pErr.message);
+      }
+    }
 
     try {
       let firebaseUser = null;
@@ -423,6 +506,15 @@ export function AuthProvider({ children }) {
       try {
         if (firebaseUser) {
           await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+          if (cleanMobile) {
+            await setDoc(doc(db, 'phone_registry', cleanMobile), {
+              uid: firebaseUser.uid,
+              email: cleanEmail,
+              name: representativeName,
+              role: 'PENDING_COLLEGE_ADMIN',
+              registeredAt: new Date().toISOString()
+            });
+          }
         }
       } catch (fsErr) {
         console.warn('Firestore user profile save warning:', fsErr.message);
@@ -493,6 +585,36 @@ export function AuthProvider({ children }) {
     delete sanitizedData.uid;
     delete sanitizedData.email;
     delete sanitizedData.createdAt;
+
+    // Check if mobile number is changing and already in use
+    const newMobile = (sanitizedData.mobileNumber || '').trim();
+    const currentMobile = (user?.mobileNumber || '').trim();
+    if (newMobile && newMobile !== currentMobile) {
+      if (!/^[6-9]\d{9}$/.test(newMobile)) {
+        throw new Error('Please enter a valid 10-digit Indian mobile number.');
+      }
+      try {
+        const phoneDocRef = doc(db, 'phone_registry', newMobile);
+        const phoneDocSnap = await getDoc(phoneDocRef);
+        if (phoneDocSnap.exists() && phoneDocSnap.data().uid !== user?.uid) {
+          throw new Error(`The mobile number ${newMobile} is already registered to another account.`);
+        }
+        // Update phone_registry
+        if (currentMobile) {
+          try { await deleteDoc(doc(db, 'phone_registry', currentMobile)); } catch (e) { /* ignore */ }
+        }
+        await setDoc(doc(db, 'phone_registry', newMobile), {
+          uid: user?.uid,
+          email: user?.email,
+          name: sanitizedData.name || user?.name,
+          role: user?.role || 'STUDENT',
+          updatedAt: new Date().toISOString()
+        });
+      } catch (err) {
+        if (err.message?.includes('already registered')) throw err;
+        console.warn('phone_registry update warning:', err.message);
+      }
+    }
 
     const updatedUser = { ...user, ...sanitizedData };
     setUser(updatedUser);

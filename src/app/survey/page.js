@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import AuthRequiredGate from '@/components/AuthRequiredGate';
@@ -25,7 +25,8 @@ import {
   Check, 
   AlertCircle,
   Star,
-  X
+  X,
+  Pencil
 } from 'lucide-react';
 
 export default function SurveyPage() {
@@ -33,6 +34,9 @@ export default function SurveyPage() {
   const [currentSection, setCurrentSection] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [existingSurvey, setExistingSurvey] = useState(null);
+  const [checkingPrevious, setCheckingPrevious] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [suggestedColleges, setSuggestedColleges] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -74,11 +78,55 @@ export default function SurveyPage() {
     q24_studyLocationPreference: '',
     q25_annualBudget: '',
 
-    // Section 6: Career Guidance
+    // Section 6: Career Guidance & Consent
     q26_govtScholarshipInfoInterest: '',
     q27_guidanceAreas: [], // Multi-select array
-    q28_biggestConfusion: '' // Long answer
+    q28_biggestConfusion: '', // Long answer
+    q29_studentConsent: false // Mandatory student & parent consent
   });
+
+  // Check if student has already completed survey on mount
+  useEffect(() => {
+    let isMounted = true;
+    const checkExistingSubmission = async () => {
+      if (!user?.uid) {
+        setCheckingPrevious(false);
+        return;
+      }
+      try {
+        const { doc, getDoc } = await import('firebase/firestore');
+        const { db } = await import('@/lib/firebase');
+        const surveyDocRef = doc(db, 'surveys', user.uid);
+        const surveySnap = await getDoc(surveyDocRef);
+
+        if (surveySnap.exists() && isMounted) {
+          const sData = surveySnap.data();
+          setExistingSurvey(sData);
+          setFormData(prev => ({
+            ...prev,
+            ...sData,
+            q29_studentConsent: true
+          }));
+        } else if (user.surveyResponses && isMounted) {
+          setExistingSurvey({
+            ...user.surveyResponses,
+            submittedAt: user.updatedAt || user.createdAt
+          });
+          setFormData(prev => ({
+            ...prev,
+            ...user.surveyResponses,
+            q29_studentConsent: true
+          }));
+        }
+      } catch (err) {
+        console.warn('Existing survey resolution warning:', err);
+      } finally {
+        if (isMounted) setCheckingPrevious(false);
+      }
+    };
+    checkExistingSubmission();
+    return () => { isMounted = false; };
+  }, [user]);
 
   const sections = [
     { id: 1, title: 'Student Information', description: 'Basic details to personalize your guidance', icon: User },
@@ -143,6 +191,7 @@ export default function SurveyPage() {
       if (!formData.q26_govtScholarshipInfoInterest) return 'Please answer Q26 about scholarships information.';
       if (formData.q27_guidanceAreas.length === 0) return 'Please select at least one area where you need guidance (Q27).';
       // Q28 is long answer - recommended
+      if (!formData.q29_studentConsent) return 'Please provide student/parent consent (Q29) before submitting your survey.';
     }
     return null;
   };
@@ -178,21 +227,26 @@ export default function SurveyPage() {
     setErrorMsg('');
 
     try {
-      const { collection, addDoc, serverTimestamp, doc, updateDoc, getDocs } = await import('firebase/firestore');
+      const { collection, setDoc, serverTimestamp, doc, updateDoc, getDocs } = await import('firebase/firestore');
       const { db } = await import('@/lib/firebase');
 
       const surveySubmission = {
         ...formData,
-        submittedAt: new Date().toISOString(),
+        submittedAt: existingSurvey?.submittedAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         timestamp: serverTimestamp(),
         userId: user?.uid || null,
         userEmail: user?.email || null,
-        source: 'web_student_survey'
+        source: 'web_student_survey',
+        q29_studentConsent: true,
+        consentTimestamp: existingSurvey?.consentTimestamp || new Date().toISOString()
       };
 
-      // 1. Try to record in 'surveys' collection
+      // 1. Record deterministically in 'surveys' collection using user.uid as doc id
       try {
-        await addDoc(collection(db, 'surveys'), surveySubmission);
+        const surveyDocId = user?.uid || `survey_${Date.now()}`;
+        await setDoc(doc(db, 'surveys', surveyDocId), surveySubmission, { merge: true });
+        setExistingSurvey(surveySubmission);
       } catch (firestoreErr) {
         console.warn('Could not write to surveys collection directly:', firestoreErr);
       }
@@ -415,10 +469,13 @@ export default function SurveyPage() {
       q25_annualBudget: '',
       q26_govtScholarshipInfoInterest: '',
       q27_guidanceAreas: [],
-      q28_biggestConfusion: ''
+      q28_biggestConfusion: '',
+      q29_studentConsent: false
     });
     setCurrentSection(1);
     setSubmitted(false);
+    setIsEditing(false);
+    setExistingSurvey(null);
     setShowPopup(false);
     setSuggestedColleges([]);
     setErrorMsg('');
@@ -555,19 +612,28 @@ export default function SurveyPage() {
             </Link>
           </div>
 
-          {/* Fill Next Student Response Button */}
-          <div className="border-t border-slate-800/80 pt-6">
-            <button
-              onClick={handleResetForNextStudent}
-              className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-bold text-xs p-3 rounded-xl hover:bg-indigo-950/30 transition cursor-pointer"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span>Fill Survey for Next Student (One by One)</span>
-            </button>
-            <p className="text-[10px] text-slate-500 mt-1">
-              Use this if multiple students in your school or classroom are taking turns.
-            </p>
-          </div>
+          {/* Fill Next Student Response Button — Restricted to Admins & School Drives */}
+          {user?.role === 'SUPER_ADMIN' ? (
+            <div className="border-t border-slate-800/80 pt-6">
+              <button
+                onClick={handleResetForNextStudent}
+                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-bold text-xs p-3 rounded-xl hover:bg-indigo-950/30 transition cursor-pointer"
+              >
+                <RotateCcw className="w-4 h-4" />
+                <span>[Admin Mode] Fill Survey for Next Student (One by One)</span>
+              </button>
+              <p className="text-[10px] text-slate-500 mt-1">
+                Admin mode: Use this if taking turns on a single device during school drives.
+              </p>
+            </div>
+          ) : (
+            <div className="border-t border-slate-800/80 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+              <span>Your responses are securely saved. You can review them anytime in your profile.</span>
+              <Link href="/profile" className="font-bold text-indigo-400 hover:text-indigo-300 transition">
+                Go to Profile &rarr;
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* ============================================================
@@ -693,6 +759,196 @@ export default function SurveyPage() {
     );
   }
 
+  // 1. Loading state while checking previous survey status
+  if (user && checkingPrevious) {
+    return (
+      <AuthRequiredGate
+        featureName="Class 10 Student Survey"
+        featureDescription="Checking your guidance profile..."
+        iconName="survey"
+        redirectPath="/survey"
+      >
+        <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
+          <div className="w-10 h-10 border-3 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+          <p className="text-xs text-slate-400 font-semibold tracking-wider uppercase">Loading guidance profile...</p>
+        </div>
+      </AuthRequiredGate>
+    );
+  }
+
+  // 2. Already completed view for students (Prevents duplicate submissions)
+  if (user && (user.hasCompletedSurvey || existingSurvey) && !isEditing) {
+    const surveyData = existingSurvey || user.surveyResponses || formData;
+    return (
+      <AuthRequiredGate
+        featureName="Class 10 Student Survey"
+        featureDescription="Sign in or register to take the 28-Question Class 10 diagnostic survey and get personalized college suggestions."
+        iconName="survey"
+        redirectPath="/survey"
+      >
+        <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full space-y-6 bg-grid-pattern bg-radial-gradient flex-grow text-left">
+          
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 text-slate-800 dark:text-slate-100">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800/80 pb-6">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Survey Completed & Recorded</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
+                  You&apos;ve Completed Your Survey
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                  Your diagnostic responses are safely saved. You do not need to submit again.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditing(true);
+                  setCurrentSection(1);
+                  window.scrollTo({ top: 150, behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-50 dark:bg-indigo-600/15 hover:bg-indigo-100 dark:hover:bg-indigo-600/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 font-bold text-xs transition cursor-pointer shrink-0"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                <span>Update / Edit Responses</span>
+              </button>
+            </div>
+
+            {/* Saved Survey Snapshot Card */}
+            <div className="bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 text-xs">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <span className="font-bold uppercase tracking-wider text-[11px] text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4" />
+                  <span>Your Recorded Guidance Snapshot</span>
+                </span>
+                <span className="text-[11px] text-slate-500">
+                  {surveyData.submittedAt ? `Submitted: ${new Date(surveyData.submittedAt).toLocaleDateString()}` : 'Recorded'}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Student Name:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">{surveyData.q1_fullName || user?.name || 'Student'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Registered Phone:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">{surveyData.q4_mobileNumber || user?.mobileNumber || 'Not specified'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">School & Section:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">{surveyData.q2_schoolName || user?.schoolName || 'Not specified'} ({surveyData.q3_classSection || '10th'})</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Location / Area:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">{surveyData.q5_location || user?.preferredLocation || 'Hyderabad'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Future Career Goal:</span>
+                  <span className="text-purple-600 dark:text-purple-400 font-bold text-sm">{surveyData.q6_careerGoal || user?.careerGoal || 'Exploring options'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Preferred Stream:</span>
+                  <span className="text-indigo-600 dark:text-indigo-400 font-bold text-sm">{surveyData.q12_intermediateStream || user?.preferredStream || 'Not decided'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Annual Budget:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold text-sm">{surveyData.q25_annualBudget || 'Standard'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-500 block text-[10px] uppercase font-semibold">Consent Status:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Verified Student & Parent Consent</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowPopup(true)}
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold p-3.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-md cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>View College Suggestions Popup</span>
+              </button>
+              <Link
+                href="/colleges"
+                className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-800 font-bold p-3.5 rounded-xl transition text-xs flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Building2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span>Browse All Colleges</span>
+              </Link>
+            </div>
+
+            {/* Admin counselor mode if applicable */}
+            {user?.role === 'SUPER_ADMIN' && (
+              <div className="border-t border-slate-200 dark:border-slate-800 pt-4">
+                <button
+                  type="button"
+                  onClick={handleResetForNextStudent}
+                  className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-bold text-xs p-2 rounded-xl hover:bg-indigo-950/30 transition cursor-pointer"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  <span>[Admin Mode] Fill Survey for Next Student</span>
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Suggestions Popup Modal */}
+          {showPopup && (
+            <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl text-left relative overflow-hidden max-h-[90vh] overflow-y-auto">
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500" />
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="absolute top-5 right-5 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="space-y-2 pr-8">
+                  <div className="inline-flex items-center gap-1.5 bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Instant College Suggestions</span>
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 font-display">
+                    Guidance Profile for {surveyData.q1_fullName || user?.name || 'Student'}
+                  </h2>
+                  <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                    Based on your goal <strong className="text-purple-600 dark:text-purple-300 font-bold">{surveyData.q6_careerGoal || 'Professional'}</strong> and preferred stream <strong className="text-indigo-600 dark:text-indigo-300 font-bold">{surveyData.q12_intermediateStream || 'your choice'}</strong>:
+                  </p>
+                </div>
+                <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                  <Link
+                    href={`/colleges?stream=${encodeURIComponent(surveyData.q12_intermediateStream || '')}`}
+                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:opacity-90 text-white font-bold p-3 rounded-xl transition text-xs text-center flex items-center justify-center gap-2"
+                  >
+                    <span>Browse Colleges for {surveyData.q12_intermediateStream || 'Your Stream'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setShowPopup(false)}
+                    className="bg-slate-100 hover:bg-slate-200 dark:bg-slate-950 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 font-bold p-3 rounded-xl transition text-xs text-center cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </AuthRequiredGate>
+    );
+  }
+
   return (
     <AuthRequiredGate
       featureName="Class 10 Student Survey"
@@ -780,6 +1036,31 @@ export default function SurveyPage() {
         <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 flex items-center gap-3 text-xs text-red-400 shadow-sm animate-shake">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{errorMsg}</span>
+        </div>
+      )}
+
+      {/* Editing Mode Notice Banner */}
+      {isEditing && (
+        <div className="bg-amber-500/15 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-amber-200 shadow-sm animate-fadeIn">
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-amber-300">Editing Your Recorded Survey Responses</p>
+              <p className="text-amber-200/80 text-[11px] mt-0.5">
+                Updating your answers will replace your previous submission and refresh your personalized college suggestions without creating duplicate records.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsEditing(false);
+              window.scrollTo({ top: 100, behavior: 'smooth' });
+            }}
+            className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-slate-600 text-slate-300 hover:text-white font-bold transition shrink-0 cursor-pointer"
+          >
+            Cancel Edit
+          </button>
         </div>
       )}
 
@@ -1517,6 +1798,26 @@ export default function SurveyPage() {
                 Your responses will be kept confidential and used solely for educational guidance and college discovery.
               </p>
             </div>
+
+            {/* Q29 - STUDENT & PARENT / GUARDIAN CONSENT (MANDATORY) */}
+            <div className="bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/80 rounded-2xl p-4 sm:p-5 space-y-2 mt-4">
+              <label className="flex items-start gap-3 cursor-pointer text-xs select-none">
+                <input
+                  type="checkbox"
+                  checked={!!formData.q29_studentConsent}
+                  onChange={(e) => handleInputChange('q29_studentConsent', e.target.checked)}
+                  className="mt-0.5 w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700 shrink-0 cursor-pointer"
+                />
+                <span className="text-slate-800 dark:text-slate-200 leading-relaxed">
+                  <strong className="text-indigo-950 dark:text-indigo-300 font-bold block text-xs sm:text-sm mb-1 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <span>29. Student & Parent / Guardian Consent (Required)</span>
+                    <span className="text-red-500">*</span>
+                  </strong>
+                  I confirm that I am a Class 10 student (or parent/guardian filling on their behalf), and I give consent to Career365Compass to process my diagnostic responses to recommend suitable Intermediate / Polytechnic streams and colleges.
+                </span>
+              </label>
+            </div>
           </div>
         )}
 
@@ -1552,7 +1853,7 @@ export default function SurveyPage() {
                 className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:opacity-95 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl shadow-purple-500/25 transition cursor-pointer active:scale-95"
               >
                 <Send className="w-4 h-4" />
-                <span>{submitting ? 'Submitting Responses...' : 'Submit Survey'}</span>
+                <span>{submitting ? (isEditing ? 'Updating Responses...' : 'Submitting Responses...') : (isEditing ? 'Update Survey Responses' : 'Submit Survey')}</span>
               </button>
             )}
           </div>

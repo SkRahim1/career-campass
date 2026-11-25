@@ -104,13 +104,28 @@ service cloud.firestore {
     }
 
     // ── Surveys Collection ────────────────────────────────────────────
-    // Open for student submissions with payload limits; only admins can read/manage
+    // Only one survey per student (surveyId == request.auth.uid); admins have full read/manage
     match /surveys/{surveyId} {
-      allow create: if request.resource.data.q1_fullName is string &&
+      allow read: if isAdmin() || (request.auth != null && (surveyId == request.auth.uid || resource.data.userId == request.auth.uid));
+      allow create, update: if isAdmin() || (
+        request.auth != null &&
+        (surveyId == request.auth.uid || request.resource.data.userId == request.auth.uid) &&
+        request.resource.data.q1_fullName is string &&
         request.resource.data.q1_fullName.size() > 0 &&
         request.resource.data.q1_fullName.size() < 100 &&
-        request.resource.data.keys().size() < 60;
-      allow read, update, delete: if isAdmin();
+        request.resource.data.keys().size() < 60
+      );
+      allow delete: if isAdmin();
+    }
+
+    // ── Phone Registry Collection ─────────────────────────────────────
+    // Used to enforce unique mobile numbers across student accounts and allow phone login
+    match /phone_registry/{mobileNumber} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && (resource.data.uid == request.auth.uid || isAdmin());
+      allow delete: if isAdmin() || (request.auth != null && resource.data.uid == request.auth.uid);
     }
 
     // ── Audit Logs Collection ─────────────────────────────────────────

@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [schoolName, setSchoolName] = useState('');
+  const [consentAgreed, setConsentAgreed] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [redirectPath, setRedirectPath] = useState('');
@@ -69,6 +70,11 @@ export default function RegisterPage() {
       setError('Password must contain at least one uppercase letter and one number.');
       return;
     }
+    // Student & Parent Consent validation
+    if (!consentAgreed) {
+      setError('Please provide student/parent consent to create your account.');
+      return;
+    }
 
     setError('');
     setSubmitting(true);
@@ -80,6 +86,7 @@ export default function RegisterPage() {
         password,
         mobileNumber,
         schoolName: schoolName || null,
+        consentGiven: true
       });
       router.push(redirectPath || '/survey?firstTime=true');
     } catch (err) {
@@ -105,9 +112,22 @@ export default function RegisterPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl py-8 px-6 sm:px-10 shadow-xl space-y-6 text-slate-800 dark:text-slate-100">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 flex items-start gap-2.5 text-xs text-red-400">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{error}</span>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3.5 text-xs text-red-400 space-y-2">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span className="font-medium leading-relaxed">{error}</span>
+              </div>
+              {error.includes('already registered') && (
+                <div className="pt-1 border-t border-red-500/20">
+                  <Link
+                    href={`/login?identifier=${encodeURIComponent(mobileNumber || email)}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 px-3 py-1.5 rounded-lg border border-indigo-500/30 transition"
+                  >
+                    <span>Sign in with this account instead</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
             </div>
           )}
 
@@ -209,6 +229,24 @@ export default function RegisterPage() {
                   className="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                 />
               </div>
+            </div>
+
+            {/* Student & Parent Consent */}
+            <div className="bg-slate-50 dark:bg-slate-950/70 border border-slate-200 dark:border-slate-800 p-3.5 rounded-xl space-y-1.5 mt-2">
+              <label className="flex items-start gap-2.5 cursor-pointer text-xs select-none">
+                <input
+                  type="checkbox"
+                  checked={consentAgreed}
+                  onChange={(e) => setConsentAgreed(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-slate-700 shrink-0 cursor-pointer"
+                />
+                <span className="text-slate-700 dark:text-slate-300 leading-snug">
+                  <strong className="text-slate-900 dark:text-slate-100 font-semibold block mb-0.5">
+                    Student & Parent / Guardian Consent <span className="text-red-500">*</span>
+                  </strong>
+                  I confirm that I am a Class 10 student (or parent/guardian), and I consent to Career365Compass storing my educational details to provide personalized stream and college guidance.
+                </span>
+              </label>
             </div>
 
             {/* Submit */}

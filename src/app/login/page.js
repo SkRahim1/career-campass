@@ -4,24 +4,28 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Mail, Lock, LogIn, ArrowRight, AlertCircle, Compass } from 'lucide-react';
+import { Mail, Lock, LogIn, ArrowRight, AlertCircle, Compass, Phone } from 'lucide-react';
 
 export default function LoginPage() {
   const { user, login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [redirectPath, setRedirectPath] = useState('');
 
-  // Extract redirect target client-side safely
+  // Extract redirect target and optional prefilled identifier client-side safely
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const target = params.get('redirect');
       if (target && target.startsWith('/')) {
         setRedirectPath(target);
+      }
+      const prefillId = params.get('identifier');
+      if (prefillId) {
+        setIdentifier(prefillId);
       }
     }
   }, []);
@@ -44,7 +48,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!identifier || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -53,10 +57,10 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      const loggedInUser = await login(email, password);
+      const loggedInUser = await login(identifier, password);
       router.push(getRedirectTarget(loggedInUser.role));
     } catch (err) {
-      setError(err.message || 'Invalid email or password');
+      setError(err.message || 'Invalid credentials');
     } finally {
       setSubmitting(false);
     }
@@ -92,25 +96,32 @@ export default function LoginPage() {
           )}
 
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Email Address */}
+            {/* Email Address or Mobile Number */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
-                Email Address
+              <label htmlFor="identifier" className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                Email Address or 10-Digit Mobile Number
               </label>
               <div className="relative rounded-xl shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500">
-                  <Mail className="w-4 h-4" />
+                  {/^[6-9]\d{0,9}$/.test(identifier) ? (
+                    <Phone className="w-4 h-4 text-indigo-400" />
+                  ) : (
+                    <Mail className="w-4 h-4" />
+                  )}
                 </div>
                 <input
-                  id="email"
-                  type="email"
+                  id="identifier"
+                  type="text"
                   required
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com or 9876543210"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
                   className="block w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:border-indigo-500 text-sm transition"
                 />
               </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                You can sign in with your registered email or 10-digit mobile number.
+              </p>
             </div>
 
             {/* Password */}
